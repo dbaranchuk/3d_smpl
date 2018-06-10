@@ -25,11 +25,15 @@ if "concat_v2" in dir(tf):
 else:
   def concat(tensors, axis, *args, **kwargs):
     return tf.concat(tensors, axis, *args, **kwargs)
+
+
 def eud_loss(a, b):
   return tf.reduce_mean(tf.square(a-b))
 
+
 def l1_loss(a, b):
   return tf.reduce_mean(tf.abs(a-b))
+
 
 def smoothLoss2(flow):
     with tf.name_scope("smoothLoss2"):
@@ -56,22 +60,24 @@ def smoothLoss2(flow):
         return loss
 
 
-
-
 def per_joint_loss(a, b):
   return tf.reduce_mean(tf.sqrt(tf.reduce_sum(tf.square(a - b), 2)))
+
 
 def merge_bf(value):
   shape = value.get_shape().as_list()
   return tf.reshape(value, [-1] + shape[2:])
 
+
 def split_bf(value, batch_size, nframes):
   shape = value.get_shape().as_list()
   return tf.reshape(value, [batch_size, nframes] + shape[1:])
 
+
 def norm(value):
   shape = value.get_shape()
   return tf.expand_dims(tf.sqrt(tf.reduce_sum(tf.square(value), len(shape)-1)), len(shape)-1)
+
 
 def get_scalar_summary(name, value):
   summ = dict()
@@ -81,6 +87,7 @@ def get_scalar_summary(name, value):
   summ["h3.6_test"] = tf.summary.scalar(name + " (h3.6 test)", value)
   return summ
 
+
 def get_hist_summary(name, value):
   summ = dict()
   summ["syn_train"] = tf.summary.histogram(name + " (syn train)", value)
@@ -89,6 +96,7 @@ def get_hist_summary(name, value):
   summ["h3.6_test"] = tf.summary.histogram(name + " (h3.6 test)", value)
   return summ
 
+
 def get_image_summary(name, value, n=4):
   summ = dict()
   summ["syn_train"] = tf.summary.image(name + " (syn train)", value, n)
@@ -96,7 +104,8 @@ def get_image_summary(name, value, n=4):
   summ["h3.6_train"] = tf.summary.image(name + " (h3.6 train)", value, n)
   summ["h3.6_test"] = tf.summary.image(name + " (h3.6 test)", value, n)
   return summ 
- 
+
+
 def getIdxMap(batch_size, height, width):
   IdxMap = np.zeros((batch_size, height, width, 2), dtype=np.float32)  
   for h in range(height):
@@ -105,6 +114,7 @@ def getIdxMap(batch_size, height, width):
     IdxMap[:, :, w, 0] = w  
   return IdxMap 
 
+
 def repeat(x, n_repeats):
   rep = tf.transpose(
       tf.expand_dims(tf.ones(shape=tf.stack([n_repeats, ])), 1), [1, 0])
@@ -112,13 +122,16 @@ def repeat(x, n_repeats):
   x = tf.matmul(tf.reshape(x, (-1, 1)), rep) 
   return tf.reshape(x, [-1])
 
+
 def split(tensor, dim):
   shape = tensor.get_shape().as_list()
   #final_shape = [item for item in shape[:dim]] + [item for item in shape[dim+1:]] 
   return [tf.squeeze(item, dim) for item in tf.split(tensor, shape[dim], axis=dim)]
 
+
 def print_shape(t):
   print(t.name, t.get_shape().as_list())
+
 
 class batch_norm(object):
   def __init__(self, epsilon=1e-5, momentum = 0.9, name="batch_norm"):
@@ -136,12 +149,14 @@ class batch_norm(object):
                       is_training=train,
                       scope=self.name)
 
+
 def conv_cond_concat(x, y):
   """Concatenate conditioning vector on feature map axis."""
   x_shapes = x.get_shape()
   y_shapes = y.get_shape()
   return concat(3, [
     x, y*tf.ones([x_shapes[0], x_shapes[1], x_shapes[2], y_shapes[3]])])
+
 
 def conv2d(input_, output_dim, 
        k_h=5, k_w=5, d_h=2, d_w=2, stddev=0.02,
@@ -155,6 +170,7 @@ def conv2d(input_, output_dim,
     conv = tf.reshape(tf.nn.bias_add(conv, biases), conv.get_shape())
 
     return conv
+
 
 def deconv2d(input_, output_shape,
        k_h=5, k_w=5, d_h=2, d_w=2, stddev=0.02,
@@ -180,9 +196,11 @@ def deconv2d(input_, output_shape,
       return deconv, w, biases
     else:
       return deconv
-     
+
+
 def lrelu(x, leak=0.2, name="lrelu"):
   return tf.maximum(x, leak*x)
+
 
 def linear(input_, output_size, scope=None, stddev=0.02, bias_start=0.0, with_w=False):
   shape = input_.get_shape().as_list()

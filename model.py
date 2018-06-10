@@ -6,7 +6,6 @@ import tensorflow as tf
 import numpy as np
 from six.moves import xrange
 import colorsys
-#from misc import load_bin_with_shape
 from data import Data_Helper_h36_syn
 
 from visibility import tf_get_visibility, tf_get_visibility_raycast
@@ -14,7 +13,6 @@ from ops import *
 import scipy.io as sio
 import math
 import pickle
-#import cv2 
 import struct
 
 from pack_data.tfrecord_utils import inputs_surreal, inputs_surreal_with_idx  
@@ -57,12 +55,11 @@ class _3DINN(object):
         self.f_bn4 = batch_norm(name='f_bn4')
         self.f_bn4_1 = batch_norm(name='f_bn4_1')
         self.Build_Model()
- 
+
+
     def Build_Model(self):
         self.global_step = tf.Variable(0, name='global_step', trainable=False)
-        self.image_center  = tf.constant(np.array([(self.config.image_size_h - 1)/2.0,
-                                       (self.config.image_size_w - 1)/2.0], dtype=np.float32))
-         
+        self.image_center  = tf.constant(np.array([(self.config.image_size_h - 1)/2.0, (self.config.image_size_w - 1)/2.0], dtype=np.float32))
         # initial variables and constants
         self.xIdxMap = np.zeros((self.config.image_size_h, self.config.image_size_w), dtype=np.float32) 
         self.xIdxMap[:,:] = np.reshape(range(self.config.image_size_w), [1,-1])
@@ -75,19 +72,17 @@ class _3DINN(object):
         dd_f = pickle.load(open(f_model_pkl_filename, 'rb'))
         m_model_pkl_filename = '../smpl/models/basicModel_m_lbs_10_207_0_v1.0.0.pkl'
         dd_m = pickle.load(open(m_model_pkl_filename, 'rb'))
+
         # facet
         self.f = dd_f['f']
         self.kintree_table = dd_f['kintree_table']
-        dd_v_template = np.concatenate((np.expand_dims(dd_f['v_template'], 0),
-                                        np.expand_dims(dd_m['v_template'], 0)), 0) 
+        dd_v_template = np.concatenate((np.expand_dims(dd_f['v_template'], 0), np.expand_dims(dd_m['v_template'], 0)), 0)
         self.mesh_mu = tf.constant(dd_v_template, dtype=tf.float32, name="mesh_mu")
         
-        dd_shapedirs = np.concatenate((np.expand_dims(dd_f['shapedirs'], 0),
-                                        np.expand_dims(dd_m['shapedirs'], 0)), 0)  
+        dd_shapedirs = np.concatenate((np.expand_dims(dd_f['shapedirs'], 0), np.expand_dims(dd_m['shapedirs'], 0)), 0)
         self.mesh_pca = tf.constant(np.array(dd_shapedirs), dtype=tf.float32, name="mesh_pca")
         
-        dd_posedirs = np.concatenate((np.expand_dims(dd_f['posedirs'], 0),
-                                        np.expand_dims(dd_m['posedirs'], 0)), 0)  
+        dd_posedirs = np.concatenate((np.expand_dims(dd_f['posedirs'], 0), np.expand_dims(dd_m['posedirs'], 0)), 0)
         self.posedirs = tf.constant(np.array(dd_posedirs), dtype=tf.float32, name="posedirs")
 
         
@@ -115,8 +110,7 @@ class _3DINN(object):
         bat_nframes = [self.config.batch_size, self.config.num_frames] 
         image_size = [self.config.image_size_h, self.config.image_size_w]
         # input/gt
-        self.pose_gt = tf.placeholder(tf.float32, bat_nframes + \
-                                   [self.config.keypoints_num, 3], name="pose_gt")
+        self.pose_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="pose_gt")
         
         self.gender_gt = tf.placeholder(tf.int32, self.config.batch_size, name="gender_gt")
         self.T_gt = tf.placeholder(tf.float32, bat_nframes + [3], name="T_gt")
@@ -124,26 +118,16 @@ class _3DINN(object):
         self.f_gt = tf.placeholder(tf.float32, bat_nframes + [2], name="f_gt")
         self.c_gt = tf.placeholder(tf.float32, bat_nframes + [2], name="c_gt")
         self.resize_scale_gt = tf.placeholder(tf.float32, bat_nframes, name="resize_scale_gt")
-        self.beta_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.bases_num], 
-                                      name="beta_gt") 
-        self.J_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], 
-                                   name="J_gt")
-        self.pmesh_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 2], 
-                                   name="pmesh_gt")
-        self.v_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 3], 
-                                   name="v_gt")
-        self.J_c_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], 
-                                   name="J_c_gt")
-        self.J_2d_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 2],
-                                       name="J_2d_gt")
-        self.images = tf.placeholder(tf.float32, bat_nframes + image_size + [3]\
-                                     , name="images")       
-        #self.visibility = tf.placeholder(tf.float32, bat_nframes + \
-        #                                 [self.config.mesh_num], name="visibility")       
-        self.seg_gt = tf.placeholder(tf.float32, bat_nframes + image_size,\
-                                   name="seg_gt")  
-        self.chamfer_gt = tf.placeholder(tf.float32, bat_nframes + \
-                                         [self.small_h, self.small_w], name="chamfer_gt")       
+        self.beta_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.bases_num], name="beta_gt")
+        self.J_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="J_gt")
+        self.pmesh_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 2], name="pmesh_gt")
+        self.v_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 3], name="v_gt")
+        self.J_c_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="J_c_gt")
+        self.J_2d_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 2], name="J_2d_gt")
+        self.images = tf.placeholder(tf.float32, bat_nframes + image_size + [3], name="images")
+        #self.visibility = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num], name="visibility")
+        self.seg_gt = tf.placeholder(tf.float32, bat_nframes + image_size, name="seg_gt")
+        self.chamfer_gt = tf.placeholder(tf.float32, bat_nframes + [self.small_h, self.small_w], name="chamfer_gt")
         
         # split into frames
         pose_gt_split = split(self.pose_gt, 1) 
@@ -164,7 +148,6 @@ class _3DINN(object):
         chamfer_gt_split = split(self.chamfer_gt, 1)
         
         # main network that takes one rgb and output pose, beta, T, R
-         
         self.heatmaps = {}
         self.pose = {}
         self.beta = {}
@@ -178,10 +161,7 @@ class _3DINN(object):
         
         # predict smpl parameters: beta, pose from heatmaps and rgb 
         for frame_id in range(self.config.num_frames):
-          self.heatmaps[frame_id] = self.ToHeatmaps(self.config.gStddev, 
-                            self.config.gWidth,
-                            self.config.image_size_h, self.config.image_size_w,
-                            J_2d_gt_split[frame_id])
+          self.heatmaps[frame_id] = self.ToHeatmaps(self.config.gStddev, self.config.gWidth, self.config.image_size_h, self.config.image_size_w, J_2d_gt_split[frame_id])
           self.beta[frame_id], self.pose[frame_id], self.R[frame_id], self.T[frame_id] = \
               self._3D_mesh_Interpretor(self.heatmaps[frame_id], image_split[frame_id],
               self.gender_gt, f_gt_split[frame_id], c_gt_split[frame_id], \
@@ -327,8 +307,7 @@ class _3DINN(object):
    
         # summary
         base_summ = [pose_loss_summary, beta_loss_summary, d3_loss_summary, centered_d3_loss_summary, d2_loss_summary, 
-                     d2_image_summary, R_loss_summary, T_loss_summary, #flow_summary, 
-                     centered_mesh_loss_summary]
+                     d2_image_summary, R_loss_summary, T_loss_summary, centered_mesh_loss_summary]
         if self.config.silh_loss:
           base_summ.append(silh_loss_summary) 
         if self.config.pretrained_flownet:
@@ -346,9 +325,7 @@ class _3DINN(object):
         
         self.saver = tf.train.Saver()  
 
-    
 
-    
     def centered_3d(self, pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender):
       centered_J_2d = (J_2d - tf.reshape(self.image_center, [1,1,1,2]))/(tf.reshape(resize_scale, [self.config.batch_size, self.config.num_frames, 1, 1])* tf.expand_dims(f, 2))
       centered_J_2d = merge_bf(centered_J_2d)
@@ -375,13 +352,15 @@ class _3DINN(object):
       pmesh = split_bf(pmesh, self.config.batch_size, self.config.num_frames)
       v_gt = split_bf(v_gt, self.config.batch_size, self.config.num_frames)
       return pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, J_gt, pmesh, v_gt
-    
+
+
     def centered_3d_with_idx(self, pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, idx):
       pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, J_gt, pmesh, v_gt \
           = self.centered_3d(pose, beta, T, R, J, J_2d, image,seg, chamfer, c, f, resize_scale,\
                              gender)
       return pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, J_gt, idx, pmesh, v_gt
-      
+
+
     def angle2R(self, angle):
       batch_size = angle.get_shape().as_list()[0]
       [sinx, siny, sinz, cosx, cosy, cosz] = tf.unstack(angle, 6, 1) 
@@ -389,22 +368,20 @@ class _3DINN(object):
       zero = tf.zeros_like(sinx, name="zero")
       Rz = tf.reshape(tf.stack([cosz, -sinz, zero, 
                                sinz, cosz, zero, 
-                               zero, zero, one], axis=1), 
-                      [batch_size, 3, 3])
+                               zero, zero, one], axis=1), [batch_size, 3, 3])
       Ry = tf.reshape(tf.stack([cosy, zero, siny,
                                zero, one, zero,
-                               -siny, zero, cosy], axis=1),
-                       [batch_size, 3, 3])  
+                               -siny, zero, cosy], axis=1), [batch_size, 3, 3])
       Rx = tf.reshape(tf.stack([one, zero, zero,
                                zero, cosx, -sinx,
-                               zero, sinx, cosx], axis=1),
-                      [batch_size, 3, 3]) 
+                               zero, sinx, cosx], axis=1), [batch_size, 3, 3])
       Rcam=tf.matmul(tf.matmul(Rz,Ry), Rx, name="Rcam")
       return Rcam 
- 
+
+
     def get_chamfer_and_seg(self, project, scale = 1.0):
-        small_height = self.small_h #int(self.config.image_size_h/scale)
-        small_width = self.small_w #int(self.config.image_size_w/scale)
+        small_height = self.small_h
+        small_width = self.small_w
         
         xIdxMap_ = getIdxMap(self.config.batch_size, small_height, small_width)
         xIdxMap = tf.reshape(xIdxMap_, [self.config.batch_size, -1, 2])
@@ -416,6 +393,8 @@ class _3DINN(object):
         C_M = tf.where(dist > 0.51, dist, tf.zeros_like(dist))
         S_M = tf.where(dist < 0.5, dist + 0.5 * tf.ones_like(dist), tf.zeros_like(dist))
         return C_M, S_M
+
+
     def pixel_interpolate(self, image, project, width, height):
         b, h, w, c = image.get_shape().as_list()
         # get pixel accoding to project1
@@ -456,13 +435,17 @@ class _3DINN(object):
         wd = tf.expand_dims(((x-x0_f) * (y-y0_f)), 1)
         pixels = tf.add_n([wa*Ia, wb*Ib, wc*Ic, wd*Id])         
         return tf.reshape(pixels, [self.config.batch_size, -1, c])
+
+
     def get_poseweights(self, poses):
         # pose: batch x 24 x 3 
         pose_matrix, _ = self.rodrigues(tf.reshape(tf.slice(poses, [0, 1, 0], [-1, self.config.keypoints_num-1, -1]), [-1, 3]))
         pose_matrix = pose_matrix - np.expand_dims(np.eye(3, dtype=np.float32), 0)
 
         pose_matrix = tf.reshape(pose_matrix, [self.config.batch_size, -1])
-        return pose_matrix 
+        return pose_matrix
+
+
     def pose_beta_to_mesh(self, betas, poses, gender):
         batch_size = betas.get_shape().as_list()[0]
         kintree_table = self.kintree_table
@@ -543,7 +526,6 @@ class _3DINN(object):
         # 24 x 2 x 4 x 4 
         results = tf.concat(results2, 0)
 
-        #print "results", results.shape
         # 2 x 4 x 4 x 6890
         # batch x 4 x 4 x 6890, batchx1x6890x24
         T = tf.matmul(tf.transpose(results, [1,2,3,0]), tf.tile(tf.expand_dims(tf.transpose(weights, [0, 2, 1]), 1), [1,4,1,1]))
@@ -605,8 +587,7 @@ class _3DINN(object):
         print_shape(y)
         posX = tf.reshape(x, [self.config.batch_size, 1, 1, self.config.keypoints_num], name="posX") # [batch_size, 1, 1, keypoints_num]
         posY = tf.reshape(y, [self.config.batch_size, 1, 1, self.config.keypoints_num], name="posY")
-        return self.batchPointToGaussianMap(posX, posY, self.xIdxMap, self.yIdxMap, 
-                                                image_size_h, image_size_w, gWidth, gStddev)
+        return self.batchPointToGaussianMap(posX, posY, self.xIdxMap, self.yIdxMap, image_size_h, image_size_w, gWidth, gStddev)
 
     
     def batchPointToGaussianMap(self, batchX0, batchY0, xIdxMap, yIdxMap, imgH, imgW, gWH, sigma):
@@ -643,7 +624,7 @@ class _3DINN(object):
         # image: [batch, h, w, 3]
         # gender: [batch, 1]
         # 4 fc layers as in 3DINN paper. We can also use other net structures e.g. autoencoder
-        print("==========_3D_mesh_Interpretor==========")
+        print("==========3D_mesh_Interpretor==========")
         with tf.variable_scope("3D_mesh_Interpretor") as scope:
             if reuse:
                scope.reuse_variables()
@@ -662,8 +643,6 @@ class _3DINN(object):
             fc4_1 = lrelu(self.g_bn4_1(conv2d(fc4, f_dim * 8, 3, 3, 1, 1, name='g_h4_1_conv'), train=is_train))
             fc5 = lrelu(self.g_bn5(conv2d(fc4_1, f_dim * 16, name='g_h5_conv'), train=is_train))
             fc5_1 = lrelu(conv2d(fc5, f_dim * 16, 3, 3, 1, 1, name='g_h5_1_conv'))
-            #out = tf.reduce_mean(fc5_1, [1,2])
-            #fc4 = lrelu(conv2d(fc3, f_dim * 4, name='g_h3_1_conv'))
             out = tf.reshape(fc5_1, [self.config.batch_size, -1])
             out = tf.concat([out, tf.expand_dims(tf.cast(gender, tf.float32), 1)], 1)
             fc6 = linear(out, 1024, scope="g_fc6")
@@ -707,6 +686,7 @@ class _3DINN(object):
             T_params = tf.concat([T12_params, T3_params], 1)
         return beta_params, pose_params, R_params, T_params
 
+
     def flow_net(self, frame1, frame2, is_train=True, reuse=False):
         input_ = tf.concat([frame1, frame2], 3)
         print("==========Flow_net==========")
@@ -738,7 +718,8 @@ class _3DINN(object):
 
             i1_e, i2_nocc = warper(frame2,flow)              
             return flow, i1_e
-   
+
+
     def _3D_Reconstructor(self, intern_params, bases, mu):
         ################################################## 
         # coords_3d = \sum(alpha_i*bases_i)
@@ -749,9 +730,7 @@ class _3DINN(object):
             # bases: [batch_size, bases_num, keypoints_num, channel=3]
             
             coords_3d_ = tf.matmul(intern_params, bases) + mu 
-            coords_3d = tf.reshape(coords_3d_, 
-                                   [self.config.batch_size, self.config.keypoints_num, 3], 
-                                   name="coords_3d")   
+            coords_3d = tf.reshape(coords_3d_, [self.config.batch_size, self.config.keypoints_num, 3], name="coords_3d")
         return coords_3d
 
 
@@ -877,7 +856,6 @@ class _3DINN(object):
         print_shape(Z)
 
         loss = tf.reduce_mean(tf.square(X_gt-X) + tf.square(Y_gt-Y) + tf.square(Z_gt-Z))
-        #loss = tf.reduce_mean(tf.sqrt(tf.square(X_gt-X) + tf.square(Y_gt-Y) + tf.square(Z_gt-Z)))
         return loss
 
 
@@ -906,19 +884,12 @@ class _3DINN(object):
         #self.saver_f = tf.train.Saver(f_vars)  
         
         self.saver_i = tf.train.Saver(i_vars + [self.global_step])  
-        sup_optim = tf.train.AdamOptimizer(config.learning_rate,\
-                                           beta1 = config.beta1) \
-            .minimize(self.sup_loss, global_step=self.global_step, var_list=i_vars)
+        sup_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1).minimize(self.sup_loss, global_step=self.global_step, var_list=i_vars)
         #flow_optim = tf.train.GradientDescentOptimizer(config.learning_rate) \
         #                        .minimize(self.flow_loss, global_step=self.global_step,
         #                                  var_list=f_vars)
         if self.is_unsup_train: 
-            recon_optim = tf.train.AdamOptimizer(config.learning_rate,\
-                                                 beta1 = config.beta1)\
-                .minimize(self.recon_loss, global_step=self.global_step, var_list=i_vars)
-        #recon_optim = tf.train.GradientDescentOptimizer(config.learning_rate) \
-        #                        .minimize(self.recon_loss, global_step=self.global_step,
-        #                                  var_list=i_vars)
+            recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1).minimize(self.recon_loss, global_step=self.global_step, var_list=i_vars)
 
         init_op = tf.group(tf.global_variables_initializer(), 
                            tf.local_variables_initializer())
@@ -1205,6 +1176,8 @@ class _3DINN(object):
         # Wait for threads to finish.
         coord.join(threads)
         self.sess.close()
+
+
     def save_obj(self, filename, v, f):
         outmesh_path = os.path.join(self.sample_dir, filename)     
         with open( outmesh_path, 'w') as fp:    
@@ -1212,6 +1185,7 @@ class _3DINN(object):
                 fp.write( 'v %f %f %f\n' % ( v_[0], v_[1], v_[2]))
             for f_ in f:
                 fp.write( 'f %d %d %d\n' %  (f_[0], f_[1], f_[2]) )
+
 
     def save(self, checkpoint_dir, step):
         model_name = "3D.model"
@@ -1232,12 +1206,12 @@ class _3DINN(object):
         else:
             return False        
 
+
     def numberHash(self, numberFloat):
         return colorsys.hsv_to_rgb(numberFloat, 1.0, 1.0)
 
 
     def visualize_joint_heatmap(self, bgimg, njoints, heatmaps, needNormalize=True):
-
         #normalize: make max to one (not sum to one)
         if(needNormalize):
             heatMapSize = heatmaps.get_shape().as_list()
@@ -1257,11 +1231,10 @@ class _3DINN(object):
         # clamp over max value
         filled = tf.fill(tf.shape(result), 1.)
         result = tf.where(tf.greater(result, filled), filled, result)
-
         return result
 
-    def visualize_joint_heatmap2(self, bgimg, njoints, heatmaps, needNormalize=True):
 
+    def visualize_joint_heatmap2(self, bgimg, njoints, heatmaps, needNormalize=True):
         #normalize: make max to one (not sum to one)
         if(needNormalize):
             heatMapSize = heatmaps.get_shape().as_list()
@@ -1281,5 +1254,4 @@ class _3DINN(object):
         # clamp over max value
         filled = tf.fill(tf.shape(result), 1.)
         result = tf.where(tf.greater(result, filled), filled, result)
-
         return result

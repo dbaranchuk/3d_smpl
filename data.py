@@ -3,8 +3,9 @@ from scipy import misc
 import math
 from chamfer_utils import get_chamfer
 import scipy.misc
-class Data_Helper_h36_syn:
 
+
+class Data_Helper_h36_syn:
     def __init__(self, data, batch_size, num_frames, h, w, chamfer_scale=1.0, keypoints_num=17, bases_num=97 ,is_perm=True):
         self.h = h
         self.w = w 
@@ -34,6 +35,7 @@ class Data_Helper_h36_syn:
         print("batch_size =", batch_size)	
         print("num_batches =", self.num_batches)
         self.reset()
+
 
     def get_bases(self):
         #bases = np.zeros((self.bases_num + 1, self.keypoints_num, 3), dtype=np.float32)
@@ -141,8 +143,8 @@ class Data_Helper_h36_syn:
         return batch_pose, batch_T, batch_R, batch_beta, batch_J, batch_J_2d, batch_image/255.0,\
                batch_seg, batch_f, batch_chamfer, batch_c, batch_gender, batch_resize_scale
 
-class Data_Helper_video_2d:
 
+class Data_Helper_video_2d:
     def __init__(self, data, h, w, batch_size, keypoints_num=17 ,is_perm=True):
         self.h = h
         self.w = w
@@ -162,14 +164,18 @@ class Data_Helper_video_2d:
         print("num_batches =", self.num_batches)
         self.reset()
 
+
     def reset(self):
         self.batch_id = 0
         if self.is_perm:
             self.perm = np.random.permutation(self.num_samples)
         else:
             self.perm = range(self.num_samples)
+
+
     def get_bases(self):
         return self.baseShape, self.meanShape
+
 
     def next(self):
         if self.batch_id >= self.num_batches:

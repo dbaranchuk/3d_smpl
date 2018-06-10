@@ -49,11 +49,17 @@ def tf_get_visibility(tf_v, tf_project, h, w):
  
   visibility = tf.slice(tf.stack(onehot), [0, 0], [-1, mesh_num])
   return visibility, arg_min_dis_tmp
+
+
 def norm(n):
   dim = len(n.get_shape().as_list())
   return tf.sqrt(tf.reduce_sum(tf.square(n), dim-1))
+
+
 def normalize(n):
   return n/tf.expand_dims(norm(n), [-1])
+
+
 def tf_get_visibility_raycast(tf_v, f, reduce_step=4):
   # tf_v: batch_size x mesh_num x 3
   # f: num_faces x 3
@@ -134,65 +140,3 @@ def tf_get_visibility_raycast(tf_v, f, reduce_step=4):
   visibility = tf.slice(tf.stack(onehot), [0, 0], [-1, mesh_num])
 
   return visibility, face_center
-
-
-"""
-# get visibility from igl
-import pyigl as igl
-from iglhelpers import *
-
-def get_visibility(v, f, focal, depth, sr=0.5):
-  
-  F = p2e(np.array(f, dtype='int32'))
-  V = p2e(v.astype('float64'))
-
-  model = p2e(np.eye(4))
-  view = p2e(np.eye(4))
-  focal = focal.astype('float64')
-  focal_x = focal[0].astype('float64')
-  focal_y = focal[1].astype('float64')
-
-  num_not_hit = 0
-  num_hit = 0
-  correct_hit = 0
-  num_vertex = v.shape[0]
-  cast_or_not = np.random.binomial(1, sr, f.shape[0])
-  visibility = np.zeros((num_vertex), dtype=np.float32)
-  for f_id in range(f.shape[0]):
-    if cast_or_not[f_id] == 0:
-      continue 
-    face = f[f_id]
-    face_center = (v[face[0], :] + v[face[1], :] + v[face[2], :])/3.0
-    pos2 = np.reshape(face_center[:2]*focal/depth, [2, 1]) + [[focal_x], [focal_y]]
-    pos2 = p2e(pos2)
-    bc = igl.eigen.MatrixXd()
-    viewport = p2e(np.array([0, 0, focal_x*2, focal_y*2], dtype='float64'))
-    proj = p2e(np.array([[1.0/depth, 0, 0, 0], 
-                         [0, 1.0/depth, 0, 0],
-                         [0, 0, 1, 0],
-                         [0, 0,0 , 1]], dtype='float64'))
-    #proj = p2e(np.array([[1, 0, 0, w/2], [0, 1, 0, h/2], [0, 0, 1, 0],
-    #                   [0, 0,0 ,1]], dtype='float64'))
-  
-    pos = proj * p2e(np.concatenate([face_center, np.array([1])]))
-    pos= e2p(pos)
-    pos = p2e(pos[:2])
-    fid = igl.eigen.MatrixXi([-1])
-    hit = igl.unproject_onto_mesh(pos2, view*model, proj, viewport, V, F, fid, bc)
- 
-    #print 
-    if e2p(fid)[0,0] == f_id:
-      for v_ in face:
-        visibility[v_] = 1
-      #print "hit or not:", hit, ",face hit:", fid, "face id:", f_id
-      correct_hit += 1
-    if not hit:
-      num_not_hit += 1
-    else:
-      num_hit += 1
-
-  #print("num_correct_hit", float(correct_hit)/float(num_hit + num_not_hit))
-  #print("num_hit", float(num_hit)/float(num_hit + num_not_hit))
-  #print("num_not_hit", float(num_not_hit)/float(num_hit + num_not_hit))
-  return visibility
-"""

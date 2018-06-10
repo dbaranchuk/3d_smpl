@@ -11,7 +11,7 @@ dataset = "h36m"
 run = 0
 data_path = "/PATH/TO/YOUR/SURREAL_bin/data"
 num_samples = 10000
-is_test = False
+is_test = True
 data_path = os.path.join(data_path, dataset)
 if train:
   data_path = os.path.join(data_path, "train")

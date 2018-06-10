@@ -1,5 +1,5 @@
 import os
-from model2 import _3DINN
+from model import _3DINN
 import tensorflow as tf
 
 """
@@ -31,10 +31,9 @@ flags.DEFINE_float("gStddev", 0.25, "std for 2d Gaussian heatmaps")
 flags.DEFINE_string("data_dir", "../src/output", "Directory name to save the preprocessed data [data]")
 flags.DEFINE_string("checkpoint_dir", "checkpoint/", "Directory name to save the checkpoints [checkpoint]")
 flags.DEFINE_string("model_dir", None, "Directory name to save the checkpoints [checkpoint]")
-#flags.DEFINE_string("flow_model_dir", None, "Directory name to save the checkpoints [checkpoint]")
 flags.DEFINE_string("sample_dir", "samples/", "Directory name to save the image samples [samples]")
 flags.DEFINE_string("logs_dir", "logs/", "Directory name to save logs [logs]")
-flags.DEFINE_boolean("is_train", True, "True for training, False for testing [False]")
+flags.DEFINE_boolean("is_train", False, "True for training, False for testing [False]")
 flags.DEFINE_boolean("is_debug_basic_function", False, "True for debugging basic function, should have d2, d3=0")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_boolean("is_sup_train", True, "True for supervised training on training data,"
@@ -59,14 +58,11 @@ def main(_):
     if not os.path.exists(logs_dir_):
         os.makedirs(logs_dir_)
     with tf.Session() as sess:
-        my3DINN = _3DINN(sess,
-		         config=FLAGS,
-                         checkpoint_dir=checkpoint_dir_,
-                         logs_dir=logs_dir_,
-                         sample_dir=sample_dir_)
+        my3DINN = _3DINN(sess, config=FLAGS, checkpoint_dir=checkpoint_dir_, logs_dir=logs_dir_, sample_dir=sample_dir_)
         if FLAGS.is_train:
             my3DINN.train(FLAGS)
         else:
             my3DINN.load(checkpoint_dir)
+
 if __name__ == '__main__':
 	tf.app.run()

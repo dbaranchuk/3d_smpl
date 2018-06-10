@@ -112,20 +112,12 @@ def sinabg2r(sina,sinb,sing):
     cosa = tf.sqrt(1 - tf.square(sina))
     cosb = tf.sqrt(1 - tf.square(sinb))
     cosg = tf.sqrt(1 - tf.square(sing))
-    Rz = tf.reshape(tf.pack([cosa, -sina, zero,
-                             sina, cosa, zero,
-                             zero, zero, one],
-                    axis=1),[bs, 3, 3])
-    Ry = tf.reshape(tf.pack([cosb, zero, sinb,
-                             zero, one, zero,
-                             -sinb, zero, cosb],
-                    axis=1),[bs, 3, 3])
-    Rx = tf.reshape(tf.pack([one, zero, zero,
-                             zero, cosg, -sing,
-                             zero, sing, cosg],
-                    axis=1),[bs, 3, 3])
+    Rz = tf.reshape(tf.pack([cosa, -sina, zero, sina, cosa, zero, zero, zero, one], axis=1),[bs, 3, 3])
+    Ry = tf.reshape(tf.pack([cosb, zero, sinb, zero, one, zero, -sinb, zero, cosb], axis=1),[bs, 3, 3])
+    Rx = tf.reshape(tf.pack([one, zero, zero, zero, cosg, -sing, zero, sing, cosg], axis=1),[bs, 3, 3])
     Rcam=tf.batch_matmul(tf.batch_matmul(Rx,Ry),Rz,name="Rcam")
     return Rcam
+
     
 def sinabg2r_fc(sina,sinb,sing):
     shape = sina.get_shape()
@@ -136,27 +128,16 @@ def sinabg2r_fc(sina,sinb,sing):
     cosa = tf.sqrt(1 - tf.square(sina))
     cosb = tf.sqrt(1 - tf.square(sinb))
     cosg = tf.sqrt(1 - tf.square(sing))
-    Rz = tf.reshape(tf.pack([cosa, -sina, zero,
-                             sina, cosa, zero,
-                             zero, zero, one],
-                            axis=2),[bs, hw, 3, 3])
-    Ry = tf.reshape(tf.pack([cosb, zero, sinb,
-                             zero, one, zero,
-                             -sinb, zero, cosb],
-                            axis=2),[bs, hw, 3, 3])
-    Rx = tf.reshape(tf.pack([one, zero, zero,
-                             zero, cosg, -sing,
-                             zero, sing, cosg],
-                            axis=2),[bs, hw, 3, 3])
+    Rz = tf.reshape(tf.pack([cosa, -sina, zero, sina, cosa, zero, zero, zero, one], axis=2),[bs, hw, 3, 3])
+    Ry = tf.reshape(tf.pack([cosb, zero, sinb, zero, one, zero, -sinb, zero, cosb], axis=2),[bs, hw, 3, 3])
+    Rx = tf.reshape(tf.pack([one, zero, zero, zero, cosg, -sing, zero, sing, cosg], axis=2),[bs, hw, 3, 3])
 
     Rcam=tf.batch_matmul(tf.batch_matmul(Rx,Ry),Rz,name="Rcam")
     
-    Rcam = tf.reshape(tf.pack([one, zero, zero,
-                               zero, one, zero,
-                               zero, zero, one],
-                              axis=2),[bs, hw, 3, 3])
+    Rcam = tf.reshape(tf.pack([one, zero, zero, zero, one, zero, zero, zero, one], axis=2),[bs, hw, 3, 3])
     return Rcam
-    
+
+
 def abg2r(a,b,g,bs):
     one = tf.ones([bs],name="one")
     zero = tf.zeros([bs],name="zero")
@@ -201,6 +182,7 @@ def r2abg(r):
     g = atan2(r21,r11)
     return a, b, g
 
+
 def zrt2flow_helper(Z1, rt12, fy, fx, y0, x0):
     r12, t12 = split_rt(rt12)
     if hyp.dataset_name == 'KITTI':
@@ -208,6 +190,7 @@ def zrt2flow_helper(Z1, rt12, fy, fx, y0, x0):
     else:
         flow = zrt2flow(Z1, r12, t12, fy, fx, y0, x0)
     return flow
+
 
 def zrt2flow_kitti(Z, R, T, oh, ow, fy, fx, y0, x0):
     if hyp.do_debug:
@@ -271,7 +254,6 @@ def zrt2flow_kitti(Z, R, T, oh, ow, fy, fx, y0, x0):
         XYZ2 = tf.check_numerics(XYZ2, 'util 241')
 
     print(flow)
-    # print XYZ2
     return flow
 
 def zrt2flow(Z, r, t, fy, fx, y0, x0):

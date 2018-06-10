@@ -4,7 +4,6 @@ import numpy as np
 import scipy
 
 def get_chamfer(mask, scale=0.25): 
-  
   h, w = mask.shape
   mask_tmp = np.zeros((h,w,3))
   mask_tmp[:,:,:] = np.reshape(mask, [h, w, 1])

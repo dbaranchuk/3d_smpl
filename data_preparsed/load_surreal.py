@@ -9,11 +9,10 @@ from smpl_webuser.serialization import load_model
 
 
 #data_dir = './SURREAL/data/h36m/train/run0/'
-smpl_dir = '/home/htung/Documents/2017/Spring/3d_smpl/smpl'
+smpl_dir = '../smpl'
 
 MALE = 1
 def get_training_params(filename='', data_dir='../SURREAL/data/h36m/train/run0'):
-
   folder_name = filename[:-6] 
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
   segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 

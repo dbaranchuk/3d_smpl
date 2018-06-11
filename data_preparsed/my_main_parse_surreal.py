@@ -26,14 +26,13 @@ for subject in subjects:
     for subact in subactions:
         filename = str(subject) + "_" + subact
 
-        print(os.path.join(full_data_path, filename))
         if os.path.exists(os.path.join(full_data_path, filename)):
             data_folder = os.path.join(full_data_path, filename)
             output_folder = os.path.join(full_write_path, filename)
             check_dir(output_folder)
 
-            print(data_folder, output_folder)
             subfiles = [fname[:-4] for fname in os.listdir(data_folder) if fname.endswith('.mp4')]
+            print(subfiles)
             for sfile in subfiles:
                 #if "c0028" in sfile:
                 print sfile

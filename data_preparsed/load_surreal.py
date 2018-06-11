@@ -12,7 +12,7 @@ from smpl_webuser.serialization import load_model
 smpl_dir = '../smpl'
 
 MALE = 1
-def get_training_params(filename='', data_dir='../SURREAL/data/h36m/train/run0'):
+def get_training_params(filename, data_dir):
   folder_name = filename[:-6] 
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
   segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 

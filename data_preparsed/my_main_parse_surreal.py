@@ -9,8 +9,6 @@ from write_utils import write_syn_to_bin, read_syn_to_bin
 data_root_dir = '/home/local/mocap/data'
 write_root_dir = '/home/local/mocap/output'
 dataset_name = 'surreal'
-subdir = '10_04'
-
 
 # actions to parse
 # actors to parse for each action
@@ -21,12 +19,12 @@ def check_dir(path):
   if not os.path.exists(path):
     os.mkdir(path)
 
-full_data_path = os.path.join(data_root_dir, subdir)
-full_write_path = os.path.join(write_root_dir, subdir)
+full_data_path = os.path.join(data_root_dir, dataset_name)
+full_write_path = os.path.join(write_root_dir, dataset_name)
 
 for subject in subjects:
     for subact in subactions:
-        filename = dataset_name + "_" + str(subject) + "_" + str(subact)
+        filename = str(subject) + "_" + str(subact)
         if os.path.exists(os.path.join(full_data_path, filename)):
             data_folder = os.path.join(full_data_path, filename)
             output_folder = os.path.join(full_write_path, filename)

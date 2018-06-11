@@ -122,10 +122,6 @@ def get_training_params(filename, data_dir):
     T2[0] = (d2[0, 0] - 160) /fx * d3[2, 0]
     T2[1] = (d2[1, 0] - 120) /fy * d3[2, 1]
 
-
-     
-    #print fx, fy
-
     # smpl to 3d center
     J_ones = np.concatenate((J, np.ones((1, num_joints))), 0)
     R_T = np.linalg.lstsq(J_ones.T, d3.T)[0].T

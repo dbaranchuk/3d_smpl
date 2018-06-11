@@ -24,6 +24,8 @@ def check_dir(path):
 full_data_path = os.path.join(data_root_dir, subdir)
 full_write_path = os.path.join(write_root_dir, subdir)
 write_split_paths = full_write_path.split('/')
+print(write_split_paths)
+
 current_path = ""
 for pp in write_split_paths:
   current_path = os.path.join(current_path, pp)

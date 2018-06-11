@@ -29,7 +29,8 @@ for subject in subjects:
             data_folder = os.path.join(full_data_path, filename)
             output_folder = os.path.join(full_write_path, filename)
             check_dir(output_folder)
-        
+
+            print(data_folder, output_folder)
             subfiles = [fname[:-4] for fname in os.listdir(data_folder) if fname.endswith('.mp4')]
             for sfile in subfiles:
                 #if "c0028" in sfile:

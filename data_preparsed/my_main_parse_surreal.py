@@ -25,6 +25,7 @@ full_write_path = os.path.join(write_root_dir, dataset_name)
 for subject in subjects:
     for subact in subactions:
         filename = str(subject) + "_" + str(subact)
+        print(os.path.join(full_data_path, filename))
         if os.path.exists(os.path.join(full_data_path, filename)):
             data_folder = os.path.join(full_data_path, filename)
             output_folder = os.path.join(full_write_path, filename)

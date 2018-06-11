@@ -32,7 +32,7 @@ for subject in subjects:
             check_dir(output_folder)
 
             subfiles = [fname[:-4] for fname in os.listdir(data_folder) if fname.endswith('.mp4')]
-            print(subfiles)
+            print(os.listdir(data_folder))
             for sfile in subfiles:
                 #if "c0028" in sfile:
                 print sfile

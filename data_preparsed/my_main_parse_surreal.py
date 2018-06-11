@@ -7,7 +7,7 @@ import pickle as pkl
 from write_utils import write_syn_to_bin, read_syn_to_bin
 
 data_root_dir = '/home/local/mocap/data'
-write_root_dir = 'home/local/mocap/output'
+write_root_dir = '/home/local/mocap/output'
 dataset_name = 'surreal'
 subdir = '10_04'
 
@@ -23,13 +23,6 @@ def check_dir(path):
 
 full_data_path = os.path.join(data_root_dir, subdir)
 full_write_path = os.path.join(write_root_dir, subdir)
-write_split_paths = full_write_path.split('/')
-print(write_split_paths)
-
-current_path = ""
-for pp in write_split_paths:
-  current_path = os.path.join(current_path, pp)
-  check_dir(current_path)
 
 for subject in subjects:
     for subact in subactions:

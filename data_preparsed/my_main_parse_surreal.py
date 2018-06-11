@@ -13,7 +13,7 @@ dataset_name = 'surreal'
 # actions to parse
 # actors to parse for each action
 subjects = [10] #, 5, 6, 7, 8, 9, 11]
-subactions = [4]
+subactions = ['04']
 
 def check_dir(path):
   if not os.path.exists(path):
@@ -24,14 +24,13 @@ full_write_path = os.path.join(write_root_dir, dataset_name)
 
 for subject in subjects:
     for subact in subactions:
-        filename = str(subject) + "_" + str(subact)
-        print(os.path.join(full_data_path, filename))
+        filename = str(subject) + "_" + subact
+
         if os.path.exists(os.path.join(full_data_path, filename)):
             data_folder = os.path.join(full_data_path, filename)
             output_folder = os.path.join(full_write_path, filename)
             check_dir(output_folder)
 
-            print(data_folder, output_folder)
             subfiles = [fname[:-4] for fname in os.listdir(data_folder) if fname.endswith('.mp4')]
             for sfile in subfiles:
                 #if "c0028" in sfile:

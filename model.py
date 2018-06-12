@@ -54,10 +54,10 @@ class _3DINN(object):
         self.f_bn3_1 = batch_norm(name='f_bn3_1')
         self.f_bn4 = batch_norm(name='f_bn4')
         self.f_bn4_1 = batch_norm(name='f_bn4_1')
-        self.Build_Model()
+        self.BuildModel()
 
 
-    def Build_Model(self):
+    def BuildModel(self):
         self.global_step = tf.Variable(0, name='global_step', trainable=False)
         self.image_center  = tf.constant(np.array([(self.config.image_size_h - 1)/2.0, (self.config.image_size_w - 1)/2.0], dtype=np.float32))
         # initial variables and constants
@@ -85,7 +85,6 @@ class _3DINN(object):
         dd_posedirs = np.concatenate((np.expand_dims(dd_f['posedirs'], 0), np.expand_dims(dd_m['posedirs'], 0)), 0)
         self.posedirs = tf.constant(np.array(dd_posedirs), dtype=tf.float32, name="posedirs")
 
-        
         dd_J_regressor = np.concatenate((np.expand_dims(dd_f['J_regressor'].todense(), 0), np.expand_dims(dd_m['J_regressor'].todense(), 0)), 0)
         self.J_regressor = tf.constant(dd_J_regressor, dtype=tf.float32, name = "J_regressor")
         
@@ -849,7 +848,7 @@ class _3DINN(object):
 
     def train(self, config):
         print("-----------------")
-        print("started the train")
+        print("Started the train")
         print("-----------------")
         """Training"""
         """ recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1) \
@@ -885,8 +884,7 @@ class _3DINN(object):
         
         if self.config.is_dryrun: 
             batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image,\
-                batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale,\
-                batch_gender, batch_pmesh, batch_v_gt = \
+            batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_pmesh, batch_v_gt = \
             self.sess.run([ self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, 
                             self.J_2d_sr, self.image_sr, self.seg_sr, self.chamfer_sr, 
                             self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, 
@@ -904,7 +902,8 @@ class _3DINN(object):
                                                  self.f_gt: batch_f,
                                                  self.resize_scale_gt: batch_resize_scale,
                                                  self.images:batch_image})
-            print "construct 3d model takes %.2f secs" %(time.time() - start)          
+            print "construct 3d model takes %.2f secs" %(time.time() - start)
+
             tf_vis, tf_am = self.sess.run([self.tf_visibility, self.tf_arg_min], 
                                 feed_dict={self.beta_gt:batch_beta, 
                                            self.pose_gt:batch_pose, 
@@ -917,9 +916,8 @@ class _3DINN(object):
                                            self.resize_scale_gt: batch_resize_scale,
                                            self.images:batch_image})
             print "infer visibility takes %.2f secs" %(time.time() - start)
-            h, J_ori, J, pixel_loss, d3_loss, d3_joint_loss, d2_loss, d2_joint_loss, project1, project_mesh0, project_mesh1, pixel0, pixel1, flow, silh_loss, S_M1, C_M1\
-             = self.sess.run([self.heatmaps[0], self.depth_J[0], self.J[0], self.pixel_loss,\
-            self.d3_loss, self.d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.project1,self.project_mesh0, self.project_mesh1, self.pixel0, self.pixel1, self.flow, self.silh_loss, self.S_M[0], self.C_M[0]], 
+            h, J_ori, J, pixel_loss, d3_loss, d3_joint_loss, d2_loss, d2_joint_loss, project1, project_mesh0, project_mesh1, pixel0, pixel1, flow, silh_loss, S_M1, C_M1 = self.sess.run([self.heatmaps[0], self.depth_J[0], self.J[0], self.pixel_loss,\
+                self.d3_loss, self.d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.project1,self.project_mesh0, self.project_mesh1, self.pixel0, self.pixel1, self.flow, self.silh_loss, self.S_M[0], self.C_M[0]],
             feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, 
                        self.T_gt: batch_T, self.R_gt:batch_R,
                        self.gender_gt:batch_gender,
@@ -932,16 +930,14 @@ class _3DINN(object):
                        self.v_gt: batch_v_gt,
                        self.resize_scale_gt: batch_resize_scale})
             print "infer projections and losses take %.2f secs" %(time.time() - start)
-            sio.savemat(os.path.join(self.sample_dir, "output.mat"), \
-                     mdict={'flow': flow, 'J_2d': batch_J_2d, \
+            sio.savemat(os.path.join(self.sample_dir, "output.mat"), mdict={'flow': flow, 'J_2d': batch_J_2d, \
                     'project1': project1, 'v': v[0], 'visibility': tf_vis, \
                     'J':J, 'batch_J': batch_J, "image": batch_image, \
                     'S_M0': S_M1, 'seg': batch_seg, 'C_M0': C_M1, \
                     'chamfer': batch_chamfer, "project_mesh0":project_mesh0, \
                     "project_mesh1":project_mesh1, 'pixel0': pixel0, 'pixel1': pixel1})
        
-            print("d3_loss: %.4f (%.4f), d2_loss: %.4f (%.4f), pixel_loss: %.4f,"
-                  " silh_loss: %.4f" %(d3_joint_loss, d3_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss))
+            print("d3_loss: %.4f (%.4f), d2_loss: %.4f (%.4f), pixel_loss: %.4f, silh_loss: %.4f" %(d3_joint_loss, d3_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss))
             return 
 
         start_time = time.time()

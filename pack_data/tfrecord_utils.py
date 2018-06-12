@@ -321,10 +321,10 @@ def read_and_decode_surreal_with_idx(tfrecord_file):
   feature['c'] = tf.reshape(feature['c'], [num_frames, 2])
   feature['f'] = tf.reshape(feature['f'], [num_frames, 2])
   feature['resize_scale'] = tf.reshape(feature['resize_scale'], [num_frames])
-    
   return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'],\
            feature['image'], feature['seg'], feature['chamfer'], feature['c'], \
            feature['f'], feature['resize_scale'], feature['gender'], feature['idx']
+
 
 def inputs_surreal(tf_filenames, batch_size):
   with tf.name_scope('surreal_input'):
@@ -336,6 +336,7 @@ def inputs_surreal(tf_filenames, batch_size):
              batch_size=batch_size, 
              num_threads=2,capacity=5000,min_after_dequeue=2000)
 
+
 def inputs_surreal_with_idx(tf_filenames, batch_size, shuffle=True):
   with tf.name_scope('surreal_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames, shuffle=shuffle)
@@ -346,7 +347,6 @@ def inputs_surreal_with_idx(tf_filenames, batch_size, shuffle=True):
              resize_scale, gender, idx], 
              batch_size=batch_size, 
              num_threads=2) #,capacity=80,min_after_dequeue=50)
-
     else: 
       return tf.train.shuffle_batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, 
              resize_scale, gender, idx], 

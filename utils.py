@@ -3,7 +3,6 @@ import math
 import numpy as np 
 from tensorflow.python.framework import ops
 from flow_transformer import transformer
-#import hyperparams as hyp
 
 def print_shape(t):
     print(t.name, t.get_shape().as_list())
@@ -14,8 +13,7 @@ def split_rt(rt):
     return r, t
 
 def merge_rt(r,t):
-    bottom_row = tf.tile(tf.reshape(tf.pack([0.,0.,0.,1.]),[1,1,4]),
-                         [hyp.bs,1,1],name="bottom_row")
+    bottom_row = tf.tile(tf.reshape(tf.pack([0.,0.,0.,1.]),[1,1,4]), [hyp.bs,1,1],name="bottom_row")
     rt = tf.concat(2,[r,tf.expand_dims(t,2)],name="rt_3x4")
     rt = tf.concat(1,[rt,bottom_row],name="rt_4x4")
     return rt

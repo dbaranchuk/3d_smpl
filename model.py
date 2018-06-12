@@ -288,7 +288,7 @@ class _3DINN(object):
         if self.config.key_loss:
           self.recon_loss += 0.01*self.d2_loss #self.pixel_loss + 10 * self.silh_loss #+ self.d3_loss  
         if self.config.silh_loss:
-          self.recon_loss += 0.0000000000000000001*self.silh_loss
+          self.recon_loss += 0.00000000000000001*self.silh_loss
 
         if self.config.pixel_loss:
           self.recon_loss += 0.01 * self.pixel_loss
@@ -310,7 +310,6 @@ class _3DINN(object):
 
         self.syn_v_summary = tf.summary.merge([dict_["syn_test"] for dict_ in syn_summ])
         self.writer = tf.summary.FileWriter(self.logs_dir, self.sess.graph)
-        
         self.saver = tf.train.Saver()  
 
 
@@ -407,7 +406,6 @@ class _3DINN(object):
         idx_c = base_y0 + x1
         idx_d = base_y1 + x1
 
-
         im_flat = tf.reshape(image, [-1, c]) 
        
         Ia = tf.gather(im_flat, idx_a)
@@ -460,8 +458,7 @@ class _3DINN(object):
             [1, self.config.mesh_num, 1, 1])), 3)
         # v_shaped: batch x 6890 x3
         J_regressor = tf.gather(self.J_regressor, gender)
-        J_posed = tf.matmul(tf.transpose(v_shaped, [0, 2, 1]), 
-                            tf.transpose(J_regressor, [0, 2, 1]))         
+        J_posed = tf.matmul(tf.transpose(v_shaped, [0, 2, 1]), tf.transpose(J_regressor, [0, 2, 1]))
         # J_posed: b x 24 x 3 
         J_posed = tf.transpose(J_posed, [0, 2, 1])
         # 24 x [b x 3]
@@ -546,7 +543,6 @@ class _3DINN(object):
       #if theta > 1e-30:
       n = r/tf.reshape(theta, [-1, 1])
       Sn = S(n)
-     
       R = tf.expand_dims(tf.eye(3), 0) + tf.reshape(tf.sin(theta), [-1, 1, 1])*Sn\
           + (1-tf.reshape(tf.cos(theta), [-1, 1, 1]))* tf.matmul(Sn,Sn)
       # else:
@@ -662,12 +658,10 @@ class _3DINN(object):
             T3_params = tf.slice(params_RT, [0, 256], [-1, 128], name="T3_params")
             T3_params = tf.nn.relu(linear(lrelu(T3_params), 128, scope="T3_params_2")) 
             T3_params = tf.nn.relu(linear(lrelu(T3_params), 1, scope="T3_params_3"))*6.0   
-         
-           
+
             T12_params = tf.slice(params_RT, [0, 384], [-1, 128], name="T12_params")
             T12_params = linear(lrelu(T12_params), 2, scope="T12_params_2")   
-            T12_params = T12_params #+ (c_gt - self.image_center) * T3_params/f_gt 
-            
+            T12_params = T12_params #+ (c_gt - self.image_center) * T3_params/f_gt
             T_params = tf.concat([T12_params, T3_params], 1)
         return beta_params, pose_params, R_params, T_params
 
@@ -852,6 +846,7 @@ class _3DINN(object):
         loss = tf.reduce_mean(tf.square(predicts_r - labels_r))
         return loss
 
+
     def train(self, config):
         print("-----------------")
         print("started the train")
@@ -960,7 +955,6 @@ class _3DINN(object):
               else:
                 print(" [!] Load pretrained failed...", self.config.model_dir)
                 return
-
         try:
           while not coord.should_stop():
             tf_vis = 0
@@ -997,8 +991,8 @@ class _3DINN(object):
                          #self.chamfer_gt: batch_chamfer,
                          self.images:batch_image, 
                          self.resize_scale_gt: batch_resize_scale})
-              if self.is_unsup_train:
 
+              if self.is_unsup_train:
                 _, step, sup_loss, d3_loss, d2_loss, beta_, tf_vis \
                    = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.tf_visibility], 
                    feed_dict={self.beta_gt:batch_beta_v, self.pose_gt:batch_pose_v, 
@@ -1011,13 +1005,11 @@ class _3DINN(object):
                          self.chamfer_gt: batch_chamfer_v,
                          self.images:batch_image_v, 
                          self.resize_scale_gt: batch_resize_scale_v})
-                #print "time:", time.time() - start
+
                 # print out everything 
-              if idx %10 == 0: 
+              if idx % 20 == 0:
                 # get v for visibility
-                #start = time.time() 
-                # if there is only supervised training, do not predict chamfer and
-                # visibility to save time
+                # if there is only supervised training, do not predict chamfer and visibility to save time
                 if self.is_unsup_train:
                   step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss,\
                   d2_joint_loss, project1, flow, silh_loss, S_M1, C_M1, beta_loss, pose_loss,\
@@ -1041,9 +1033,7 @@ class _3DINN(object):
                   print("[%s, iter: %d] sup_loss: %.4f, d3_loss: %.4f (%.6f) (%.4f), d2_loss: %.4f (%.6f), "
                       "pixel_loss: %.4f, silh_loss: %.4f, beta_loss: %.4f, pose_loss: %.4f, R_loss:%.4f, T_loss: %.4f" \
                       %(self.config.name, idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss, beta_loss, pose_loss, R_loss, T_loss))
-                  #print "time2:", time.time() - start
-                
-       
+
                   step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss,\
                   d2_joint_loss, project1, flow, silh_loss, S_M1, C_M1, beta_loss, pose_loss,\
                   R_loss, T_loss, pixel_loss, project_mesh0, project_mesh1, pixel0, pixel1\
@@ -1089,12 +1079,11 @@ class _3DINN(object):
                             self.images:batch_image, 
                             self.resize_scale_gt: batch_resize_scale})
                     self.writer.add_summary(summ_str, step)
-                    print("[%s, step: %d] sup_loss: %.4f, d3_loss: %.4f (%.6f) (%.4f),"
-                        " d2_loss: %.4f (%.6f), beta_loss: %.4f, pose_loss: %.4f, "
-                        "R_loss:%.4f, T_loss: %.4f" \
+                    print("[%s, step: %d] Losses: sup: %.4f, d3: %.4f (%.6f) (%.4f),"
+                        " d2: %.4f (%.6f), beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" \
                         %(self.config.name, step, sup_loss, d3_joint_loss, d3_loss, \
-                          d3_c_loss, d2_joint_loss, d2_loss, beta_loss, pose_loss, \
-                          R_loss, T_loss))
+                          d3_c_loss, d2_joint_loss, d2_loss, beta_loss, pose_loss, R_loss, T_loss))
+                    # Validation
                     step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, \
                     d2_loss, project1, flow, d2_joint_loss, beta_loss, pose_loss, R_loss,\
                     T_loss, project_mesh0, project_mesh1, pixel0, pixel1\
@@ -1117,13 +1106,10 @@ class _3DINN(object):
                             self.images:batch_image_v, 
                             self.resize_scale_gt: batch_resize_scale_v})
                     self.writer.add_summary(summ_str, step)
-                    print "model name: %s" %(self.config.name)
-                    print("[test, iter: %d] sup_loss: %.4f, d3_loss: %.4f (%.6f)(%.4f),"
-                          "d2_loss: %.4f (%.6f), beta_loss: %.4f, pose_loss: %.4f, "
-                          "R_loss:%.4f, T_loss: %.4f" \
+                    print("[test, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f)(%.4f),"
+                          "d2: %.4f (%.6f), beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" \
                           %(idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, \
                             d2_joint_loss, d2_loss, beta_loss, pose_loss, R_loss, T_loss))
-                  
 
               if step %1000 == 0: 
                 # save results in mat
@@ -1169,9 +1155,7 @@ class _3DINN(object):
         model_name = "3D.model"
         if not os.path.exists(checkpoint_dir):
             os.makedirs(checkpoint_dir)
-        self.saver.save(self.sess,
-                        os.path.join(checkpoint_dir, model_name),
-                        global_step=step)
+        self.saver.save(self.sess, os.path.join(checkpoint_dir, model_name), global_step=step)
 
 
     def load(self, checkpoint_dir, saver=None):

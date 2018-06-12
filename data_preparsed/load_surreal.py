@@ -13,7 +13,7 @@ smpl_dir = '../smpl'
 
 MALE = 1
 def get_training_params(filename, data_dir):
-  folder_name = filename[:-6] 
+  folder_name = filename[:-6]
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
   segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 
 
@@ -37,7 +37,7 @@ def get_training_params(filename, data_dir):
 
   num_joints = data['joints2D'].shape[1]
   num_frames = data['joints2D'].shape[2]
-  #plt.ion()
+  
   import time
   import math
   w = 320
@@ -173,5 +173,3 @@ def get_training_params(filename, data_dir):
   output['image'] = all_image
   output['gender'] = gender
   return output
-
-#get_training_params('h36m_S1_Directions_c0002')

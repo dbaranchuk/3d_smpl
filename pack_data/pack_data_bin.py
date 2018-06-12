@@ -7,7 +7,7 @@ import struct
 import sys
 from tfrecord_utils import convert_to_tfrecords_from_folder
 with_idx=True
-dataset = "h36m"
+dataset = "surreal"
 run = 0
 data_path = "/PATH/TO/YOUR/SURREAL_bin/data"
 num_samples = 10000

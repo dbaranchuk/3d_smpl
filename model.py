@@ -162,17 +162,14 @@ class _3DINN(object):
         # predict smpl parameters: beta, pose from heatmaps and rgb 
         for frame_id in range(self.config.num_frames):
           self.heatmaps[frame_id] = self.ToHeatmaps(self.config.gStddev, self.config.gWidth, self.config.image_size_h, self.config.image_size_w, J_2d_gt_split[frame_id])
-          self.beta[frame_id], self.pose[frame_id], self.R[frame_id], self.T[frame_id] = \
-              self._3D_mesh_Interpretor(self.heatmaps[frame_id], image_split[frame_id],
-              self.gender_gt, f_gt_split[frame_id], c_gt_split[frame_id], \
-                  resize_scale_gt_split[frame_id] ,is_train=True, reuse=frame_id)
+          self.beta[frame_id], self.pose[frame_id], self.R[frame_id], self.T[frame_id] = self._3D_mesh_Interpretor(self.heatmaps[frame_id], image_split[frame_id], self.gender_gt, f_gt_split[frame_id], c_gt_split[frame_id], resize_scale_gt_split[frame_id] ,is_train=True, reuse=frame_id)
           self.pose_loss += eud_loss(self.pose[frame_id], pose_gt_split[frame_id]) 
           self.beta_loss += eud_loss(self.beta[frame_id], beta_gt_split[frame_id]) 
           self.R_loss += eud_loss(self.R[frame_id], R_gt_split[frame_id])
           self.T_loss += eud_loss(self.T[frame_id], T_gt_split[frame_id])
 
         # supervised loss
-        self.sup_loss = self.pose_loss + 0.05 * self.beta_loss + self.R_loss + 0.1*self.T_loss
+        self.sup_loss = self.pose_loss + 0.05 * self.beta_loss + self.R_loss + 0.1 * self.T_loss
         seg = self.seg_gt
         chamfer = self.chamfer_gt
         # supervised summary
@@ -196,8 +193,7 @@ class _3DINN(object):
         self.centered_d3_joint_loss = 0
         self.centered_mesh_loss = 0
         for frame_id in range(self.config.num_frames): 
-          self.v[frame_id], self.J[frame_id], self.J_ori[frame_id] = self.pose_beta_to_mesh(self.beta[frame_id], 
-              self.pose[frame_id], self.gender_gt) 
+          self.v[frame_id], self.J[frame_id], self.J_ori[frame_id] = self.pose_beta_to_mesh(self.beta[frame_id], self.pose[frame_id], self.gender_gt) 
           R = tf.transpose(self.angle2R(self.R[frame_id]), [0, 2, 1])
           # 2x 6890x3
           v_centered = self.v[frame_id]
@@ -227,10 +223,8 @@ class _3DINN(object):
           focal_length = tf.expand_dims(f_gt_split[frame_id], 1)
           depth_mesh = tf.slice(self.v[frame_id], [0, 0, 2], [-1, -1, 1])
           depth_J = tf.slice(self.J[frame_id], [0, 0, 2], [-1, -1, 1])
-          direct_project[frame_id] = tf.divide(tf.slice(self.v[frame_id], [0, 0, 0], [-1, -1, 2])\
-                                , depth_mesh) 
-          project_J[frame_id] = tf.divide(tf.slice(self.J[frame_id], [0, 0, 0], [-1, -1, 2])\
-                                ,depth_J)
+          direct_project[frame_id] = tf.divide(tf.slice(self.v[frame_id], [0, 0, 0], [-1, -1, 2]), depth_mesh)
+          project_J[frame_id] = tf.divide(tf.slice(self.J[frame_id], [0, 0, 0], [-1, -1, 2]),depth_J)
            
           project[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) \
                               * direct_project[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
@@ -244,10 +238,7 @@ class _3DINN(object):
 
         self.d2_joint_loss /= self.config.num_frames
         d2_loss_summary = get_scalar_summary("d2 joint loss", self.d2_joint_loss)
-        heatmaps = self.ToHeatmaps(self.config.gStddev, 
-                            self.config.gWidth,
-                            self.config.image_size_h, self.config.image_size_w,
-                            project_J[0])
+        heatmaps = self.ToHeatmaps(self.config.gStddev, self.config.gWidth, self.config.image_size_h, self.config.image_size_w, project_J[0])
         d2_heatmap = self.visualize_joint_heatmap(image_split[0], self.config.keypoints_num, heatmaps)
         d2_image_summary = get_image_summary("input_2d_heatmap", d2_heatmap, 4);
 
@@ -345,10 +336,8 @@ class _3DINN(object):
       J = J_gt + tf.expand_dims(T, 2) 
  
       c = tf.tile(tf.reshape(self.image_center, [1,1,2]), [self.config.batch_size, self.config.num_frames, 1])
-      pmesh = tf.divide(tf.slice(v, [0,0,0], [-1, -1, 2]) * tf.expand_dims(merge_bf(f), 1),\
-                        tf.slice(v, [0, 0, 2], [-1, -1, 1]))
-      pmesh = tf.reshape(merge_bf(resize_scale), [-1, 1, 1])\
-                        * pmesh + tf.expand_dims(merge_bf(c), 1) 
+      pmesh = tf.divide(tf.slice(v, [0,0,0], [-1, -1, 2]) * tf.expand_dims(merge_bf(f), 1), tf.slice(v, [0, 0, 2], [-1, -1, 1]))
+      pmesh = tf.reshape(merge_bf(resize_scale), [-1, 1, 1]) * pmesh + tf.expand_dims(merge_bf(c), 1)
       pmesh = split_bf(pmesh, self.config.batch_size, self.config.num_frames)
       v_gt = split_bf(v_gt, self.config.batch_size, self.config.num_frames)
       return pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, J_gt, pmesh, v_gt

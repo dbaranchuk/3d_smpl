@@ -62,7 +62,7 @@ def main(_):
         if FLAGS.is_train:
             my3DINN.train(FLAGS)
         else:
-            my3DINN.load(checkpoint_dir)
+            my3DINN.load(checkpoint_dir_)
 
 if __name__ == '__main__':
 	tf.app.run()

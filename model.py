@@ -1191,6 +1191,7 @@ class _3DINN(object):
         if ckpt and ckpt.model_checkpoint_path:
             ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
             self.saver.restore(self.sess, os.path.join(checkpoint_dir, ckpt_name))
+            print("HUI")
             return True
         else:
             return False        

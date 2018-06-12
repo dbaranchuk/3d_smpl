@@ -17,7 +17,6 @@ import struct
 
 from pack_data.tfrecord_utils import inputs_surreal, inputs_surreal_with_idx  
 from tqdm import tqdm
-
 from utils import warper 
 
 class _3DINN(object):
@@ -90,25 +89,15 @@ class _3DINN(object):
         
         dd_weights = np.concatenate((np.expand_dims(dd_f['weights'], 0), np.expand_dims(dd_m['weights'], 0)), 0)
         self.weights = tf.constant(dd_weights, dtype=tf.float32, name="weights")
-        
-        #load data from tfrecords 
-        # synthetic data from surreal
-        surreal_filenames = ["../tf_code/tfrecords2/surreal2_quo" + str(id) + ".tfrecords" for id in range(1)] 
-        self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr, \
-            self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.pmesh_sr, self.v_gt_sr = \
-            self.centered_3d(*inputs_surreal(surreal_filenames, self.config.batch_size))
-        
-        # validation data from surreal
-        test_list = [5]
-        surreal_test_filenames = ["../tf_code/tfrecords2/surreal2_100_test_quo1.tfrecords"]
-        self.pose_sr_v, self.beta_sr_v, self.T_sr_v, self.R_sr_v, self.J_sr_v, self.J_2d_sr_v, self.image_sr_v, self.seg_sr_v, \
-            self.chamfer_sr_v, self.c_sr_v, self.f_sr_v, self.resize_scale_sr_v, self.gender_sr_v, self.J_c_sr_v, self.idx_sr_v, self.pmesh_sr_v, self.v_gt_v = \
-            self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_test_filenames, self.config.batch_size))
+
+        #load data from tfrecords
+        self.loadData()
+
         bat_nframes = [self.config.batch_size, self.config.num_frames] 
         image_size = [self.config.image_size_h, self.config.image_size_w]
+
         # input/gt
         self.pose_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="pose_gt")
-        
         self.gender_gt = tf.placeholder(tf.int32, self.config.batch_size, name="gender_gt")
         self.T_gt = tf.placeholder(tf.float32, bat_nframes + [3], name="T_gt")
         self.R_gt = tf.placeholder(tf.float32, bat_nframes + [6], name="R_gt")
@@ -184,7 +173,6 @@ class _3DINN(object):
         self.J = {}
         self.J_c = {}
         self.J_ori = {}
-        #self.mesh_loss = 0  
         self.d3_loss = 0
         self.d3_joint_loss = 0
         self.centered_d3_joint_loss = 0
@@ -209,6 +197,7 @@ class _3DINN(object):
         d3_loss_summary = get_scalar_summary("d3 joint loss", self.d3_joint_loss)
         centered_d3_loss_summary = get_scalar_summary("centered d3 joint loss", self.centered_d3_joint_loss)
         centered_mesh_loss_summary = get_scalar_summary("centered mesh loss", self.centered_mesh_loss)
+
         # projections
         project = {}
         direct_project = {}
@@ -231,7 +220,6 @@ class _3DINN(object):
           self.depth_J[frame_id] = project_J[frame_id]
           self.d2_loss = eud_loss(project_J[frame_id], J_2d_gt_split[frame_id])
           self.d2_joint_loss += per_joint_loss(project_J[frame_id], J_2d_gt_split[frame_id])
-          
 
         self.d2_joint_loss /= self.config.num_frames
         d2_loss_summary = get_scalar_summary("d2 joint loss", self.d2_joint_loss)
@@ -288,7 +276,6 @@ class _3DINN(object):
           self.recon_loss += 0.01*self.d2_loss #self.pixel_loss + 10 * self.silh_loss #+ self.d3_loss  
         if self.config.silh_loss:
           self.recon_loss += 0.00000000000000001*self.silh_loss
-
         if self.config.pixel_loss:
           self.recon_loss += 0.01 * self.pixel_loss
    
@@ -310,6 +297,25 @@ class _3DINN(object):
         self.syn_v_summary = tf.summary.merge([dict_["syn_test"] for dict_ in syn_summ])
         self.writer = tf.summary.FileWriter(self.logs_dir, self.sess.graph)
         self.saver = tf.train.Saver()  
+
+
+    def loadData(self):
+        #load data from tfrecords
+        # synthetic data from surreal
+        surreal_train_filenames = ["../tf_code/tfrecords2/surreal2_quo" + str(id) + ".tfrecords" for id in range(1)]
+        self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr, \
+        self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.pmesh_sr, self.v_gt_sr = \
+        self.centered_3d(*inputs_surreal(surreal_train_filenames, self.config.batch_size))
+
+        # validation data from surreal
+        surreal_valid_filenames = ["../tf_code/tfrecords2/surreal2_100_test_quo1.tfrecords"]
+        self.pose_sr_v, self.beta_sr_v, self.T_sr_v, self.R_sr_v, self.J_sr_v, self.J_2d_sr_v, self.image_sr_v, self.seg_sr_v, \
+        self.chamfer_sr_v, self.c_sr_v, self.f_sr_v, self.resize_scale_sr_v, self.gender_sr_v, self.J_c_sr_v, self.idx_sr_v, self.pmesh_sr_v, self.v_gt_v = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_valid_filenames, self.config.batch_size))
+
+        # test data to predict from surreal
+        # surreal_test_filenames = ["TODO"]
+        # self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, \
+        self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_test_filenames, self.config.batch_size))
 
 
     def centered_3d(self, pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender):
@@ -667,7 +673,7 @@ class _3DINN(object):
 
     def flow_net(self, frame1, frame2, is_train=True, reuse=False):
         input_ = tf.concat([frame1, frame2], 3)
-        print("==========Flow_net==========")
+        print("==========FlowNet==========")
         with tf.variable_scope("flownet") as scope:
             if reuse:
                scope.reuse_variables()
@@ -1113,18 +1119,17 @@ class _3DINN(object):
                   sio.savemat(os.path.join(self.sample_dir, "output" + str(int(idx)) + ".mat"), \
                     mdict={'flow': flow, 'J_2d': batch_J_2d_v, \
                     'project1': project1, 'v': v, 'visibility': tf_vis, \
-                    'J':J, 'batch_J': batch_J_v, "image": batch_image_v, \
+                    'J':J, 'batch_J': batch_J_v, 'image': batch_image_v, \
                     'S_M0': S_M1, 'seg': batch_seg_v, 'C_M0': C_M1, 'chamfer': batch_chamfer_v,
-                    'project_mesh0':project_mesh0, "project_mesh1":project_mesh1, "pixel0": pixel0, 'pixel1':pixel1})
+                    'project_mesh0':project_mesh0, 'project_mesh1':project_mesh1, 'pixel0': pixel0, 'pixel1':pixel1})
                 else:
                   sio.savemat(os.path.join(self.sample_dir, "output" + str(int(idx)) + ".mat"), \
-                    mdict={'flow': flow, 'J_2d': batch_J_2d_v, \
-                    'project1': project1, 'v': v, \
-                    'J':J, 'batch_J': batch_J_v, "image": batch_image_v, \
+                    mdict={'flow': flow, 'J_2d': batch_J_2d_v, 'project1': project1, 'v': v, \
+                    'J':J, 'batch_J': batch_J_v, 'image': batch_image_v, \
                     'seg': batch_seg_v, 'chamfer': batch_chamfer_v,
-                    'project_mesh0':project_mesh0, "project_mesh1":project_mesh1, "pixel0": pixel0, 'pixel1':pixel1})
+                    'project_mesh0':project_mesh0, 'project_mesh1':project_mesh1, 'pixel0': pixel0, 'pixel1':pixel1})
 
-              if (step)%5000 == 0:
+              if step % 5000 == 0:
                 self.save(self.checkpoint_dir, step)
             break
         except tf.errors.OutOfRangeError:

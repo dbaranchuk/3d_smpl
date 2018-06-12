@@ -24,7 +24,6 @@ def tf_get_visibility(tf_v, tf_project, h, w):
 
   # batch_size x mesh_num
   distance = tf.reshape(tf.slice(tf_v, [0,0,2], [-1, -1, 1]), [-1])
-  
   batch_id = tf.reshape(tf.tile(tf.reshape(tf.range(batch_size), [-1, 1]), [1, mesh_num]), [-1])
   mesh_id = tf.reshape(tf.tile(tf.reshape(tf.range(mesh_num), [1, -1]), [batch_size, 1]), [-1]) 
  
@@ -94,7 +93,6 @@ def tf_get_visibility_raycast(tf_v, f, reduce_step=4):
   N = tf.cross(v0v1, v0v2)
   NdotRayDirection = tf.matmul(N, tf.transpose(dir_, [0, 2, 1]))
   isNotParallel = tf.where(tf.less(tf.abs(NdotRayDirection), kEpsilon), tf.zeros_like(NdotRayDirection), tf.ones_like(NdotRayDirection))
-  
 
   # find P
   d = tf.reduce_sum(tf.multiply(N, v0), 2)
@@ -138,5 +136,4 @@ def tf_get_visibility_raycast(tf_v, f, reduce_step=4):
     onehot.append(oneh)
  
   visibility = tf.slice(tf.stack(onehot), [0, 0], [-1, mesh_num])
-
   return visibility, face_center

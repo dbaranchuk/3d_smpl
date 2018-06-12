@@ -57,12 +57,13 @@ def main(_):
         os.makedirs(sample_dir_)
     if not os.path.exists(logs_dir_):
         os.makedirs(logs_dir_)
+
     with tf.Session() as sess:
         my3DINN = _3DINN(sess, config=FLAGS, checkpoint_dir=checkpoint_dir_, logs_dir=logs_dir_, sample_dir=sample_dir_)
         if FLAGS.is_train:
             my3DINN.train(FLAGS)
         else:
-            my3DINN.load(checkpoint_dir_)
+            my3DINN.load(FLAGS.model_dir)
 
 if __name__ == '__main__':
 	tf.app.run()

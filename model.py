@@ -92,10 +92,6 @@ class _3DINN(object):
 
         #load data from tfrecords
         self.loadData()
-
-        #bat_nframes = [self.config.batch_size, self.config.num_frames]
-        #image_size = [self.config.image_size_h, self.config.image_size_w]
-
         # input/gt
         self.initTensors()
 
@@ -142,6 +138,7 @@ class _3DINN(object):
         self.sup_loss = self.pose_loss + 0.05 * self.beta_loss + self.R_loss + 0.1 * self.T_loss
         seg = self.seg_gt
         chamfer = self.chamfer_gt
+
         # supervised summary
         sup_loss_summary = get_scalar_summary("supervised loss", self.sup_loss) 
         pose_loss_summary = get_scalar_summary("pose loss", self.pose_loss)
@@ -282,11 +279,12 @@ class _3DINN(object):
         self.writer = tf.summary.FileWriter(self.logs_dir, self.sess.graph)
         self.saver = tf.train.Saver()  
 
+
+    ''' Init input/gt placeholders '''
     def initTensors(self):
         bat_nframes = [self.config.batch_size, self.config.num_frames]
         image_size = [self.config.image_size_h, self.config.image_size_w]
 
-        # input/gt
         self.pose_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="pose_gt")
         self.gender_gt = tf.placeholder(tf.int32, self.config.batch_size, name="gender_gt")
         self.T_gt = tf.placeholder(tf.float32, bat_nframes + [3], name="T_gt")
@@ -306,6 +304,7 @@ class _3DINN(object):
         self.chamfer_gt = tf.placeholder(tf.float32, bat_nframes + [self.small_h, self.small_w], name="chamfer_gt")
 
 
+    '''Load surreal train validation and test data'''
     def loadData(self):
         #load data from tfrecords
         # synthetic data from surreal

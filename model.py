@@ -93,28 +93,12 @@ class _3DINN(object):
         #load data from tfrecords
         self.loadData()
 
-        bat_nframes = [self.config.batch_size, self.config.num_frames] 
-        image_size = [self.config.image_size_h, self.config.image_size_w]
+        #bat_nframes = [self.config.batch_size, self.config.num_frames]
+        #image_size = [self.config.image_size_h, self.config.image_size_w]
 
         # input/gt
-        self.pose_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="pose_gt")
-        self.gender_gt = tf.placeholder(tf.int32, self.config.batch_size, name="gender_gt")
-        self.T_gt = tf.placeholder(tf.float32, bat_nframes + [3], name="T_gt")
-        self.R_gt = tf.placeholder(tf.float32, bat_nframes + [6], name="R_gt")
-        self.f_gt = tf.placeholder(tf.float32, bat_nframes + [2], name="f_gt")
-        self.c_gt = tf.placeholder(tf.float32, bat_nframes + [2], name="c_gt")
-        self.resize_scale_gt = tf.placeholder(tf.float32, bat_nframes, name="resize_scale_gt")
-        self.beta_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.bases_num], name="beta_gt")
-        self.J_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="J_gt")
-        self.pmesh_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 2], name="pmesh_gt")
-        self.v_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 3], name="v_gt")
-        self.J_c_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="J_c_gt")
-        self.J_2d_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 2], name="J_2d_gt")
-        self.images = tf.placeholder(tf.float32, bat_nframes + image_size + [3], name="images")
-        #self.visibility = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num], name="visibility")
-        self.seg_gt = tf.placeholder(tf.float32, bat_nframes + image_size, name="seg_gt")
-        self.chamfer_gt = tf.placeholder(tf.float32, bat_nframes + [self.small_h, self.small_w], name="chamfer_gt")
-        
+        self.initTensors()
+
         # split into frames
         pose_gt_split = split(self.pose_gt, 1) 
         beta_gt_split = split(self.beta_gt, 1)
@@ -297,6 +281,29 @@ class _3DINN(object):
         self.syn_v_summary = tf.summary.merge([dict_["syn_test"] for dict_ in syn_summ])
         self.writer = tf.summary.FileWriter(self.logs_dir, self.sess.graph)
         self.saver = tf.train.Saver()  
+
+    def initTensors(self):
+        bat_nframes = [self.config.batch_size, self.config.num_frames]
+        image_size = [self.config.image_size_h, self.config.image_size_w]
+
+        # input/gt
+        self.pose_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="pose_gt")
+        self.gender_gt = tf.placeholder(tf.int32, self.config.batch_size, name="gender_gt")
+        self.T_gt = tf.placeholder(tf.float32, bat_nframes + [3], name="T_gt")
+        self.R_gt = tf.placeholder(tf.float32, bat_nframes + [6], name="R_gt")
+        self.f_gt = tf.placeholder(tf.float32, bat_nframes + [2], name="f_gt")
+        self.c_gt = tf.placeholder(tf.float32, bat_nframes + [2], name="c_gt")
+        self.resize_scale_gt = tf.placeholder(tf.float32, bat_nframes, name="resize_scale_gt")
+        self.beta_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.bases_num], name="beta_gt")
+        self.J_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="J_gt")
+        self.pmesh_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 2], name="pmesh_gt")
+        self.v_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num, 3], name="v_gt")
+        self.J_c_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 3], name="J_c_gt")
+        self.J_2d_gt = tf.placeholder(tf.float32, bat_nframes + [self.config.keypoints_num, 2], name="J_2d_gt")
+        self.images = tf.placeholder(tf.float32, bat_nframes + image_size + [3], name="images")
+        #self.visibility = tf.placeholder(tf.float32, bat_nframes + [self.config.mesh_num], name="visibility")
+        self.seg_gt = tf.placeholder(tf.float32, bat_nframes + image_size, name="seg_gt")
+        self.chamfer_gt = tf.placeholder(tf.float32, bat_nframes + [self.small_h, self.small_w], name="chamfer_gt")
 
 
     def loadData(self):

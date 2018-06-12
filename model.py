@@ -1007,9 +1007,10 @@ class _3DINN(object):
                          self.resize_scale_gt: batch_resize_scale_v})
 
                 # print out everything 
-              if idx % 20 == 0:
+              if idx % 50 == 0:
                 # get v for visibility
                 # if there is only supervised training, do not predict chamfer and visibility to save time
+                print("=============================")
                 if self.is_unsup_train:
                   step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss,\
                   d2_joint_loss, project1, flow, silh_loss, S_M1, C_M1, beta_loss, pose_loss,\

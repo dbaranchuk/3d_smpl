@@ -86,12 +86,10 @@ class _3DINN(object):
         self.posedirs = tf.constant(np.array(dd_posedirs), dtype=tf.float32, name="posedirs")
 
         
-        dd_J_regressor = np.concatenate((np.expand_dims(dd_f['J_regressor'].todense(), 0),
-                                        np.expand_dims(dd_m['J_regressor'].todense(), 0)), 0)  
+        dd_J_regressor = np.concatenate((np.expand_dims(dd_f['J_regressor'].todense(), 0), np.expand_dims(dd_m['J_regressor'].todense(), 0)), 0)
         self.J_regressor = tf.constant(dd_J_regressor, dtype=tf.float32, name = "J_regressor")
         
-        dd_weights = np.concatenate((np.expand_dims(dd_f['weights'], 0),
-                                        np.expand_dims(dd_m['weights'], 0)), 0)  
+        dd_weights = np.concatenate((np.expand_dims(dd_f['weights'], 0), np.expand_dims(dd_m['weights'], 0)), 0)
         self.weights = tf.constant(dd_weights, dtype=tf.float32, name="weights")
         
         #load data from tfrecords 
@@ -279,8 +277,7 @@ class _3DINN(object):
         visibility_split = split(self.tf_visibility, 1)
         
         self.flow_pixels = pmesh_gt_split[1] - pmesh_gt_split[0] 
-        self.pixel_loss = l1_loss(tf.expand_dims(visibility_split[0], 2) * self.flow_pixels, 
-                                  tf.expand_dims(visibility_split[0], 2) * self.flow)  
+        self.pixel_loss = l1_loss(tf.expand_dims(visibility_split[0], 2) * self.flow_pixels, tf.expand_dims(visibility_split[0], 2) * self.flow)
 
         pixel_hist_summary = get_hist_summary("flow pixels", self.flow_pixels)        
         pixel_loss_summary = get_scalar_summary("pixel loss", self.pixel_loss) 
@@ -345,8 +342,7 @@ class _3DINN(object):
 
     def centered_3d_with_idx(self, pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, idx):
       pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, J_gt, pmesh, v_gt \
-          = self.centered_3d(pose, beta, T, R, J, J_2d, image,seg, chamfer, c, f, resize_scale,\
-                             gender)
+          = self.centered_3d(pose, beta, T, R, J, J_2d, image,seg, chamfer, c, f, resize_scale, gender)
       return pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, J_gt, idx, pmesh, v_gt
 
 
@@ -861,10 +857,8 @@ class _3DINN(object):
         print("started the train")
         print("-----------------")
         """Training"""
-        """
-        recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1) \
-                                .minimize(self.recon_loss, global_step=self.global_step)
-        """
+        """ recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1) \
+                                .minimize(self.recon_loss, global_step=self.global_step) """
         t_vars = tf.trainable_variables() 
         
         i_vars = [var for var in t_vars if "f_" not in var.name]
@@ -875,13 +869,11 @@ class _3DINN(object):
         self.saver_i = tf.train.Saver(i_vars + [self.global_step])  
         sup_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1).minimize(self.sup_loss, global_step=self.global_step, var_list=i_vars)
         #flow_optim = tf.train.GradientDescentOptimizer(config.learning_rate) \
-        #                        .minimize(self.flow_loss, global_step=self.global_step,
-        #                                  var_list=f_vars)
+         #                        .minimize(self.flow_loss, global_step=self.global_step, var_list=f_vars)
         if self.is_unsup_train: 
             recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1).minimize(self.recon_loss, global_step=self.global_step, var_list=i_vars)
 
-        init_op = tf.group(tf.global_variables_initializer(), 
-                           tf.local_variables_initializer())
+        init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
         self.sess.run(init_op)
        
         # Start input enqueue threads.
@@ -890,11 +882,9 @@ class _3DINN(object):
 
         #TrainSummary = tf.summary.merge_all()
         #self.writer = tf.summary.FileWriter(os.path.join(config.logs_dir, config.name), self.sess.graph)
-
         #self.writer_heatmap = tf.train.SummaryWriter(self.config.log_dir+"/01_input_heatmap", self.sess.graph)
 
         """load data"""
-        
         # facet 
         f_ = self.f 
         
@@ -956,8 +946,7 @@ class _3DINN(object):
                     "project_mesh1":project_mesh1, 'pixel0': pixel0, 'pixel1': pixel1})
        
             print("d3_loss: %.4f (%.4f), d2_loss: %.4f (%.4f), pixel_loss: %.4f,"
-                  " silh_loss: %.4f" %(d3_joint_loss, d3_loss, d2_joint_loss, \
-                                       d2_loss, pixel_loss, silh_loss))
+                  " silh_loss: %.4f" %(d3_joint_loss, d3_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss))
             return 
 
         start_time = time.time()
@@ -1191,7 +1180,6 @@ class _3DINN(object):
         if ckpt and ckpt.model_checkpoint_path:
             ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
             self.saver.restore(self.sess, os.path.join(checkpoint_dir, ckpt_name))
-            print("HUI")
             return True
         else:
             return False        

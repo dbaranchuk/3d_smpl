@@ -1030,8 +1030,8 @@ class _3DINN(object):
                            self.images:batch_image, 
                            self.resize_scale_gt: batch_resize_scale})
                   self.writer.add_summary(summ_str, step)
-                  print("[%s, iter: %d] sup_loss: %.4f, d3_loss: %.4f (%.6f) (%.4f), d2_loss: %.4f (%.6f), "
-                      "pixel_loss: %.4f, silh_loss: %.4f, beta_loss: %.4f, pose_loss: %.4f, R_loss:%.4f, T_loss: %.4f" \
+                  print("[%s, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f) (%.4f), d2: %.4f (%.6f), "
+                      "pixel: %.4f, silh: %.4f, beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" \
                       %(self.config.name, idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss, beta_loss, pose_loss, R_loss, T_loss))
 
                   step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss,\
@@ -1055,10 +1055,9 @@ class _3DINN(object):
                          self.images:batch_image_v, 
                          self.resize_scale_gt: batch_resize_scale_v})
                   self.writer.add_summary(summ_str, step)
-                  print("[test, iter: %d] sup_loss: %.4f, d3_loss: %.4f (%.6f)(%.4f), d2_loss: %.4f (%.6f), "
-                    "pixel_loss: %.4f, silh_loss: %.4f, beta_loss: %.4f, pose_loss: %.4f, R_loss:%.4f, T_loss: %.4f" \
+                  print("[test, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f)(%.4f), d2: %.4f (%.6f), "
+                    "pixel: %.4f, silh: %.4f, beta: %.4f, pose: %.4f, R:%.4f, T: %.4f" \
                     %(idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss, beta_loss, pose_loss, R_loss, T_loss))
-                 
                 else: # training with only supervision
                     # dump results from training and validation data
                     step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, \

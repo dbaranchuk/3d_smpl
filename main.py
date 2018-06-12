@@ -33,7 +33,7 @@ flags.DEFINE_string("checkpoint_dir", "checkpoint/", "Directory name to save the
 flags.DEFINE_string("model_dir", None, "Directory name to save the checkpoints [checkpoint]")
 flags.DEFINE_string("sample_dir", "samples/", "Directory name to save the image samples [samples]")
 flags.DEFINE_string("logs_dir", "logs/", "Directory name to save logs [logs]")
-flags.DEFINE_boolean("is_train", False, "True for training, False for testing [False]")
+flags.DEFINE_boolean("is_train", True, "True for training, False for testing [False]")
 flags.DEFINE_boolean("is_debug_basic_function", False, "True for debugging basic function, should have d2, d3=0")
 flags.DEFINE_boolean("visualize", False, "True for visualizing, False for nothing [False]")
 flags.DEFINE_boolean("is_sup_train", True, "True for supervised training on training data,"

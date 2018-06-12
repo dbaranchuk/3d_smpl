@@ -1174,12 +1174,14 @@ class _3DINN(object):
                         global_step=step)
 
 
-    def load(self, checkpoint_dir):
+    def load(self, checkpoint_dir, saver=None):
         print(" [*] Reading checkpoints...")
         ckpt = tf.train.get_checkpoint_state(checkpoint_dir)
         if ckpt and ckpt.model_checkpoint_path:
             ckpt_name = os.path.basename(ckpt.model_checkpoint_path)
-            self.saver.restore(self.sess, os.path.join(checkpoint_dir, ckpt_name))
+            if saver == None:
+                saver = self.saver
+            saver.restore(self.sess, os.path.join(checkpoint_dir, ckpt_name))
             return True
         else:
             return False        

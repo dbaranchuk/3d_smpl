@@ -1125,7 +1125,7 @@ class _3DINN(object):
                 beta, pose, T, R, v, J = {},{},{},{},{},{}
                 beta[0], pose[0], T[0], R[0], v[0], J[0] = ([],[],[],[],[],[])
                 beta[1], pose[1], T[1], R[1], v[1], J[1] = ([],[],[],[],[],[])
-                for i in range(256):
+                for i in range(138):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, \
                         batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, \

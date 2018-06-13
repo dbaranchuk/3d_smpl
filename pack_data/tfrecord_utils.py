@@ -20,10 +20,10 @@ def get_file_list(data_path, quo =0, test=False):
         p = os.path.join(data_path, folder)
         for filename in os.listdir(p):
             with open(os.path.join(p, filename), 'rb') as f_:
-            line = f_.read(4) # gender
-            line = f_.read(4) # num_frames
-            num_frames = struct.unpack('i', line)[0]
-            print filename, "nframes", num_frames
+                line = f_.read(4) # gender
+                line = f_.read(4) # num_frames
+                num_frames = struct.unpack('i', line)[0]
+                print filename, "nframes", num_frames
             """
                 if test:
                     for frame_id in range(num_frames - 1):
@@ -35,7 +35,6 @@ def get_file_list(data_path, quo =0, test=False):
                 """
             fid = np.random.randint(num_frames-1)
             files.append(os.path.join(p, filename) + "#" + str(fid))
-           
     print("number of folder", num)
     return files
 

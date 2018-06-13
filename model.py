@@ -1081,6 +1081,7 @@ class _3DINN(object):
         coord.join(threads)
         self.sess.close()
 
+
     def predict(self, config):
         print("----------------")
         print("Start predicting")
@@ -1146,17 +1147,22 @@ class _3DINN(object):
                          self.chamfer_gt: batch_chamfer_t,
                          self.images:batch_image_t,
                          self.resize_scale_gt: batch_resize_scale_t})
-
-              # save results in mat
-              if self.is_unsup_train:
-                sio.savemat(os.path.join(self.sample_dir, "gait" + str(idx_t) + str(int(idx)) + ".mat"), \
-                    mdict={'flow': flow, 'J_2d': batch_J_2d_t, 'project1': project1, 'v': v, 'visibility': tf_vis, \
-                    'J':J, 'batch_J': batch_J_t, 'image': batch_image_t, 'S_M0': S_M1, 'seg': batch_seg_t, 'C_M0': C_M1, 'chamfer': batch_chamfer_t,
-                    'project_mesh0':project_mesh0, 'project_mesh1':project_mesh1, 'pixel0': pixel0, 'pixel1':pixel1})
               else:
-                sio.savemat(os.path.join(self.sample_dir, "gait" + str(int(idx)) + ".mat"), \
-                    mdict={'flow': flow, 'J_2d': batch_J_2d_t, 'project1': project1, 'v': v, 'J':J, 'batch_J': batch_J_t, 'image': batch_image_t, \
-                    'seg': batch_seg_t, 'chamfer': batch_chamfer_t, 'project_mesh0':project_mesh0, 'project_mesh1':project_mesh1, 'pixel0': pixel0, 'pixel1':pixel1})
+                  step, v, J = self.sess.run([self.global_step, self.v[0], self.J[0]],
+                            feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
+                            self.T_gt: batch_T_t, self.R_gt:batch_R_t,
+                            self.gender_gt:batch_gender_t,
+                            self.J_gt: batch_J_t, self.J_c_gt: batch_J_c_t,
+                            self.J_2d_gt: batch_J_2d_t,
+                            self.seg_gt:batch_seg_t, self.f_gt: batch_f_t,
+                            self.c_gt: batch_c_t, self.v_gt:batch_v_gt_t,
+                            self.pmesh_gt:batch_pmesh_t,
+                            self.chamfer_gt: batch_chamfer_t,
+                            self.images:batch_image_t,
+                            self.resize_scale_gt: batch_resize_scale_t})
+              # save results in mat
+              print(v, J, batch_image_t)
+              sio.savemat(os.path.join(self.sample_dir, "gait" + str(idx_t) + str(int(idx)) + ".mat"), mdict={'v':v, 'J':J, 'image':batch_image_t})
             break
         except tf.errors.OutOfRangeError:
             print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))

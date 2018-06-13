@@ -321,12 +321,12 @@ class _3DINN(object):
         # test data to predict from surreal
         surreal_test_filenames = ["../tf_code/gait/surreal_10_04.tfrecords"]
         self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t,\
-        self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.pmesh_sr_t, self.v_gt_t = self.centered_3d(*inputs_surreal(surreal_test_filenames, self.config.batch_size, shuffle=False, num_frames=138), num_frames=138)
+        self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.pmesh_sr_t, self.v_gt_t = self.centered_3d(*inputs_surreal(surreal_test_filenames, self.config.batch_size, shuffle=False, num_frames=138))
         
 
 
-    def centered_3d(self, pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, num_frames=2):
-      centered_J_2d = (J_2d - tf.reshape(self.image_center, [1,1,1,2]))/(tf.reshape(resize_scale, [self.config.batch_size, num_frames, 1, 1])* tf.expand_dims(f, 2))
+    def centered_3d(self, pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender):
+      centered_J_2d = (J_2d - tf.reshape(self.image_center, [1,1,1,2]))/(tf.reshape(resize_scale, [self.config.batch_size, self.config.num_frames, 1, 1])* tf.expand_dims(f, 2))
       centered_J_2d = merge_bf(centered_J_2d)
     
       v_gt, J_gt, _ = self.pose_beta_to_mesh(merge_bf(beta), merge_bf(pose), tf.reshape(tf.tile(tf.expand_dims(gender, 1), [1,2]), [-1]))
@@ -336,18 +336,18 @@ class _3DINN(object):
       # [X, Y]
       T3 = tf.slice(T, [0,0,2], [-1, -1, 1])
       T12 = centered_J_2d * (tf.slice(J_gt, [0, 0, 2], [-1, -1, 1]) + tf.expand_dims(merge_bf(T3), 1)) - tf.slice(J_gt, [0, 0, 0], [-1, -1, 2])
-      T12 = split_bf(tf.reduce_mean(T12, 1), self.config.batch_size, num_frames)
+      T12 = split_bf(tf.reduce_mean(T12, 1), self.config.batch_size, self.config.num_frames)
       T = tf.concat([T12, T3], 2)
-      J_gt = split_bf(J_gt, self.config.batch_size, num_frames)
+      J_gt = split_bf(J_gt, self.config.batch_size, self.config.num_frames)
         
       v = v + tf.expand_dims(merge_bf(T),1)
       J = J_gt + tf.expand_dims(T, 2) 
  
-      c = tf.tile(tf.reshape(self.image_center, [1,1,2]), [self.config.batch_size, num_frames, 1])
+      c = tf.tile(tf.reshape(self.image_center, [1,1,2]), [self.config.batch_size, self.config.num_frames, 1])
       pmesh = tf.divide(tf.slice(v, [0,0,0], [-1, -1, 2]) * tf.expand_dims(merge_bf(f), 1), tf.slice(v, [0, 0, 2], [-1, -1, 1]))
       pmesh = tf.reshape(merge_bf(resize_scale), [-1, 1, 1]) * pmesh + tf.expand_dims(merge_bf(c), 1)
-      pmesh = split_bf(pmesh, self.config.batch_size, num_frames)
-      v_gt = split_bf(v_gt, self.config.batch_size, num_frames)
+      pmesh = split_bf(pmesh, self.config.batch_size, self.config.num_frames)
+      v_gt = split_bf(v_gt, self.config.batch_size, self.config.num_frames)
       return pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, J_gt, pmesh, v_gt
 
 
@@ -452,12 +452,10 @@ class _3DINN(object):
 
         v_shaped =tf.matmul(tf.expand_dims(betas, 1), tf.reshape(tf.transpose(mesh_pca, [0, 3, 1, 2]),
                  [batch_size, self.config.bases_num, -1]))
-        v_shaped = tf.reshape( 
-             tf.squeeze(tf.matmul(tf.expand_dims(betas, 1), 
-                        tf.reshape(tf.transpose(mesh_pca, [0, 3, 1, 2]),
+        v_shaped = tf.reshape(tf.squeeze(tf.matmul(tf.expand_dims(betas, 1),
+                            tf.reshape(tf.transpose(mesh_pca, [0, 3, 1, 2]),
                         [batch_size, self.config.bases_num, -1])), axis=1) 
-             + tf.reshape(mesh_mu, [batch_size, -1]), 
-             [batch_size, self.config.mesh_num, 3]) #6890x3
+             + tf.reshape(mesh_mu, [batch_size, -1]), [batch_size, self.config.mesh_num, 3]) #6890x3
 
         print("posedirs", posedirs.get_shape())
         # posedirs: batch x 6890 x 3 x 207
@@ -496,9 +494,7 @@ class _3DINN(object):
             tf.reshape(J_posed_split[0], [batch_size, 3, 1])), 2))        
         
         for i in range(1, kintree_table.shape[1]):
-            tmp = with_zeros(tf.concat((angle_matrix[i],
-                tf.reshape(J_posed_split[i] - J_posed_split[parent[i]], 
-                [batch_size, 3, 1])), 2)) 
+            tmp = with_zeros(tf.concat((angle_matrix[i], tf.reshape(J_posed_split[i] - J_posed_split[parent[i]], [batch_size, 3, 1])), 2)) 
             results[i] = tf.matmul(results[parent[i]], tmp)
         # 24, 2x4x4
         results_global = results

@@ -118,7 +118,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
   s = 1.2 #1.3 + 0.1 * np.random.rand()
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
-  print(J_2d, np.random.uniform((2)), crop_size, int(2*crop_size))
+  print(new_2d_center, np.reshape(new_2d_center, [1, 1, -1]), crop_size, int(2*crop_size))
   new_image_size = int(2*crop_size)
   x_min = int(math.ceil(new_2d_center[0] - crop_size)) 
   x_max = int(math.floor(new_2d_center[0] + crop_size)) 

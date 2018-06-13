@@ -8,27 +8,25 @@ import sys
 from tfrecord_utils import convert_to_tfrecords_from_folder
 with_idx=True
 dataset = "surreal"
-run = 0
-data_path = "/PATH/TO/YOUR/SURREAL_bin/data"
+data_path = "/home/local/mocap/data/surreal/bin"
 num_samples = 10000
 is_test = True
 data_path = os.path.join(data_path, dataset)
 
-if train:
-  data_path = os.path.join(data_path, "train")
-else:
-  data_path = os.path.join(data_path, "test")
-
-data_path = os.path.join(data_path, "run" + str(run))
+#if train:
+#  data_path = os.path.join(data_path, "train")
+#else:
+#  data_path = os.path.join(data_path, "test")
 
 print data_path
- 
-quo = sys.argv[1]
 
-print "quo", quo
+#quo = sys.argv[1]
+#print "quo", quo
+
+subject = sys.argv[1]
 
 #a = b
-filename = "/path/to/your/tfrecords/folder/surreal_" + str(quo) + ".tfrecords"
+filename = "/home/local/mocap/tf_code/gait/surreal_" + subject + ".tfrecords"
 
 convert_to_tfrecords_from_folder(data_path, filename, quo = quo, test=is_test, get_samples=num_samples, with_idx=with_idx)
 print filename

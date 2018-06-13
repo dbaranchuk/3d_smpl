@@ -23,13 +23,11 @@ def get_file_list(data_path, quo =0, test=False):
       num += 1
       p = os.path.join(data_path, folder)
       for filename in os.listdir(p):
-        #if filename.startswith("h36m_S1_Directions_c0002"):
         with open(os.path.join(p, filename), 'rb') as f_:
           line = f_.read(4) # gender
           line = f_.read(4) # num_frames
           num_frames = struct.unpack('i', line)[0]
-          #if num_frames != 100:
-          #print filename, "nframes", num_frames
+          print filename, "nframes", num_frames
         """
         if test:
           for frame_id in range(num_frames - 1):
@@ -95,6 +93,7 @@ def convert_to_npz_from_folder(folder_name, npz_filename, get_samples=None, quo=
 
   np.savez(npz_filename, pose=data_pose, T=data_T, R=data_R, beta=data_beta, J=data_J,
            J_2d=data_J_2d, image=data_image, seg=data_seg, f=data_f, gender=data_gender)
+
 
 def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypoints_num=24, bases_num=10, chamfer_scale=0.5):
   filename, t = file_string.split("#")
@@ -197,8 +196,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
   
   writer = tf.python_io.TFRecordWriter(tf_filename)
   for sample_id in tqdm(range(get_samples)):
-    pose, T, R, beta, J, J_2d, image, seg, f, chamfer, c, gender, resize_scale = \
-      loadBatchSurreal_fromString(files[sample_id], crop_image_size, num_frames)
+    pose, T, R, beta, J, J_2d, image, seg, f, chamfer, c, gender, resize_scale = loadBatchSurreal_fromString(files[sample_id], crop_image_size, num_frames)
     import scipy.misc
     scipy.misc.imsave('../tmp/image_' + str(sample_id) + '.png', image[0, :, :, :])
     if with_idx:

@@ -97,8 +97,8 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   output[0] = read_syn_to_bin(filename, int(t))
   output[1] = read_syn_to_bin(filename, int(t) + 1)
 
-  print(output[frame_id], len(output[frame_id]['pose']))
-  num_frames = len(output[frame_id]['pose'])
+  print(output, len(output[0]['pose']))
+  num_frames = len(output[0]['pose'])
 
   data_pose = np.zeros((num_frames, keypoints_num * 3))
   data_T = np.zeros((num_frames, 3))

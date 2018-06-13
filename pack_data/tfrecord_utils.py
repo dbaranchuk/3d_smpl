@@ -221,6 +221,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
             }
             if with_idx:
                 feature['idx'] = _intList_feature([sample_id])
+                print(sample_id, feature['idx'])
 
             example = tf.train.Example(features=tf.train.Features(feature=feature))
             writer.write(example.SerializeToString())

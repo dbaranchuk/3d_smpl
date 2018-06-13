@@ -1171,6 +1171,7 @@ class _3DINN(object):
                     v[idx_t].append(_v)
                     J[idx_t].append(_J)
 
+            print(beta)
             for i in beta.keys():
                 print(i)
                 beta[i] = np.array(beta[i])

@@ -1150,6 +1150,7 @@ class _3DINN(object):
                          self.images:batch_image_t,
                          self.resize_scale_gt: batch_resize_scale_t})
               else:
+                  print(self.config.num_frames, config.num_frames)
                   for frame_id in range(self.config.num_frames):
                     step, _beta, _pose, _T, _R, _v, _J = self.sess.run([self.global_step, self.beta[frame_id], self.pose[frame_id],
                                                                         self.T[frame_id], self.R[frame_id], self.v[frame_id], self.J[frame_id]],

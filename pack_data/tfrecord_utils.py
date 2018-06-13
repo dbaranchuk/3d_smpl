@@ -300,7 +300,6 @@ def read_and_decode_surreal_with_idx(tfrecord_file):
       'gender': tf.FixedLenFeature([], tf.int64),
       'idx': tf.FixedLenFeature([], tf.int64),
     })
-  print(serialized_example)
   feature['pose'] = tf.reshape(feature['pose'], [num_frames, keypoints_num, 3])
   feature['beta'] = tf.reshape(feature['beta'], [num_frames, bases_num])
   feature['T'] = tf.reshape(feature['T'], [num_frames, 3])

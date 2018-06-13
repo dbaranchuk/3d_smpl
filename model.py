@@ -1137,6 +1137,7 @@ class _3DINN(object):
                                   self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t,
                                   self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
+                    print(self.is_unsup_train, config.is_unsup_train)
                     if self.is_unsup_train:
                         _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],
                         feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
@@ -1150,7 +1151,6 @@ class _3DINN(object):
                          self.images:batch_image_t,
                          self.resize_scale_gt: batch_resize_scale_t})
                     else:
-                        print(self.config.num_frames, config.num_frames)
                         for frame_id in range(self.config.num_frames):
                             step, _beta, _pose, _T, _R, _v, _J = self.sess.run([self.global_step, self.beta[frame_id], self.pose[frame_id],
                                                                         self.T[frame_id], self.R[frame_id], self.v[frame_id], self.J[frame_id]],

@@ -221,7 +221,6 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
             }
             if with_idx:
                 feature['idx'] = _intList_feature([sample_id])
-                print(sample_id, feature['idx'])
 
             example = tf.train.Example(features=tf.train.Features(feature=feature))
             writer.write(example.SerializeToString())
@@ -301,7 +300,7 @@ def read_and_decode_surreal_with_idx(tfrecord_file):
       'gender': tf.FixedLenFeature([], tf.int64),
       'idx': tf.FixedLenFeature([], tf.int64),
     })
-  print(feature['idx'])
+  print(feature['gender'], feature['idx'])
   feature['pose'] = tf.reshape(feature['pose'], [num_frames, keypoints_num, 3])
   feature['beta'] = tf.reshape(feature['beta'], [num_frames, bases_num])
   feature['T'] = tf.reshape(feature['T'], [num_frames, 3])

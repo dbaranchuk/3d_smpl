@@ -9,7 +9,7 @@ from tfrecord_utils import convert_to_tfrecords_from_folder
 with_idx=True
 dataset = "surreal"
 data_path = "/home/local/mocap/output"
-num_samples = 100
+num_samples = 2
 is_test = True
 data_path = os.path.join(data_path, dataset)
 

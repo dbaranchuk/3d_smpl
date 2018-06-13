@@ -237,8 +237,8 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
   writer.close() 
 
 
-def read_and_decode_surreal(tfrecord_file):
-  num_frames = 2
+def read_and_decode_surreal(tfrecord_file, num_frames=2):
+    #num_frames = 2
   image_size = 128
   keypoints_num = 24
   bases_num = 10
@@ -328,7 +328,7 @@ def read_and_decode_surreal_with_idx(tfrecord_file):
 def inputs_surreal(tf_filenames, batch_size, shuffle=True):
   with tf.name_scope('surreal_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames)
-    pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_surreal(filename_queue) 
+    pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_surreal(filename_queue, ) 
     print(pose.shape)
     if not shuffle:
         return tf.train.batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f,

@@ -1164,13 +1164,13 @@ class _3DINN(object):
                             self.images:batch_image_t,
                             self.resize_scale_gt: batch_resize_scale_t})
 
-                            print(_beta)
-                            beta[idx_t].append(_beta)
-                            pose[idx_t].append(_pose)
-                            T[idx_t].append(_T)
-                            R[idx_t].append(_R)
-                            v[idx_t].append(_v)
-                            J[idx_t].append(_J)
+                            print(idx_t)
+                            beta[idx_t[0]].append(_beta)
+                            pose[idx_t[0]].append(_pose)
+                            T[idx_t[0]].append(_T)
+                            R[idx_t[0]].append(_R)
+                            v[idx_t[0]].append(_v)
+                            J[idx_t[0]].append(_J)
 
                 for i in beta.keys():
                     print(i)

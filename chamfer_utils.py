@@ -28,7 +28,7 @@ def get_chamfer(mask, scale=0.25):
     return np.zeros((h_, w_)), h_, w_ 
 
   if len(occupied_pixels) < 4:
-    subsample = np.zeros(1)
+    subsample = np.zeros(1).astype('int32')
   else:
     subsample = np.random.permutation(len(occupied_pixels))[: len(occupied_pixels)/4]
 

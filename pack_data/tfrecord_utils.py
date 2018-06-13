@@ -199,7 +199,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
         if num_frames % 2 == 1:
             num_frames -= 1
 
-        for fid in range(num_frames-1):
+        for fid in range(0, num_frames, 2):
             if random_fid:
                 fid = -1
             pose, T, R, beta, J, J_2d, image, seg, f, chamfer, c, gender, resize_scale = loadBatchSurreal_fromString(files[sample_id], crop_image_size, fid=fid)

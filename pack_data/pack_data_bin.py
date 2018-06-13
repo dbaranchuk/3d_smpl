@@ -7,11 +7,11 @@ import struct
 import sys
 from tfrecord_utils import convert_to_tfrecords_from_folder
 with_idx=True
-#dataset = "surreal"
-data_path = "/home/local/mocap/data/surreal/bin"
+dataset = "surreal"
+data_path = "/home/local/mocap/data"
 num_samples = 10000
 is_test = True
-#data_path = os.path.join(data_path, dataset)
+data_path = os.path.join(data_path, dataset)
 
 #if train:
 #  data_path = os.path.join(data_path, "train")

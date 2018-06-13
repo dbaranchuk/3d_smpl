@@ -13,35 +13,32 @@ sys.path.insert(0, '../')
 from chamfer_utils import get_chamfer
 
 def get_file_list(data_path, quo =0, test=False):
-  files = []
-  num = 0
-  for folder in tqdm(os.listdir(data_path)):
-    condition = "_S9_" not in folder
-    if test:
-      condition = "_S9_" in folder and "1" not in folder
-    if condition:
-      num += 1
-      p = os.path.join(data_path, folder)
-      for filename in os.listdir(p):
-        with open(os.path.join(p, filename), 'rb') as f_:
-          line = f_.read(4) # gender
-          line = f_.read(4) # num_frames
-          num_frames = struct.unpack('i', line)[0]
-          print filename, "nframes", num_frames
-        """
-        if test:
-          for frame_id in range(num_frames - 1):
-            if frame_id %20 == quo:
-              #    files.append(os.path.join(p, filename) + "#" + str(frame_id))
-              #fid = np.random.randint(num_frames-1)
-              files.append(os.path.join(p, filename) + "#" + str(frame_id))
-        else:
-        """
-        fid = np.random.randint(num_frames-1)
-        files.append(os.path.join(p, filename) + "#" + str(fid))
+    files = []
+    num = 0
+    for folder in tqdm(os.listdir(data_path)):
+        num += 1
+        p = os.path.join(data_path, folder)
+        for filename in os.listdir(p):
+            with open(os.path.join(p, filename), 'rb') as f_:
+            line = f_.read(4) # gender
+            line = f_.read(4) # num_frames
+            num_frames = struct.unpack('i', line)[0]
+            print filename, "nframes", num_frames
+            """
+                if test:
+                    for frame_id in range(num_frames - 1):
+                        if frame_id %20 == quo:
+                        #    files.append(os.path.join(p, filename) + "#" + str(frame_id))
+                        #fid = np.random.randint(num_frames-1)
+                        files.append(os.path.join(p, filename) + "#" + str(frame_id))
+                else:
+                """
+            fid = np.random.randint(num_frames-1)
+            files.append(os.path.join(p, filename) + "#" + str(fid))
            
-  print("number of folder", num)
-  return files
+    print("number of folder", num)
+    return files
+
 
 
 def convert_to_npz_from_folder(folder_name, npz_filename, get_samples=None, quo=0):

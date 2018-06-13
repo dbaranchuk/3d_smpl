@@ -59,7 +59,8 @@ def main(_):
         if FLAGS.is_train:
             my3DINN.train(FLAGS)
         else:
-            my3DINN.load(FLAGS.model_dir)
+            #my3DINN.load(FLAGS.model_dir)
+            my3DINN.predict(FLAGS)
 
 if __name__ == '__main__':
 	tf.app.run()

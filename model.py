@@ -1164,6 +1164,7 @@ class _3DINN(object):
                             self.chamfer_gt: batch_chamfer_t,
                             self.images:batch_image_t,
                             self.resize_scale_gt: batch_resize_scale_t})
+                    print(_beta)
                     beta[idx_t].append(_beta)
                     pose[idx_t].append(_pose)
                     T[idx_t].append(_T)
@@ -1171,7 +1172,6 @@ class _3DINN(object):
                     v[idx_t].append(_v)
                     J[idx_t].append(_J)
 
-            print(beta)
             for i in beta.keys():
                 print(i)
                 beta[i] = np.array(beta[i])
@@ -1181,7 +1181,7 @@ class _3DINN(object):
                 v[i] = np.array(v[i])
                 J[i] = np.array(J[i])
                 # save results in mat
-                print(beta[i].shape, pose[i].shape, t[i].shape, R[i].shape, v[i].shape, J[i].shape)
+                print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape, v[i].shape, J[i].shape)
                 sio.savemat(os.path.join(self.sample_dir, "gait_" + str(i) + ".mat"),
                             mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i], 'v':v[i], 'J':J[i]})
             break

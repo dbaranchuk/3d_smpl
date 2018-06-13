@@ -1174,19 +1174,19 @@ class _3DINN(object):
                             v[idx_t].append(_v)
                             J[idx_t].append(_J)
 
-            for i in beta.keys():
-                print(i)
-                beta[i] = np.array(beta[i])
-                pose[i] = np.array(pose[i])
-                T[i] = np.array(T[i])
-                R[i] = np.array(R[i])
-                v[i] = np.array(v[i])
-                J[i] = np.array(J[i])
-                # save results in mat
-                print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape, v[i].shape, J[i].shape)
-                sio.savemat(os.path.join(self.sample_dir, "gait_" + str(i) + ".mat"),
-                            mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i], 'v':v[i], 'J':J[i]})
-            break
+                for i in beta.keys():
+                    print(i)
+                    beta[i] = np.array(beta[i])
+                    pose[i] = np.array(pose[i])
+                    T[i] = np.array(T[i])
+                    R[i] = np.array(R[i])
+                    v[i] = np.array(v[i])
+                    J[i] = np.array(J[i])
+                    # save results in mat
+                    print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape, v[i].shape, J[i].shape)
+                    sio.savemat(os.path.join(self.sample_dir, "gait_" + str(i) + ".mat"),
+                                mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i], 'v':v[i], 'J':J[i]})
+                break
         except tf.errors.OutOfRangeError:
             print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))
         finally:

@@ -33,7 +33,8 @@ def get_file_list(data_path, quo =0, test=False):
                         files.append(os.path.join(p, filename) + "#" + str(frame_id))
                 else:
                 """
-            fid = np.random.randint(num_frames-1)
+            fid = num_frames
+            #fid = np.random.randint(num_frames-1)
             files.append(os.path.join(p, filename) + "#" + str(fid))
     print("number of folder", num)
     return files
@@ -96,9 +97,11 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   output = dict()
 
   if num_frames == 2:
-    output[0] = read_syn_to_bin(filename, int(t))
-    output[1] = read_syn_to_bin(filename, int(t) + 1)
+    fid = np.random.randint(int(t)-1)
+    output[0] = read_syn_to_bin(filename, fid)
+    output[1] = read_syn_to_bin(filename, fid + 1)
   else:
+    num_frames = int(t)
     for i in range(num_frames):
         output[i] = read_syn_to_bin(filename, i)
 

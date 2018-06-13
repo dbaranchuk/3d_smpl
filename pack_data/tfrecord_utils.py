@@ -96,7 +96,10 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   output = dict()
   output[0] = read_syn_to_bin(filename, int(t))
   output[1] = read_syn_to_bin(filename, int(t) + 1)
-    
+
+  print(output[frame_id], len(output[frame_id]['pose']))
+  num_frames = len(output[frame_id]['pose'])
+
   data_pose = np.zeros((num_frames, keypoints_num * 3))
   data_T = np.zeros((num_frames, 3))
   data_R = np.zeros((num_frames, 6))
@@ -118,7 +121,6 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   new_2d_center = np.round(J_2d[0, :] + 15*np.array([0, 1])) + 0.5*np.ones((2)) # + 10 * (np.random.uniform((2)) - 1))
   s = 1.2 #1.3 + 0.1 * np.random.rand()
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
-  print(new_2d_center, np.reshape(new_2d_center, [1, 1, -1]), crop_size, int(2*crop_size))
   new_image_size = int(2*crop_size)
   x_min = int(math.ceil(new_2d_center[0] - crop_size)) 
   x_max = int(math.floor(new_2d_center[0] + crop_size)) 
@@ -165,8 +167,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       
       #print np.max(output['seg'][sample_id, :, :])
       data_seg[frame_id, :, :] = seg[:, :, 0]
-      data_chamfer[frame_id, :, :], _, _ = get_chamfer(seg[:,:,0],
-                                                        chamfer_scale)
+      data_chamfer[frame_id, :, :], _, _ = get_chamfer(seg[:,:,0], chamfer_scale)
   return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_image/255.0,\
          data_seg, data_f, data_chamfer, data_c, data_gender, data_resize_scale  
 

@@ -94,11 +94,13 @@ def convert_to_npz_from_folder(folder_name, npz_filename, get_samples=None, quo=
 def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypoints_num=24, bases_num=10, chamfer_scale=0.5):
   filename, t = file_string.split("#")
   output = dict()
-  output[0] = read_syn_to_bin(filename, int(t))
-  output[1] = read_syn_to_bin(filename, int(t) + 1)
 
-  print(output, len(output[0]['pose']))
-  num_frames = len(output[0]['pose'])
+  if num_frames == 2:
+    output[0] = read_syn_to_bin(filename, int(t))
+    output[1] = read_syn_to_bin(filename, int(t) + 1)
+  else:
+    for i in range(num_frames):
+        output[i] = read_syn_to_bin(filename, i)
 
   data_pose = np.zeros((num_frames, keypoints_num * 3))
   data_T = np.zeros((num_frames, 3))
@@ -184,7 +186,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
   if shuffle:
     random.shuffle(files)
   num_files = len(files)
-  num_frames = 2
+  num_frames = 150
   crop_image_size = 128
   keypoints_num = 24
   bases_num = 10

@@ -48,7 +48,6 @@ def write_syn_to_bin(parsed_data, filename):
        
 
 def read_syn_to_bin(filename, frame_id):
-
   with open(filename, 'rb') as f_:
     line = f_.read(4)
     gender = struct.unpack('i', line)[0] 

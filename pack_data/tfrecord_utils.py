@@ -224,7 +224,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
 
             example = tf.train.Example(features=tf.train.Features(feature=feature))
             writer.write(example.SerializeToString())
-            print(example.SerializeToString())
+            print(feature)
             if random_fid:
                 break
     writer.close()

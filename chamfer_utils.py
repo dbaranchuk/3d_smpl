@@ -35,7 +35,7 @@ def get_chamfer(mask, scale=0.25):
   x2 = np.reshape(np.sum(np.square(non_occupied_pixels), axis=1), [-1, 1])
   y2 = np.reshape(np.sum(np.square(occupied_pixels), axis=1), [1, -1])  
   xy = np.matmul(non_occupied_pixels, occupied_pixels.T)
-  print(x2 - 2* xy + y2)
+  print(h, w)
   dist = np.min(x2 - 2* xy + y2, axis = 1) 
   chamfer = np.zeros((h_,w_),dtype=np.float32)
   for pos_id in range(non_occupied_pixels.shape[0]):

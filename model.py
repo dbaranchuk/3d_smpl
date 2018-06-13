@@ -1136,6 +1136,7 @@ class _3DINN(object):
 
               v = None
               J = None
+              beta = None
               if self.is_unsup_train:
                   _, step, sup_loss, d3_loss, d2_loss, beta, v, J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],
                    feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
@@ -1149,7 +1150,7 @@ class _3DINN(object):
                          self.images:batch_image_t,
                          self.resize_scale_gt: batch_resize_scale_t})
               else:
-                  step, v, J = self.sess.run([self.global_step, self.v[0], self.J[0]],
+                  step, beta, v, J = self.sess.run([self.global_step, self.beta[0], self.v[0], self.J[0]],
                             feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                             self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                             self.gender_gt:batch_gender_t,
@@ -1162,7 +1163,7 @@ class _3DINN(object):
                             self.images:batch_image_t,
                             self.resize_scale_gt: batch_resize_scale_t})
               # save results in mat
-              print(v, J, batch_image_t)
+              print(beta, v.shape, J.shape, batch_image_t.shape)
               sio.savemat(os.path.join(self.sample_dir, "gait" + str(idx_t) + str(int(idx)) + ".mat"), mdict={'v':v, 'J':J, 'image':batch_image_t})
             break
         except tf.errors.OutOfRangeError:

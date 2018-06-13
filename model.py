@@ -23,8 +23,7 @@ class _3DINN(object):
     def __init__(self, sess, checkpoint_dir, logs_dir, sample_dir, config=None):
         self.sess = sess
         self.config = config
-        self.is_unsup_train = self.config.key_loss or self.config.silh_loss \
-                              or self.config.pixel_loss 
+        self.is_unsup_train = self.config.key_loss or self.config.silh_loss or self.config.pixel_loss 
         # dump path
         self.checkpoint_dir = checkpoint_dir
         self.logs_dir = logs_dir
@@ -1135,9 +1134,8 @@ class _3DINN(object):
                                   self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t,
                                   self.chamfer_sr_t, self.c_sr_t, self.f_sr_t,
                                   self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t,
-                                  self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
-
-                    print(self.is_unsup_train, config.is_unsup_train)
+                                  self.idx_sr_t, self.pmesh_sr_t, self.v_gt
+                                                      
                     if self.is_unsup_train:
                         _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],
                         feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,

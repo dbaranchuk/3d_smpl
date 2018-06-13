@@ -169,7 +169,6 @@ class _3DINN(object):
           depth_J = tf.slice(self.J[frame_id], [0, 0, 2], [-1, -1, 1])
           direct_project[frame_id] = tf.divide(tf.slice(self.v[frame_id], [0, 0, 0], [-1, -1, 2]), depth_mesh)
           project_J[frame_id] = tf.divide(tf.slice(self.J[frame_id], [0, 0, 0], [-1, -1, 2]),depth_J)
-           
           project[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) \
                               * direct_project[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
           project_J[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1])\
@@ -1123,7 +1122,11 @@ class _3DINN(object):
           while not coord.should_stop():
             tf_vis = 0
             pixel_loss = 0
-            for idx in xrange(0, 18):
+
+            beta, pose, T, R, v, J = ({},{},{},{},{},{})
+            beta[0], pose[0], T[0], R[0], v[0], J[0] = ([],[],[],[],[],[])
+            beta[1], pose[1], T[1], R[1], v[1], J[1] = ([],[],[],[],[],[])
+            for i in range(64):
               # load testing data
               batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, \
                   batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, \
@@ -1134,9 +1137,6 @@ class _3DINN(object):
                                   self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t,
                                   self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
-              v = None
-              J = None
-              beta = None
               if self.is_unsup_train:
                   _, step, sup_loss, d3_loss, d2_loss, beta, v, J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],
                    feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
@@ -1150,7 +1150,9 @@ class _3DINN(object):
                          self.images:batch_image_t,
                          self.resize_scale_gt: batch_resize_scale_t})
               else:
-                  step, beta, v, J = self.sess.run([self.global_step, self.beta[0], self.v[0], self.J[0]],
+                  for frame_id in range(self.config.num_frames):
+                    step, _beta, _pose, _T, _R, _v, _J = self.sess.run([self.global_step, self.beta[frame_id], self.pose[frame_id],
+                                                                        self.T[frame_id], self.R[frame_id], self.v[frame_id], self.J[frame_id]],
                             feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                             self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                             self.gender_gt:batch_gender_t,
@@ -1162,9 +1164,25 @@ class _3DINN(object):
                             self.chamfer_gt: batch_chamfer_t,
                             self.images:batch_image_t,
                             self.resize_scale_gt: batch_resize_scale_t})
-              # save results in mat
-              print(beta, v.shape, J.shape, batch_image_t.shape)
-              sio.savemat(os.path.join(self.sample_dir, "gait" + str(idx_t) + str(int(idx)) + ".mat"), mdict={'v':v, 'J':J, 'image':batch_image_t})
+                    beta[idx_t].append(_beta)
+                    pose[idx_t].append(_pose)
+                    T[idx_t].append(_T)
+                    R[idx_t].append(_R)
+                    v[idx_t].append(_v)
+                    J[idx_t].append(_J)
+
+            for i in beta.keys():
+                print(i)
+                beta[i] = np.array(beta[i])
+                pose[i] = np.array(pose[i])
+                T[i] = np.array(T[i])
+                R[i] = np.array(R[i])
+                v[i] = np.array(v[i])
+                J[i] = np.array(J[i])
+                # save results in mat
+                print(beta[i].shape, pose[i].shape, t[i].shape, R[i].shape, v[i].shape, J[i].shape)
+                sio.savemat(os.path.join(self.sample_dir, "gait_" + str(i) + ".mat"),
+                            mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i], 'v':v[i], 'J':J[i]})
             break
         except tf.errors.OutOfRangeError:
             print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))

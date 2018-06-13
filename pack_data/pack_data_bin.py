@@ -28,5 +28,5 @@ subject = sys.argv[1]
 #a = b
 filename = "/home/local/mocap/tf_code/gait/surreal_" + subject + ".tfrecords"
 
-convert_to_tfrecords_from_folder(data_path, filename, test=is_test, get_samples=num_samples, with_idx=with_idx)
+convert_to_tfrecords_from_folder(data_path, filename, test=is_test, get_samples=num_samples, with_idx=with_idx, random_fid=False)
 print filename

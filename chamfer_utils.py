@@ -27,8 +27,11 @@ def get_chamfer(mask, scale=0.25):
   if len(non_occupied_pixels) == 0:
     return np.zeros((h_, w_)), h_, w_ 
 
-  print(len(occupied_pixels), len(non_occupied_pixels))
-  subsample = np.random.permutation(len(occupied_pixels))[: len(occupied_pixels)/4]  
+  if len(occupied_pixels) < 4:
+    subsample = np.random.permutation(len(occupied_pixels))
+  else:
+    subsample = np.random.permutation(len(occupied_pixels))[: len(occupied_pixels)/4]
+
   non_occupied_pixels = np.array(non_occupied_pixels) 
   occupied_pixels = np.array(occupied_pixels)
   occupied_pixels = occupied_pixels[np.array(subsample)]  

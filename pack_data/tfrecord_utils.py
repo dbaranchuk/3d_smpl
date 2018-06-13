@@ -325,10 +325,10 @@ def read_and_decode_surreal_with_idx(tfrecord_file):
            feature['f'], feature['resize_scale'], feature['gender'], feature['idx']
 
 
-def inputs_surreal(tf_filenames, batch_size, shuffle=True):
+def inputs_surreal(tf_filenames, batch_size, shuffle=True, num_frames=2):
   with tf.name_scope('surreal_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames)
-    pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_surreal(filename_queue, ) 
+    pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_surreal(filename_queue, num_frames)
     print(pose.shape)
     if not shuffle:
         return tf.train.batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f,

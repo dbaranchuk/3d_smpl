@@ -1130,7 +1130,6 @@ class _3DINN(object):
                                   self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t,
                                   self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
-                    print(idx_t)
                     if self.is_unsup_train:
                         _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],
                         feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
@@ -1158,8 +1157,8 @@ class _3DINN(object):
                             self.images:batch_image_t,
                             self.resize_scale_gt: batch_resize_scale_t})
 
-                            beta[idx_t[0]].append(batch_beta_t[0][frame_id])#_beta[0]
-                            pose[idx_t[0]].append(batch_pose_t[0][frame_id])#_pose[0])
+                            beta[idx_t[0]].append(_beta[0])
+                            pose[idx_t[0]].append(_pose[0])
 
                 for i in beta.keys():
                     print(i)
@@ -1167,7 +1166,7 @@ class _3DINN(object):
                     pose[i] = np.array(pose[i])
                     # save results in mat
                     print(beta[i].shape, pose[i].shape)
-                    sio.savemat(os.path.join(self.sample_dir, "gait_gt_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i]})
+                    sio.savemat(os.path.join(self.sample_dir, "gait_pretrained_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i]})
                 break
         except tf.errors.OutOfRangeError:
             print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))

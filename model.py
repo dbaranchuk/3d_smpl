@@ -1116,9 +1116,9 @@ class _3DINN(object):
                 tf_vis = 0
                 pixel_loss = 0
 
-                beta, pose, T, R = {},{},{},{}
-                beta[0], pose[0], T[0], R[0] = ([],[],[],[])
-                beta[1], pose[1], T[1], R[1]= ([],[],[],[])
+                beta, pose = {},{}
+                beta[0], pose[0] = ([],[])
+                beta[1], pose[1] = ([],[])
                 for i in range(138):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, \
@@ -1144,7 +1144,7 @@ class _3DINN(object):
                          self.resize_scale_gt: batch_resize_scale_t})
                     else:
                         for frame_id in range(self.config.num_frames):
-                            _beta, _pose, _T, _R, = self.sess.run([self.beta[frame_id], self.pose[frame_id], self.T[frame_id], self.R[frame_id]],
+                            _beta, _pose = self.sess.run([self.beta[frame_id], self.pose[frame_id],
                             feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                             self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                             self.gender_gt:batch_gender_t,
@@ -1159,17 +1159,13 @@ class _3DINN(object):
 
                             beta[idx_t[0]].append(batch_beta_t[0][frame_id])#_beta[0]
                             pose[idx_t[0]].append(batch_pose_t[0][frame_id])#_pose[0])
-                    #T[idx_t[0]].append(_T[0])
-                    #R[idx_t[0]].append(_R[0])
 
                 for i in beta.keys():
                     print(i)
                     beta[i] = np.array(beta[i])
                     pose[i] = np.array(pose[i])
-                    #T[i] = np.array(T[i])
-                    #R[i] = np.array(R[i])
                     # save results in mat
-                    print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape)
+                    print(beta[i].shape, pose[i].shape)
                     sio.savemat(os.path.join(self.sample_dir, "gait_gt_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i]})
                 break
         except tf.errors.OutOfRangeError:

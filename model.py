@@ -1157,20 +1157,20 @@ class _3DINN(object):
                             self.images:batch_image_t,
                             self.resize_scale_gt: batch_resize_scale_t})
 
-                    beta[idx_t[0]].append(batch_beta_t[0])#_beta[0])
-                    pose[idx_t[0]].append(batch_pose_t[0])#_pose[0])
-                    T[idx_t[0]].append(_T[0])
-                    R[idx_t[0]].append(_R[0])
+                            beta[idx_t[0]].append(batch_beta_t[frame_id])#_beta[0]
+                            pose[idx_t[0]].append(batch_pose_t[frame_id])#_pose[0])
+                    #T[idx_t[0]].append(_T[0])
+                    #R[idx_t[0]].append(_R[0])
 
                 for i in beta.keys():
                     print(i)
                     beta[i] = np.array(beta[i])
                     pose[i] = np.array(pose[i])
-                    T[i] = np.array(T[i])
-                    R[i] = np.array(R[i])
+                    #T[i] = np.array(T[i])
+                    #R[i] = np.array(R[i])
                     # save results in mat
                     print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape)
-                    sio.savemat(os.path.join(self.sample_dir, "gait_gt_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i]})
+                    sio.savemat(os.path.join(self.sample_dir, "gait_gt_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i]})
                 break
         except tf.errors.OutOfRangeError:
             print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))

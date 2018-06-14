@@ -1170,7 +1170,7 @@ class _3DINN(object):
                     R[i] = np.array(R[i])
                     # save results in mat
                     print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape)
-                    sio.savemat(os.path.join(self.sample_dir, "gait_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i]})
+                    sio.savemat(os.path.join(self.sample_dir, "gait_pretrained" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i]})
                 break
         except tf.errors.OutOfRangeError:
             print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))

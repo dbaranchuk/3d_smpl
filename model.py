@@ -1087,14 +1087,8 @@ class _3DINN(object):
         """Training"""
         t_vars = tf.trainable_variables()
         i_vars = [var for var in t_vars if "f_" not in var.name]
-        # flownet variables
-        #f_vars = [var for var in t_vars if "f_" in var.name]
-        #self.saver_f = tf.train.Saver(f_vars)
 
         self.saver_i = tf.train.Saver(i_vars + [self.global_step])
-        #sup_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1).minimize(self.sup_loss, global_step=self.global_step, var_list=i_vars)
-        #flow_optim = tf.train.GradientDescentOptimizer(config.learning_rate) \
-         #                        .minimize(self.flow_loss, global_step=self.global_step, var_list=f_vars)
         if self.is_unsup_train:
             recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1).minimize(self.recon_loss, global_step=self.global_step, var_list=i_vars)
 
@@ -1122,9 +1116,9 @@ class _3DINN(object):
                 tf_vis = 0
                 pixel_loss = 0
 
-                beta, pose, T, R, v, J = {},{},{},{},{},{}
-                beta[0], pose[0], T[0], R[0], v[0], J[0] = ([],[],[],[],[],[])
-                beta[1], pose[1], T[1], R[1], v[1], J[1] = ([],[],[],[],[],[])
+                beta, pose, T, R = {},{},{},{}
+                beta[0], pose[0], T[0], R[0] = ([],[],[],[])
+                beta[1], pose[1], T[1], R[1]= ([],[],[],[])
                 for i in range(138):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, \
@@ -1150,8 +1144,7 @@ class _3DINN(object):
                          self.resize_scale_gt: batch_resize_scale_t})
                     else:
                         for frame_id in range(self.config.num_frames):
-                            step, _beta, _pose, _T, _R, _v, _J = self.sess.run([self.global_step, self.beta[frame_id], self.pose[frame_id],
-                                                                        self.T[frame_id], self.R[frame_id], self.v[frame_id], self.J[frame_id]],
+                            _beta, _pose, _T, _R, = self.sess.run([self.beta[frame_id], self.pose[frame_id], self.T[frame_id], self.R[frame_id]],
                             feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                             self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                             self.gender_gt:batch_gender_t,
@@ -1168,8 +1161,6 @@ class _3DINN(object):
                             pose[idx_t[0]].append(_pose)
                             T[idx_t[0]].append(_T)
                             R[idx_t[0]].append(_R)
-                            v[idx_t[0]].append(_v)
-                            J[idx_t[0]].append(_J)
 
                 for i in beta.keys():
                     print(i)
@@ -1177,12 +1168,9 @@ class _3DINN(object):
                     pose[i] = np.array(pose[i])
                     T[i] = np.array(T[i])
                     R[i] = np.array(R[i])
-                    v[i] = np.array(v[i])
-                    J[i] = np.array(J[i])
                     # save results in mat
-                    print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape, v[i].shape, J[i].shape)
-                    sio.savemat(os.path.join(self.sample_dir, "gait_" + str(i) + ".mat"),
-                                mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i], 'v':v[i], 'J':J[i]})
+                    print(beta[i].shape, pose[i].shape, T[i].shape, R[i].shape)
+                    sio.savemat(os.path.join(self.sample_dir, "gait_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i], 'T':T[i], 'R':R[i]})
                 break
         except tf.errors.OutOfRangeError:
             print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))

@@ -134,6 +134,8 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   
   for frame_id in range(num_frames): 
       data_pose[frame_id, :] = output[frame_id]['pose']
+      print(output[frame_id]['pose'])
+      
       data_gender = int(output[frame_id]['gender'])
       data_R[frame_id, :3] = np.sin(output[frame_id]['R'])
       data_R[frame_id, 3:6] = np.cos(output[frame_id]['R'])

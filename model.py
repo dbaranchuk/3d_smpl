@@ -1144,7 +1144,7 @@ class _3DINN(object):
                          self.resize_scale_gt: batch_resize_scale_t})
                     else:
                         for frame_id in range(self.config.num_frames):
-                            _beta, _pose = self.sess.run([self.beta[frame_id], self.pose[frame_id],
+                            _beta, _pose = self.sess.run([self.beta[frame_id], self.pose[frame_id]],
                             feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                             self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                             self.gender_gt:batch_gender_t,

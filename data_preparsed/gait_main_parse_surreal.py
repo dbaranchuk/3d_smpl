@@ -6,8 +6,8 @@ import numpy as np
 import pickle as pkl
 from write_utils import write_syn_to_bin, read_syn_to_bin
 
-data_root_dir = '/home/local/mocap/data'
-write_root_dir = '/home/local/mocap/output'
+data_root_dir = '/home/local/data/cmc/synthetic/run0'
+write_root_dir = '/home/local/data/cmc/synthetic/bin'
 dataset_name = 'surreal'
 
 # actions to parse

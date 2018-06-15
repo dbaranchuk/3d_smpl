@@ -312,7 +312,7 @@ class _3DINN(object):
         # synthetic data from surreal
         surreal_train_filenames = ["../tf_code/gait/surreal_10_04.tfrecords"]
         self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr,\
-        self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.idx_sr, self.pmesh_sr, self.v_gt = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_train_filenames, self.config.batch_size))
+        self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.idx_sr, self.pmesh_sr, self.v_gt_sr = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_train_filenames, self.config.batch_size))
 #        surreal_train_filenames = ["../tf_code/tfrecords2/surreal2_quo" + str(id) + ".tfrecords" for id in range(1)]
 #        self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr, \
 #        self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.pmesh_sr, self.v_gt_sr = \

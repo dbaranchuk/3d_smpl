@@ -1072,7 +1072,7 @@ class _3DINN(object):
                     'seg': batch_seg_v, 'chamfer': batch_chamfer_v,
                     'project_mesh0':project_mesh0, 'project_mesh1':project_mesh1, 'pixel0': pixel0, 'pixel1':pixel1})
 
-              if step % 5000 == 0:
+              if step % 1000 == 0:
                 self.save(self.checkpoint_dir, step)
             break
         except tf.errors.OutOfRangeError:

@@ -30,7 +30,7 @@ full_write_path = os.path.join(write_root_dir, modality)
 for subject in subjects:
     for direction in directions:
         filename = subject + "_" + direction
-
+        print(filename)
         if os.path.exists(os.path.join(full_data_path, filename)):
             data_folder = os.path.join(full_data_path, filename)
             output_folder = full_write_path#os.path.join(full_write_path, filename)

@@ -33,7 +33,7 @@ for subject in subjects:
 
         if os.path.exists(os.path.join(full_data_path, filename)):
             data_folder = os.path.join(full_data_path, filename)
-            output_folder = os.path.join(full_write_path, filename)
+            output_folder = full_write_path#os.path.join(full_write_path, filename)
             check_dir(output_folder)
 
             subfiles = [fname[:-4] for fname in os.listdir(data_folder) if fname.endswith('.mp4')]

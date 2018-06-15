@@ -24,21 +24,12 @@ def get_file_list(data_path, quo =0, test=False):
                 line = f_.read(4) # num_frames
                 num_frames = struct.unpack('i', line)[0]
                 print filename, "nframes", num_frames
-            """
-                if test:
-                    for frame_id in range(num_frames - 1):
-                        if frame_id %20 == quo:
-                        #    files.append(os.path.join(p, filename) + "#" + str(frame_id))
-                        #fid = np.random.randint(num_frames-1)
+
+                for frame_id in range(num_frames - 1):
+                    if test or (not test and frame_id % 25 == 0):
                         files.append(os.path.join(p, filename) + "#" + str(frame_id))
-                else:
-                """
-            fid = num_frames
-            #fid = np.random.randint(num_frames-1)
-            files.append(os.path.join(p, filename) + "#" + str(fid))
     print("number of folder", num)
     return files
-
 
 
 def convert_to_npz_from_folder(folder_name, npz_filename, get_samples=None, quo=0):
@@ -92,14 +83,11 @@ def convert_to_npz_from_folder(folder_name, npz_filename, get_samples=None, quo=
            J_2d=data_J_2d, image=data_image, seg=data_seg, f=data_f, gender=data_gender)
 
 
-def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypoints_num=24, bases_num=10, chamfer_scale=0.5, fid=-1):
+def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypoints_num=24, bases_num=10, chamfer_scale=0.5, is_gait=False):
   filename, t = file_string.split("#")
   output = dict()
-
-  if fid == -1:
-    fid = np.random.randint(int(t)-1)
-  output[0] = read_syn_to_bin(filename, fid)
-  output[1] = read_syn_to_bin(filename, fid + 1)
+  output[0] = read_syn_to_bin(filename, int(t))
+  output[1] = read_syn_to_bin(filename, int(t) + 1)
 
   data_pose = np.zeros((num_frames, keypoints_num * 3))
   data_T = np.zeros((num_frames, 3))
@@ -119,9 +107,15 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
-################################
-  new_2d_center = np.round(J_2d[0, :] + 45*np.array([0, 1])) + 0.5*np.ones((2)) # + 10 * (np.random.uniform((2)) - 1))
-  s = 0.6 #1.3 + 0.1 * np.random.rand()
+
+  ##############################
+  if not is_gait:
+    new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
+    s = 1.2 #1.3 + 0.1 * np.random.rand()
+  else:
+    new_2d_center = np.round(J_2d[0, :] + 45 * np.array([0, 1])) + 0.5*np.ones((2))
+    s = 0.6
+
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
   new_image_size = int(2*crop_size)
   x_min = int(math.ceil(new_2d_center[0] - crop_size)) 
@@ -180,7 +174,7 @@ def _intList_feature(value):
   return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
 
 
-def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None, test=False, quo=0, with_idx=False, shuffle=True, random_fid=True):
+def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None, test=False, quo=0, with_idx=False, shuffle=True, is_gait=False):
     files = get_file_list(folder_name, quo, test=test)
     print('files', files)
     if shuffle:
@@ -195,38 +189,29 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
   
     writer = tf.python_io.TFRecordWriter(tf_filename)
     for sample_id in tqdm(range(get_samples)):
-        filename, t = files[sample_id].split("#")
-        num_frames = int(t)
-        if num_frames % 2 == 1:
-            num_frames -= 1
+        pose, T, R, beta, J, J_2d, image, seg, f, chamfer, c, gender, resize_scale = loadBatchSurreal_fromString(files[sample_id], crop_image_size, is_gait=is_gait)
+        scipy.misc.imsave('../tmp/image_' + str(sample_id) + '.png', image[0, :, :, :])
+        feature={
+            'pose': _floatList_feature(pose.flatten()),
+            'beta': _floatList_feature(beta.flatten()),
+            'T': _floatList_feature(T.flatten()),
+            'R': _floatList_feature(R.flatten()),
+            'J': _floatList_feature(J.flatten()),
+            'J_2d': _floatList_feature(J_2d.flatten()),
+            'image': _floatList_feature(image.flatten()),
+            'seg': _floatList_feature(seg.flatten()),
+            'f': _floatList_feature(f.flatten()),
+            'chamfer': _floatList_feature(chamfer.flatten()),
+            'c': _floatList_feature(c.flatten()),
+            'resize_scale': _floatList_feature(resize_scale.flatten()),
+            'gender': _intList_feature([gender])
+        }
+        if with_idx:
+            feature['idx'] = _intList_feature([sample_id])
 
-        for fid in range(0, num_frames, 2):
-            if random_fid:
-                fid = -1
-            pose, T, R, beta, J, J_2d, image, seg, f, chamfer, c, gender, resize_scale = loadBatchSurreal_fromString(files[sample_id], crop_image_size, fid=fid)
-            scipy.misc.imsave('../tmp/image_' + str(sample_id) + '.png', image[0, :, :, :])
-            feature={
-                'pose': _floatList_feature(pose.flatten()),
-                'beta': _floatList_feature(beta.flatten()),
-                'T': _floatList_feature(T.flatten()),
-                'R': _floatList_feature(R.flatten()),
-                'J': _floatList_feature(J.flatten()),
-                'J_2d': _floatList_feature(J_2d.flatten()),
-                'image': _floatList_feature(image.flatten()),
-                'seg': _floatList_feature(seg.flatten()),
-                'f': _floatList_feature(f.flatten()),
-                'chamfer': _floatList_feature(chamfer.flatten()),
-                'c': _floatList_feature(c.flatten()),
-                'resize_scale': _floatList_feature(resize_scale.flatten()),
-                'gender': _intList_feature([gender])
-            }
-            if with_idx:
-                feature['idx'] = _intList_feature([sample_id])
+        example = tf.train.Example(features=tf.train.Features(feature=feature))
+        writer.write(example.SerializeToString())
 
-            example = tf.train.Example(features=tf.train.Features(feature=feature))
-            writer.write(example.SerializeToString())
-            if random_fid:
-                break
     writer.close()
 
 

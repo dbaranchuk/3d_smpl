@@ -34,10 +34,10 @@ for subject in subjects:
             data_folder = os.path.join(full_data_path, filename)
             output_folder = full_write_path#os.path.join(full_write_path, filename)
             check_dir(output_folder)
-            print(data_folder)
             subfiles = [fname[:-4] for fname in os.listdir(data_folder) if fname.endswith('.mp4')]
             for sfile in subfiles:
                 print sfile
-                parsed_data = get_training_params(sfile, data_dir = full_data_path)
+                #### FIX ####
+                parsed_data = get_training_params(sfile, data_dir = full_data_path, direction)
                 write_syn_to_bin(parsed_data, os.path.join(output_folder, sfile) + ".bin")
           

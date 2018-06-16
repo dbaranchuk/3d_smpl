@@ -44,10 +44,7 @@ for action in actions:
         
         subfiles = [fname[:-4] for fname in os.listdir(data_folder) if fname.endswith('.mp4')]
         for sfile in subfiles:
-              #if "c0028" in sfile:
               print sfile
               parsed_data = get_training_params(sfile, data_dir = full_data_path) 
               write_syn_to_bin(parsed_data, os.path.join(output_folder, sfile) + ".bin")
-              #read_syn_to_bin(os.path.join(output_folder, sfile) + ".bin")
-              
           

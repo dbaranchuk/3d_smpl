@@ -12,8 +12,11 @@ from smpl_webuser.serialization import load_model
 smpl_dir = '../smpl'
 
 MALE = 1
-def get_training_params(filename, data_dir, direction):
-  folder_name = filename[:-6] + '_' + direction 
+def get_training_params(filename, data_dir, direction=None):
+  folder_name = filename[:-6]
+  if direction != None:
+    folder_name += '_' + direction
+  
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
   segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 
 

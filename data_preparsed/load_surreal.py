@@ -13,7 +13,6 @@ smpl_dir = '../smpl'
 
 MALE = 1
 def get_training_params(filename, data_dir, direction):
-  print(filename)
   folder_name = filename[:-6] + '_' + direction 
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
   segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 

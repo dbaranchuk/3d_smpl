@@ -8,7 +8,7 @@ from write_utils import write_syn_to_bin, read_syn_to_bin
 
 data_root_dir = '/home/local/data/cmc/synthetic/run0'
 write_root_dir = '/home/local/data/cmc/synthetic/bin'
-is_test = True
+is_test = False
 
 if is_test:
     subjects = ['ung_07_03', '08_05', '10_04', '39_02', 'ung_12_03']

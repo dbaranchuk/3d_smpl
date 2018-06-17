@@ -38,5 +38,5 @@ for subject in subjects:
             for sfile in subfiles:
                 print sfile
                 parsed_data = get_training_params(sfile, full_data_path, direction)
-                write_syn_to_bin(parsed_data, os.path.join(output_folder, sfile) + ".bin")
+                write_syn_to_bin(parsed_data, os.path.join(output_folder, sfile) + "_" + direction + ".bin")
           

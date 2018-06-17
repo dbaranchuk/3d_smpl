@@ -222,11 +222,11 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
             counters[filename] += 1
             feature['idx'] = _intList_feature([idx])#[sample_id])
 
-        for i in counters.keys():
-            print(counters[i])
         example = tf.train.Example(features=tf.train.Features(feature=feature))
         writer.write(example.SerializeToString())
 
+    for i in counters.keys():
+        print(counters[i])
     writer.close()
 
 

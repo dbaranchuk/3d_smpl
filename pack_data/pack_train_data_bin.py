@@ -8,7 +8,7 @@ import sys
 from tfrecord_utils import convert_to_tfrecords_from_folder
 with_idx=True
 dataset = "surreal"
-data_path = "/home/local/data/surreal/SURREAL/data/cmu"
+data_path = "/home/local/data/surreal/SURREAL/data/bin"
 is_test = False
 data_path = os.path.join(data_path, dataset)
 modalities = ['train', 'test', 'val']

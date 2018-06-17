@@ -12,7 +12,7 @@ import sys
 sys.path.insert(0, '../')
 from chamfer_utils import get_chamfer
 
-def get_file_list(data_path, quo =0, test=False):
+def get_file_list(data_path, quo=0, test=False):
     files = []
     num = 0
     for folder in tqdm(os.listdir(data_path)):

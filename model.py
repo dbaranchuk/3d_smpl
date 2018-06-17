@@ -1107,8 +1107,6 @@ class _3DINN(object):
                 pixel_loss = 0
 
                 beta, pose = {},{}
-                for i in range(4):
-                    beta[i], pose[i] = ([],[])
                 
                 for i in range(459):
                     # load testing data
@@ -1120,6 +1118,10 @@ class _3DINN(object):
                                   self.chamfer_sr_t, self.c_sr_t, self.f_sr_t,
                                   self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t,
                                   self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
+
+                    if beta[idx_t[0]] == None:
+                        print(idx_t[0])
+                        beta[idx_[0]], pose[idx_t[0]] = ([],[])
 
                     if self.is_unsup_train:
                         _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],

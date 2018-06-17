@@ -25,8 +25,8 @@ def get_file_list(data_path, quo=0, test=False):
                 num_frames = struct.unpack('i', line)[0]
                 print filename, "nframes", num_frames
 
-                for frame_id in range(num_frames - 1):
-                    if test or (not test and frame_id % 25 == 0):
+                for frame_id in range(0, num_frames-1, 2):
+                    if test or (not test and frame_id % 20 == 0):
                         files.append(os.path.join(p, filename) + "#" + str(frame_id))
     print("number of folder", num)
     return files

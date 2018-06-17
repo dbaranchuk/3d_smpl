@@ -13,8 +13,8 @@ def check_dir(path):
 data_path = "/home/local/data/surreal/SURREAL/data/cmu/"
 output_path = "/home/local/data/surreal/SURREAL/data/bin/"
 is_test = False
-modalities = ['train', 'test', 'val']
-runs = ['run0', 'run1', 'run2']
+modalities = ['test'] #'train', 'val'
+runs = ['run0']#, 'run1', 'run2']
 
 for modality in modalities:
     for run in runs:
@@ -28,6 +28,9 @@ for modality in modalities:
             file_folder = os.path.join(data_folder, filename)
             subfiles = [fname[:-4] for fname in os.listdir(file_folder) if fname.endswith('.mp4')]
             for sfile in subfiles:
+                c = sfile.split('_')[-1]
+                if c != 'c0001':
+                    continue
                 print sfile
                 parsed_data = get_training_params(sfile, data_dir = data_folder)
                 write_syn_to_bin(parsed_data, os.path.join(output_folder, sfile) + ".bin")

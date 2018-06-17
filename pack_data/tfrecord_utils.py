@@ -217,6 +217,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
                         max_idx = idx
                 filename_to_idx[filename] = max_idx + 1
             idx = filename_to_idx[filename]
+            print(t)
             feature['idx'] = _intList_feature([idx])#[sample_id])
 
         example = tf.train.Example(features=tf.train.Features(feature=feature))

@@ -1121,7 +1121,7 @@ class _3DINN(object):
 
                     if not idx_t[0] in beta:
                         print(idx_t[0])
-                        beta[idx_[0]], pose[idx_t[0]] = ([],[])
+                        beta[idx_t[0]], pose[idx_t[0]] = ([],[])
 
                     if self.is_unsup_train:
                         _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],

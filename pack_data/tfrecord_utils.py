@@ -189,6 +189,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
   
     writer = tf.python_io.TFRecordWriter(tf_filename)
     filename_to_idx = dict()
+    counters = dict()
     for sample_id in tqdm(range(get_samples)):
         pose, T, R, beta, J, J_2d, image, seg, f, chamfer, c, gender, resize_scale = loadBatchSurreal_fromString(files[sample_id], crop_image_size, is_gait=is_gait)
         scipy.misc.imsave('../tmp/image_' + str(sample_id) + '.png', image[0, :, :, :])
@@ -210,6 +211,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
         if with_idx:
             filename, t = files[sample_id].split("#")
             if not filename in filename_to_idx.keys():
+                counters[filename] = 0
                 max_idx = -1
                 for fname in filename_to_idx.keys():
                     idx = filename_to_idx[fname]
@@ -217,8 +219,11 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
                         max_idx = idx
                 filename_to_idx[filename] = max_idx + 1
             idx = filename_to_idx[filename]
+            counters[filename] += 1
             feature['idx'] = _intList_feature([idx])#[sample_id])
 
+        for i in counters.keys():
+            print(counters[i])
         example = tf.train.Example(features=tf.train.Features(feature=feature))
         writer.write(example.SerializeToString())
 

@@ -210,7 +210,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
         if with_idx:
             filename, t = files[sample_id].split("#")
             if not filename in filename_to_idx.keys():
-                max_idx = 0
+                max_idx = -1
                 for fname in filename_to_idx.keys():
                     idx = filename_to_idx[fname]
                     if idx > max_idx:

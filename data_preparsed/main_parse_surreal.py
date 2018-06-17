@@ -18,6 +18,7 @@ runs = ['run0', 'run1', 'run2']
 
 for modality in modalities:
     for run in runs:
+        print(modality, run)
         data_folder = os.path.join(data_path, modality, run)
         output_folder = os.path.join(output_path, modality, run)
         if not os.path.exists(data_folder):

@@ -903,19 +903,12 @@ class _3DINN(object):
               batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image,\
                 batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, \
                 batch_gender, batch_J_c, batch_v_gt = \
-                self.sess.run([ self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr,
-                                self.J_2d_sr, self.image_sr, self.seg_sr, self.chamfer_sr,
-                                self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr,
-                                self.J_c_sr, self.v_gt_sr])
+                self.sess.run([ self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr, self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.v_gt_sr])
               # load validation/testing data
               batch_pose_v, batch_beta_v, batch_T_v, batch_R_v, batch_J_v, batch_J_2d_v, \
                   batch_image_v, batch_seg_v, batch_chamfer_v, batch_c_v, batch_f_v, \
-                  batch_resize_scale_v, batch_gender_v, batch_J_c_v, idx_v, batch_pmesh_v,\
-                  batch_v_gt_v = self.sess.run([ self.pose_sr_v, self.beta_sr_v, self.T_sr_v, self.R_sr_v,
-                                  self.J_sr_v, self.J_2d_sr_v, self.image_sr_v, self.seg_sr_v,
-                                  self.chamfer_sr_v, self.c_sr_v, self.f_sr_v, 
-                                  self.resize_scale_sr_v, self.gender_sr_v, self.J_c_sr_v,
-                                  self.idx_sr_v, self.pmesh_sr_v, self.v_gt_v])
+                  batch_resize_scale_v, batch_gender_v, batch_J_c_v, idx_v,\
+              batch_pmesh_v, batch_v_gt_v = self.sess.run([ self.pose_sr_v, self.beta_sr_v, self.T_sr_v, self.R_sr_v, self.J_sr_v, self.J_2d_sr_v, self.image_sr_v, self.seg_sr_v, self.chamfer_sr_v, self.c_sr_v, self.f_sr_v, self.resize_scale_sr_v, self.gender_sr_v, self.J_c_sr_v, self.idx_sr_v, self.pmesh_sr_v, self.v_gt_v])
               if self.config.is_sup_train:
                 _, step, sup_loss, d3_loss, d2_loss, beta_ \
                    = self.sess.run([sup_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0]],
@@ -1082,7 +1075,6 @@ class _3DINN(object):
         print("----------------")
         print("Start predicting")
         print("----------------")
-        """Training"""
         t_vars = tf.trainable_variables()
         i_vars = [var for var in t_vars if "f_" not in var.name]
 
@@ -1115,9 +1107,10 @@ class _3DINN(object):
                 pixel_loss = 0
 
                 beta, pose = {},{}
-                beta[0], pose[0] = ([],[])
-                beta[1], pose[1] = ([],[])
-                for i in range(138):
+                for i in range(4):
+                    beta[i], pose[i] = ([],[])
+                
+                for i in range(459):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, \
                         batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, \

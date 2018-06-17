@@ -1107,7 +1107,7 @@ class _3DINN(object):
                 pixel_loss = 0
 
                 beta, pose = {},{}
-                
+
                 for i in range(459):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, \
@@ -1119,7 +1119,7 @@ class _3DINN(object):
                                   self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t,
                                   self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
-                    if beta[idx_t[0]] == None:
+                    if not idx_t[0] in beta:
                         print(idx_t[0])
                         beta[idx_[0]], pose[idx_t[0]] = ([],[])
 

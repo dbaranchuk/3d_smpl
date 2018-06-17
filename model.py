@@ -1108,7 +1108,7 @@ class _3DINN(object):
 
                 beta, pose = {},{}
 
-                for i in range(910):
+                for i in range(455):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, \
                         batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, \

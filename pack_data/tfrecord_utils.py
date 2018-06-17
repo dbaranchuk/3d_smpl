@@ -26,7 +26,7 @@ def get_file_list(data_path, quo=0, test=False):
                 print filename, "nframes", num_frames
 
                 for frame_id in range(num_frames - 1):
-                    if test or (not test and frame_id % 25 == 0):
+                    if test or (not test and frame_id % 20 == 0):
                         files.append(os.path.join(p, filename) + "#" + str(frame_id))
     print("number of folder", num)
     return files

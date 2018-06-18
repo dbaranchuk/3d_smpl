@@ -118,7 +118,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   else:
     new_2d_center = np.round(J_2d[0, :] + 45 * np.array([0, 1])) + 0.5*np.ones((2))
     s = 0.6
-
+  print(new_2d_center)
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
   new_image_size = int(2*crop_size)
   x_min = int(math.ceil(new_2d_center[0] - crop_size)) 
@@ -139,7 +139,6 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       data_f[frame_id, :] = output[frame_id]['f']
       data_T[frame_id, :] = output[frame_id]['T']
       data_J[frame_id, :, :] = output[frame_id]['J']
-    
       data_J_2d[frame_id, :, :] = resize_scale * (output[frame_id]['J_2d'] - np.reshape(new_origin, [1, -1]))
       
       # crop image
@@ -150,7 +149,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       img_y_min = max(y_min, 0)
       img_y_max = min(y_max, h -1)
       print(h, w, img_x_min, img_x_max, img_y_min, img_y_max)
-      
+
       crop_image = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32) 
       crop_image[max(0, -y_min):max(0, -y_min) + img_y_max - img_y_min + 1, \
                  max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1, :] \

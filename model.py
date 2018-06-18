@@ -111,7 +111,8 @@ class _3DINN(object):
           self.T_loss += eud_loss(self.T[frame_id], T_gt_split[frame_id])
 
         # supervised loss
-        self.sup_loss = self.pose_loss + 0.05 * self.beta_loss + self.R_loss + 0.1 * self.T_loss
+        #self.sup_loss = self.pose_loss + 0.05 * self.beta_loss + self.R_loss + 0.1 * self.T_loss
+        self.sup_loss = self.pose_loss + self.beta_loss + 0.1 * self.R_loss + 0.1 * self.T_loss
         seg = self.seg_gt
         chamfer = self.chamfer_gt
 
@@ -205,9 +206,7 @@ class _3DINN(object):
           S_I = tf.squeeze(tf.image.resize_images(tf.expand_dims(seg_split[frame_id], 3), [small_height, small_width]), 3) 
           C_I = chamfer_split[frame_id]
           
-          self.silh_loss += tf.reduce_mean(tf.square(\
-              self.config.alpha * self.S_M[frame_id] * C_I + \
-              (1-self.config.alpha) * S_I * self.C_M[frame_id]))
+          self.silh_loss += tf.reduce_mean(tf.square(self.config.alpha * self.S_M[frame_id] * C_I + (1-self.config.alpha) * S_I * self.C_M[frame_id]))
           if frame_id == 0:
             self.output = self.S_M[frame_id]
 
@@ -231,7 +230,7 @@ class _3DINN(object):
         if self.config.key_loss:
           self.recon_loss += 0.01*self.d2_loss #self.pixel_loss + 10 * self.silh_loss #+ self.d3_loss  
         if self.config.silh_loss:
-          self.recon_loss += 0.00000000000000001*self.silh_loss
+          self.recon_loss += 0.0000000000000001*self.silh_loss
         if self.config.pixel_loss:
           self.recon_loss += 0.01 * self.pixel_loss
    

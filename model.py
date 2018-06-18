@@ -1028,8 +1028,8 @@ class _3DINN(object):
             self.sess.run(init_op)
 
         # Start input enqueue threads.
-        #coord = tf.train.Coordinator()
-        #threads = tf.train.start_queue_runners(sess=self.sess, coord=coord)
+        coord = tf.train.Coordinator()
+        threads = tf.train.start_queue_runners(sess=self.sess, coord=coord)
 
         """load data"""
         start_time = time.time()
@@ -1043,21 +1043,20 @@ class _3DINN(object):
               else:
                 print(" [!] Load pretrained failed...", self.config.model_dir)
                 return
-        #try:
-            #while not coord.should_stop():
-        #tf_vis = 0
-        #pixel_loss = 0
+        try:
+            while not coord.should_stop():
+                #tf_vis = 0
+                #pixel_loss = 0
+                beta, pose = {},{}
+                for i in range(458):
+                    # load testing data
+                    batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, batch_resize_scale_t, batch_gender_t, batch_J_c_t, idx_t, batch_pmesh_t, batch_v_gt_t = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
-        beta, pose = {},{}
-        for i in range(458):
-            # load testing data
-            batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, batch_resize_scale_t, batch_gender_t, batch_J_c_t, idx_t, batch_pmesh_t, batch_v_gt_t = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
+                    if not idx_t[0] in beta:
+                        beta[idx_t[0]], pose[idx_t[0]] = ([],[])
 
-            if not idx_t[0] in beta:
-                beta[idx_t[0]], pose[idx_t[0]] = [], []
-
-            if self.is_unsup_train:
-                _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],
+                    if self.is_unsup_train:
+                        _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],
                         feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                          self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                          self.gender_gt:batch_gender_t,
@@ -1068,9 +1067,9 @@ class _3DINN(object):
                          self.chamfer_gt: batch_chamfer_t,
                          self.images:batch_image_t,
                          self.resize_scale_gt: batch_resize_scale_t})
-            else:
-                for frame_id in range(self.config.num_frames):
-                    _beta, _pose = self.sess.run([self.beta[frame_id], self.pose[frame_id]],
+                    else:
+                        for frame_id in range(self.config.num_frames):
+                            _beta, _pose = self.sess.run([self.beta[frame_id], self.pose[frame_id]],
                             feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                             self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                             self.gender_gt:batch_gender_t,
@@ -1083,24 +1082,24 @@ class _3DINN(object):
                             self.images:batch_image_t,
                             self.resize_scale_gt: batch_resize_scale_t})
 
-                    beta[idx_t[0]].append(_beta[0])
-                    pose[idx_t[0]].append(_pose[0])
+                            beta[idx_t[0]].append(_beta[0])
+                            pose[idx_t[0]].append(_pose[0])
 
-            for i in beta.keys():
-                print(i)
-                beta[i] = np.array(beta[i])
-                pose[i] = np.array(pose[i])
-                # save results in mat
-                print(beta[i].shape, pose[i].shape)
-                sio.savemat(os.path.join(self.sample_dir, "gait_pretrained_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i]})
-
-        #except tf.errors.OutOfRangeError:
-        #    print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))
-        #finally:
-        #    # When done, ask the threads to stop.
-        #    coord.request_stop()
+                for i in beta.keys():
+                    print(i)
+                    beta[i] = np.array(beta[i])
+                    pose[i] = np.array(pose[i])
+                    # save results in mat
+                    print(beta[i].shape, pose[i].shape)
+                    sio.savemat(os.path.join(self.sample_dir, "gait_pretrained_" + str(i) + ".mat"), mdict={'beta':beta[i], 'pose':pose[i]})
+                break
+        except tf.errors.OutOfRangeError:
+            print('Done training for %d epochs, %d steps.' % (FLAGS.num_epochs, step))
+        finally:
+            # When done, ask the threads to stop.
+            coord.request_stop()
         # Wait for threads to finish.
-        #coord.join(threads)
+        coord.join(threads)
         self.sess.close()
 
 
@@ -1171,6 +1170,7 @@ class _3DINN(object):
 #                    'J':J, 'batch_J': batch_J_v, 'image': batch_image_v, \
 #                    'seg': batch_seg_v, 'chamfer': batch_chamfer_v,
 #                    'project_mesh0':project_mesh0, 'project_mesh1':project_mesh1, 'pixel0': pixel0, 'pixel1':pixel1})
+
 
 #        if self.config.is_dryrun:
 #            batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image,\

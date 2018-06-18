@@ -1045,8 +1045,8 @@ class _3DINN(object):
                 return
         #try:
             #while not coord.should_stop():
-        tf_vis = 0
-        pixel_loss = 0
+        #tf_vis = 0
+        #pixel_loss = 0
 
         beta, pose = {},{}
         for i in range(458):
@@ -1054,7 +1054,7 @@ class _3DINN(object):
             batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, batch_resize_scale_t, batch_gender_t, batch_J_c_t, idx_t, batch_pmesh_t, batch_v_gt_t = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
             if not idx_t[0] in beta:
-                beta[idx_t[0]], pose[idx_t[0]] = ([],[])
+                beta[idx_t[0]], pose[idx_t[0]] = [], []
 
             if self.is_unsup_train:
                 _, step, sup_loss, d3_loss, d2_loss, _beta, _v, _J, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.v[0], self.J[0], self.tf_visibility],

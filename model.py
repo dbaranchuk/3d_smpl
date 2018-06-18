@@ -1024,8 +1024,8 @@ class _3DINN(object):
         if self.is_unsup_train:
             recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1).minimize(self.recon_loss, global_step=self.global_step, var_list=i_vars)
 
-            init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
-            self.sess.run(init_op)
+        init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+        self.sess.run(init_op)
 
         # Start input enqueue threads.
         coord = tf.train.Coordinator()

@@ -11,13 +11,13 @@ dataset = "surreal"
 data_path = "/home/local/data/surreal/SURREAL/data/bin"
 is_test = False
 data_path = os.path.join(data_path, dataset)
-modalities = ['train', 'test', 'val']
-runs = ['run0', 'run1', 'run2']
+modalities = ['test']#['train', 'test', 'val']
+runs = ['run0']#, 'run1', 'run2']
 
 for modality in modalities:
     data_path = os.path.join(data_path, modality)
     for run in runs:
-        data_path = os.path.join(data_path, run)
+        #data_path = os.path.join(data_path, run)
         if not os.path.exists(data_path):
             continue
 

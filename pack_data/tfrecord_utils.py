@@ -31,6 +31,7 @@ def get_file_list(data_path, quo=0, test=False):
                     if test or (not test and frame_id % 20 == 0):
                         files.append(os.path.join(p, filename) + "#" + str(frame_id))
     print("number of folder", num)
+    print("number of files", len(files))
     return files
 
 
@@ -178,7 +179,6 @@ def _intList_feature(value):
 
 def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None, test=False, quo=0, with_idx=False, shuffle=True, is_gait=False):
     files = get_file_list(folder_name, quo, test=test)
-    print('files', files)
     if shuffle:
         random.shuffle(files)
     num_files = len(files)

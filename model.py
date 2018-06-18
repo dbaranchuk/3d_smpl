@@ -236,8 +236,7 @@ class _3DINN(object):
           self.recon_loss += 0.01 * self.pixel_loss
    
         # summary
-        base_summ = [pose_loss_summary, beta_loss_summary, d3_loss_summary, centered_d3_loss_summary, d2_loss_summary, 
-                     d2_image_summary, R_loss_summary, T_loss_summary, centered_mesh_loss_summary]
+        base_summ = [pose_loss_summary, beta_loss_summary, d3_loss_summary, centered_d3_loss_summary, d2_loss_summary, d2_image_summary, R_loss_summary, T_loss_summary, centered_mesh_loss_summary]
         if self.config.silh_loss:
           base_summ.append(silh_loss_summary) 
         if self.config.pretrained_flownet:

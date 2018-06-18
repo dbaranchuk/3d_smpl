@@ -964,8 +964,8 @@ class _3DINN(object):
                          self.chamfer_gt: batch_chamfer_v,
                          self.images:batch_image_v,
                          self.resize_scale_gt: batch_resize_scale_v})
-                  self.writer.add_summary(summ_str, step)
-                  print("[test, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f)(%.4f), d2: %.4f (%.6f), pixel: %.4f, silh: %.4f, beta: %.4f, pose: %.4f, R:%.4f, T: %.4f" % (idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss, beta_loss, pose_loss, R_loss, T_loss))
+                    self.writer.add_summary(summ_str, step)
+                    print("[test, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f)(%.4f), d2: %.4f (%.6f), pixel: %.4f, silh: %.4f, beta: %.4f, pose: %.4f, R:%.4f, T: %.4f" % (idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, pixel_loss, silh_loss, beta_loss, pose_loss, R_loss, T_loss))
                 else: # training with only supervision
                     params = [self.global_step, self.syn_summary, self.sup_loss, self.v[0], self.J[0], self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.beta_loss, self.pose_loss, self.R_loss, self.T_loss]
 

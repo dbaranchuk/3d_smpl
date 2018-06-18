@@ -10,7 +10,6 @@ with_idx=True
 dataset = "surreal"
 data_path = "/home/local/data/surreal/SURREAL/data/bin"
 is_test = False
-data_path = os.path.join(data_path, dataset)
 modalities = ['test']#['train', 'test', 'val']
 runs = ['run0']#, 'run1', 'run2']
 

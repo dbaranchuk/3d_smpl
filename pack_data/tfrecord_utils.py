@@ -146,7 +146,6 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       img_x_max = min(x_max, w -1)
       img_y_min = max(y_min, 0)
       img_y_max = min(y_max, h -1)
-      print(h, w, img_x_min, img_x_max, img_y_min, img_y_max)
 
       crop_image = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32) 
       crop_image[max(0, -y_min):max(0, -y_min) + img_y_max - img_y_min + 1, \

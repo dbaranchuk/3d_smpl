@@ -20,5 +20,5 @@ data_path = os.path.join(data_path, modality)
 print data_path
 
 filename = "/home/local/mocap/tf_code/gait/" + dataset + "/" + modality + ".tfrecords"
-convert_to_tfrecords_from_folder(data_path, filename, test=is_test, with_idx=with_idx, is_gait=True)
+convert_to_tfrecords_from_folder(data_path, filename, is_test=is_test, with_idx=with_idx, is_gait=True)
 print filename

@@ -175,8 +175,9 @@ def _intList_feature(value):
   return tf.train.Feature(int64_list=tf.train.Int64List(value=value))
 
 
-def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None, test=False, quo=0, with_idx=False, shuffle=True, is_gait=False):
-    files = get_file_list(folder_name, quo, test=test)
+def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None, is_test=False, quo=0, with_idx=False, shuffle=True, is_gait=False):
+    files = get_file_list(folder_name, quo, test=is_test)
+    shuffle = not is_test
     if shuffle:
         random.shuffle(files)
     num_files = len(files)

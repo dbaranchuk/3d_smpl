@@ -56,6 +56,7 @@ def get_training_params(filename, data_dir, direction=None):
   all_seg = np.zeros((num_frames, h, w), dtype=np.bool_)
   all_image = np.zeros((num_frames, h, w, 3), dtype=np.uint8)
 
+  print(segs)
   for frame_id in range(num_frames):
  
     img = cap.get_data(frame_id)

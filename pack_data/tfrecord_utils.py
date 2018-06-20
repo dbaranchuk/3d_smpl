@@ -25,7 +25,7 @@ def get_file_list(data_path, quo=0, test=False):
                 num_frames = struct.unpack('i', line)[0]
                 print filename, "nframes", num_frames
 
-                for frame_id in range(0, num_frames, 2):
+                for frame_id in range(0, num_frames-1, 2):
                     if not test and frame_id == 0:
                         continue
                     if test or (not test and frame_id % 10 == 0): #

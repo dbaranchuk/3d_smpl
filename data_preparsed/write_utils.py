@@ -41,6 +41,7 @@ def read_syn_to_bin(filename, frame_id):
     line = f_.read(4)
     num_frames = struct.unpack('i', line)[0] 
     num_elements_in_line = 10 + 72 + 2 + 3 + 3 + 24 * 3 + 24 * 2 + h * w * 3
+    print(num_elements_in_line)
     # get to the head of requested frame
     _ = f_.read((4 * (num_elements_in_line) + h * w) * frame_id)
     line = f_.read(4 * num_elements_in_line)

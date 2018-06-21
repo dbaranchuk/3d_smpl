@@ -316,7 +316,7 @@ class _3DINN(object):
         #self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.idx_sr, self.pmesh_sr, self.v_gt_sr = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_train_filenames, self.config.batch_size))
 
         # validation data from surreal
-        surreal_test_filenames = ["../tf_code/tfrecords2/surreal2_100_test_quo1.tfrecords"]
+        surreal_valid_filenames = ["../tf_code/tfrecords2/surreal2_100_test_quo1.tfrecords"]
         #surreal_valid_filenames = ["../tf_code/gait/surreal/prev/test.tfrecords"]
         self.pose_sr_v, self.beta_sr_v, self.T_sr_v, self.R_sr_v, self.J_sr_v, self.J_2d_sr_v, self.image_sr_v, self.seg_sr_v,\
         self.chamfer_sr_v, self.c_sr_v, self.f_sr_v, self.resize_scale_sr_v, self.gender_sr_v, self.J_c_sr_v, self.idx_sr_v, self.pmesh_sr_v, self.v_gt_v = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_valid_filenames, self.config.batch_size))

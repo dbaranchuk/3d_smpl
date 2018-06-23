@@ -775,7 +775,6 @@ class _3DINN(object):
                  tf.sqrt(tf.reduce_sum(tf.square(diff_right), [1, 2])))/2
           
           scale = avg_limb/avg
-
           coords_3d_rot = coords_3d_rot * tf.reshape(scale, [-1, 1, 1])          
           return coords_3d_trans, coords_3d_rot, scale
 
@@ -986,7 +985,7 @@ class _3DINN(object):
                 pixel_loss = 0
                 for idx in xrange(0, self.config.max_iter):
                     # load test data
-                    batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image, batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_J_c, idx, batch_pmesh, batch_v_gt = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
+                    batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image, batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_J_c, _idx, batch_pmesh, batch_v_gt = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
                     # Train interation
                     _, step, sup_loss, d3_loss, d2_loss, beta_, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.tf_visibility], feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.pmesh_gt:batch_pmesh, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})

@@ -8,7 +8,6 @@
 #CUDA_VISIBLE_DEVICES=0 python main.py --name=model4 --model_dir=checkpoint/model4 --is_train=True --learning_rate=0.000001  --batch_size=64 --gf_dim=32 --is_sup_train=True --max_iter=2000
 
 #finetune
-CUDA_VISIBLE_DEVICES=0 python main.py --name=finetuned --batch_size=1 --model_dir=checkpoint/model4 --gf_dim=32 --is_sup_train=False --is_train=True
---key_loss=True --max_iter=1000
+CUDA_VISIBLE_DEVICES=0 python main.py --name=finetuned --batch_size=1 --model_dir=checkpoint/model4 --gf_dim=32 --is_sup_train=False --is_train=True --key_loss=True --max_iter=1000
 
 #CUDA_VISIBLE_DEVICES=0 python main.py --name=model0 --batch_size=1 --model_dir=checkpoint/model0 --gf_dim=32 --is_sup_train=False --is_train=False #--key_loss=True #--silh_loss=True

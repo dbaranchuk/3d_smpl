@@ -160,6 +160,9 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
                  max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1, :] \
                  = image[img_y_min:img_y_max + 1, img_x_min:img_x_max +1, :] 
       data_image[frame_id, :, :, :] = scipy.misc.imresize(crop_image, [image_size, image_size])
+      #
+      cv2.imwrite(img_path+str(frame_id)+'src.jpg', scipy.misc.imresize(crop_image, [image_size, image_size]))
+
       seg_float = output[frame_id]['seg'].astype(np.float32)
       crop_seg = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32)
       crop_seg[max(0, -y_min):max(0, -y_min) + img_y_max - img_y_min + 1, \
@@ -173,6 +176,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       #print np.max(output['seg'][sample_id, :, :])
       data_seg[frame_id, :, :] = seg[:, :, 0]
       data_chamfer[frame_id, :, :], _, _ = get_chamfer(seg[:,:,0], chamfer_scale)
+  exit()
   return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_image/255.0,\
          data_seg, data_f, data_chamfer, data_c, data_gender, data_resize_scale  
 

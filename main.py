@@ -59,7 +59,8 @@ def main(_):
         if FLAGS.is_train:
             if FLAGS.is_sup_train:
                 my3DINN.train()
-            else my3DINN.unsup_train()
+            else:
+                my3DINN.unsup_train()
         else:
             my3DINN.predict()
 

@@ -107,16 +107,16 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   # Cropping
   old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
   # Use keypoint 0 in frame1 as center
-  J_2d = output[0]['J_2d'].astype('int32')
+  J_2d = output[0]['J_2d']#.astype('int32')
   J_2d[:, 1] = 240 - J_2d[:, 1]
-  import cv2
-  img_path = '/home/local/tmp/'
-  image = output[0]['image']
-  for i in range(24):
-      joint = J_2d[i]
-      cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
-      cv2.imwrite(img_path+'vis.jpg', image)
-  exit()
+#  import cv2
+#  img_path = '/home/local/tmp/'
+#  image = output[0]['image']
+#  for i in range(24):
+#      joint = J_2d[i]
+#      cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
+#      cv2.imwrite(img_path+'vis.jpg', image)
+#  exit()
 
   ##############################
   if not is_gait:

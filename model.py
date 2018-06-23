@@ -601,7 +601,8 @@ class _3DINN(object):
 
         import cv2
         print(batch_gmap[0].shape)
-        vis = batch_gmap[0].transpose((2, 0, 1))
+        vis = tf.transpose(batch_gmap[0], perm=[2, 0, 1]).eval()
+        print(type(vis))
         img_path = '/home/local/tmp/'
         for i, gmap in enumerate(vis):
             cv2.imwrite(img_path+str(i)+'.jpg', gmap)

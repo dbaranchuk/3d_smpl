@@ -989,6 +989,7 @@ class _3DINN(object):
                     image = batch_image[0]
                     for i in range(24):
                         joint = batch_J_2d[0]
+                        print(type(joint), joint.shape, tuple(joint))
                         cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
                     cv2.imwrite(img_path, image)
                     exit(0)

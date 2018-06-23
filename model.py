@@ -563,11 +563,12 @@ class _3DINN(object):
         #jointPos = tf.reshape(jointPos, [self.config.batch_size, 1, 1, self.config.keypoints_num*2])
         #[posX, posY] = tf.split(3, 2, jointPos)
 
-        print(type(coords_2d), coords_2d.shape)
         import cv2
         img_path = '/home/local/tmp/vis.jpg'
         image = np.zeros(128, 128, 3)
-        for joint in coords_2d:
+        for i in range(24):
+            joint = coords_2d[0][i]
+            print(type(joint))
             cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
         cv2.imwrite(img_path, image)
         exit(0)

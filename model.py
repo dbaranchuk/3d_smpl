@@ -600,6 +600,7 @@ class _3DINN(object):
         print_shape(batch_gmap)
 
         import cv2
+        print(batch_gmap[0].shape)
         vis = np.transpose(batch_gmap[0], (2, 0, 1))
         img_path = '/home/local/tmp/'
         for i, gmap in enumerate(vis):

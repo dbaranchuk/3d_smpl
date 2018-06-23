@@ -563,10 +563,16 @@ class _3DINN(object):
         #jointPos = tf.reshape(jointPos, [self.config.batch_size, 1, 1, self.config.keypoints_num*2])
         #[posX, posY] = tf.split(3, 2, jointPos)
 
+        print(type(coords_2d), coords_2d.shape)
+        import cv2
+        img_path = '/home/local/tmp/vis.jpg'
+        image = np.zeros(128, 128, 3)
+        for joint in coords_2d:
+            cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
+        cv2.imwrite(img_path, image)
+        exit(0)
         # adjusted codes
         [x, y] = tf.split(coords_2d, 2, 2)
-        print_shape(x)
-        print_shape(y)
         posX = tf.reshape(x, [self.config.batch_size, 1, 1, self.config.keypoints_num], name="posX") # [batch_size, 1, 1, keypoints_num]
         posY = tf.reshape(y, [self.config.batch_size, 1, 1, self.config.keypoints_num], name="posY")
         return self.batchPointToGaussianMap(posX, posY, self.xIdxMap, self.yIdxMap, image_size_h, image_size_w, gWidth, gStddev)
@@ -598,13 +604,6 @@ class _3DINN(object):
         print_shape(batch_norm)
         batch_gmap = tf.div(batch_gmap, batch_norm, name="batch_gmap")
         print_shape(batch_gmap)
-
-        print(batchX0)
-        import cv2
-        img_path = '/home/local/tmp/'
-        for i, gmap in enumerate(vis):
-            cv2.imwrite(img_path+str(i)+'.jpg', gmap)
-        exit(0)
         return batch_gmap
 
 

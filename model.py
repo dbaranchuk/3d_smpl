@@ -598,8 +598,8 @@ class _3DINN(object):
         print_shape(batch_norm)
         batch_gmap = tf.div(batch_gmap, batch_norm, name="batch_gmap")
         print_shape(batch_gmap)
-        print(type(batch_gmap), type(tf.Session().run(batch_gmap)))
 
+        print(batchX0)
         import cv2
         img_path = '/home/local/tmp/'
         for i, gmap in enumerate(vis):

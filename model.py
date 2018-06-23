@@ -565,7 +565,7 @@ class _3DINN(object):
 
         import cv2
         img_path = '/home/local/tmp/vis.jpg'
-        image = np.zeros(128, 128, 3)
+        image = np.zeros((128, 128, 3))
         for i in range(24):
             joint = coords_2d[0][i]
             print(type(joint))

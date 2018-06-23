@@ -590,6 +590,8 @@ class _3DINN(object):
 
         batch_gmap = (1./(2.*math.pi*var))*tf.exp(-(x2+y2)/(2.*var), name="batch_gmap") #2d gaussian doen't have sqrt()
         print_shape(batch_gmap)
+        vis = batch_gmap[0].copy().sum(2)[:,:,0]
+        print(type(batch_gmap), vis.shape)
         #normalize
         batch_sum = tf.reduce_sum(batch_gmap, [1, 2], True, name="batch_sum")
         print_shape(batch_sum)
@@ -600,8 +602,6 @@ class _3DINN(object):
         print_shape(batch_gmap)
 
         import cv2
-        vis = self.sess.run(batch_gmap[0]).transpose((2, 0, 1))
-        print(type(vis))
         img_path = '/home/local/tmp/'
         for i, gmap in enumerate(vis):
             cv2.imwrite(img_path+str(i)+'.jpg', gmap)

@@ -897,7 +897,7 @@ class _3DINN(object):
               # load validation data
               batch_pose_v, batch_beta_v, batch_T_v, batch_R_v, batch_J_v, batch_J_2d_v, batch_image_v, batch_seg_v, batch_chamfer_v, batch_c_v, batch_f_v, batch_resize_scale_v, batch_gender_v, batch_J_c_v, idx_v, batch_pmesh_v, batch_v_gt_v = self.sess.run([ self.pose_sr_v, self.beta_sr_v, self.T_sr_v, self.R_sr_v, self.J_sr_v, self.J_2d_sr_v, self.image_sr_v, self.seg_sr_v, self.chamfer_sr_v, self.c_sr_v, self.f_sr_v, self.resize_scale_sr_v, self.gender_sr_v, self.J_c_sr_v, self.idx_sr_v, self.pmesh_sr_v, self.v_gt_v])
 
-              _, step, sup_loss, d3_loss, d2_loss = self.sess.run([sup_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, feed_dict={\
+              _, step, sup_loss, d3_loss, d2_loss = self.sess.run([sup_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss], feed_dict={\
                          self.beta_gt:batch_beta, self.pose_gt:batch_pose,
                          self.T_gt: batch_T, self.R_gt:batch_R,
                          self.gender_gt:batch_gender,

@@ -57,9 +57,11 @@ def main(_):
     with tf.Session() as sess:
         my3DINN = _3DINN(sess, config=FLAGS, checkpoint_dir=checkpoint_dir_, logs_dir=logs_dir_, sample_dir=sample_dir_)
         if FLAGS.is_train:
-            my3DINN.train(FLAGS)
+            if FLAGS.is_sup_train:
+                my3DINN.train()
+            else my3DINN.unsup_train()
         else:
-            my3DINN.predict(FLAGS)
+            my3DINN.predict()
 
 if __name__ == '__main__':
 	tf.app.run()

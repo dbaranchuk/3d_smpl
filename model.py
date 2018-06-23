@@ -891,7 +891,7 @@ class _3DINN(object):
         try:
           while not coord.should_stop():
             tf_vis = 0
-            for idx in xrange(0, config.max_iter):
+            for idx in xrange(0, self.config.max_iter):
               # load training data
               batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image, batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_J_c, batch_v_gt = self.sess.run([ self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr, self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.v_gt_sr])
               # load validation data

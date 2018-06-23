@@ -10,4 +10,4 @@
 #finetune
 CUDA_VISIBLE_DEVICES=0 python main.py --name=finetune --batch_size=1 --model_dir=checkpoint/model5 --gf_dim=32 --is_sup_train=False --is_train=True --key_loss=True --max_iter=242 #--silh_loss=True --max_iter=1000
 
-CUDA_VISIBLE_DEVICES=0 python main.py --name=finetune --batch_size=1 --model_dir=checkpoint/finetune --gf_dim=32 --is_sup_train=False --is_train=False
+#CUDA_VISIBLE_DEVICES=0 python main.py --name=finetune --batch_size=1 --model_dir=checkpoint/finetune --gf_dim=32 --is_sup_train=False --is_train=False

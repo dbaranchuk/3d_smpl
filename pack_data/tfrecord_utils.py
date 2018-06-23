@@ -109,7 +109,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']#.astype('int32')
   J_2d[:, 1] = 240 - J_2d[:, 1]
-#  import cv2
+  import cv2
 #  img_path = '/home/local/tmp/'
 #  image = output[0]['image']
 #  for i in range(24):

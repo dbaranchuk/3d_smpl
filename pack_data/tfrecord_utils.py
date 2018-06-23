@@ -107,24 +107,20 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   # Cropping
   old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
   # Use keypoint 0 in frame1 as center
-  J_2d = output[0]['J_2d'].astype('int32')
+  J_2d = output[0]['J_2d']#.astype('int32')
   J_2d[:, 1] = 240 - J_2d[:, 1]
-  import cv2
-  img_path = '/home/local/tmp/'
-  image = output[0]['image']
-  for i in range(24):
-      joint = J_2d[i]
-      cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
-      cv2.imwrite(img_path+'vis.jpg', image)
+#  import cv2
+#  img_path = '/home/local/tmp/'
+#  image = output[0]['image']
+#  for i in range(24):
+#      joint = J_2d[i]
+#      cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
+#      cv2.imwrite(img_path+'vis.jpg', image)
 #  exit()
 
-  ##############################
-  #if not is_gait:
   new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
   s = 1.2 #1.3 + 0.1 * np.random.rand()
-  #else:
-  #  new_2d_center = np.round(J_2d[0, :] + 45 * np.array([0, 1])) + 0.5*np.ones((2))
-  #  s = 0.6
+
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
   new_image_size = int(2*crop_size)
   x_min = int(math.ceil(new_2d_center[0] - crop_size)) 
@@ -160,8 +156,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
                  max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1, :] \
                  = image[img_y_min:img_y_max + 1, img_x_min:img_x_max +1, :] 
       data_image[frame_id, :, :, :] = scipy.misc.imresize(crop_image, [image_size, image_size])
-      #
-      cv2.imwrite(img_path+str(frame_id)+'src.jpg', scipy.misc.imresize(crop_image, [image_size, image_size]))
+      #cv2.imwrite(img_path+str(frame_id)+'src.jpg', scipy.misc.imresize(crop_image, [image_size, image_size]))
 
       seg_float = output[frame_id]['seg'].astype(np.float32)
       crop_seg = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32)
@@ -176,7 +171,6 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       #print np.max(output['seg'][sample_id, :, :])
       data_seg[frame_id, :, :] = seg[:, :, 0]
       data_chamfer[frame_id, :, :], _, _ = get_chamfer(seg[:,:,0], chamfer_scale)
-  exit()
   return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_image/255.0,\
          data_seg, data_f, data_chamfer, data_c, data_gender, data_resize_scale  
 

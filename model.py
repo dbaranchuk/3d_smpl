@@ -600,8 +600,8 @@ class _3DINN(object):
         print_shape(batch_gmap)
 
         import cv2
-        print(batch_gmap[0].shape)
-        vis = tf.transpose(batch_gmap[0], perm=[2, 0, 1]).eval()
+        print(batch_gmap[0].eval().shape)
+        vis = np.transpose(batch_gmap[0].eval(), (2, 0, 1))
         print(type(vis))
         img_path = '/home/local/tmp/'
         for i, gmap in enumerate(vis):

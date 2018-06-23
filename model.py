@@ -230,7 +230,8 @@ class _3DINN(object):
         if self.config.key_loss:
           self.recon_loss += 0.01*self.d2_loss #self.pixel_loss + 10 * self.silh_loss #+ self.d3_loss  
         if self.config.silh_loss:
-          self.recon_loss += 0.0000000000000001*self.silh_loss
+          print(0.000000000000001*self.silh_loss)
+          self.recon_loss += 0.000000000000001*self.silh_loss
         if self.config.pixel_loss:
           self.recon_loss += 0.01 * self.pixel_loss
    
@@ -991,7 +992,6 @@ class _3DINN(object):
                     _, step, sup_loss, d3_loss, d2_loss, beta_, tf_vis = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss, self.beta[0], self.tf_visibility], feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.pmesh_gt:batch_pmesh, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
 
                     if idx % 100 == 0:
-                        print("=============================")
                         params = [self.global_step, self.syn_summary, self.sup_loss, self.v[0], self.J[0], self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.project1, self.flow, self.silh_loss, self.S_M[0], self.C_M[0], self.beta_loss, self.pose_loss, self.R_loss, self.T_loss]
 
                         step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, d2_joint_loss, project1, flow, silh_loss, S_M1, C_M1, beta_loss, pose_loss, R_loss, T_loss = self.sess.run(params, feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_c_gt: batch_J_c, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.v_gt:batch_v_gt, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})

@@ -108,6 +108,16 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
+  print(J_2d.shape)
+  exit()
+  import cv2
+  img_path = '/home/local/tmp/'
+  image = output[0]['image']
+  for i in range(24):
+      joint = batch_J_2d[0][0][i]
+      cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
+      cv2.imwrite(img_path+'vis.jpg', image)
+
   ##############################
   if not is_gait:
     new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))

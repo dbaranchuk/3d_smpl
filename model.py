@@ -987,6 +987,7 @@ class _3DINN(object):
                     import cv2
                     img_path = '/home/local/tmp/'
                     image = batch_image[0][0]*255
+                    print(im)
                     cv2.imwrite(img_path+'src.jpg', image)
                     for i in range(24):
                         joint = batch_J_2d[0][0][i]

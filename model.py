@@ -173,9 +173,6 @@ class _3DINN(object):
           project_J[frame_id] = tf.divide(tf.slice(self.J[frame_id], [0, 0, 0], [-1, -1, 2]), depth_J)
           project[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) * direct_project[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
           project_J[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) * project_J[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
-          ####
-          for i in range(24):
-              project_J[frame_id] = project_J[frame_id][i,1].assign(127-project_J[frame_id][i,1])
 
           self.depth_J[frame_id] = project_J[frame_id]
           self.d2_loss = eud_loss(project_J[frame_id], J_2d_gt_split[frame_id])
@@ -369,10 +366,13 @@ class _3DINN(object):
       Ry = tf.reshape(tf.stack([cosy, zero, siny,
                                zero, one, zero,
                                -siny, zero, cosy], axis=1), [batch_size, 3, 3])
+      _Ry = tf.reshape(tf.stack([-one, zero, zero,
+                                zero, one, zero,
+                                zero, zero, -one], axis=1), [batch_size, 3, 3])
       Rx = tf.reshape(tf.stack([one, zero, zero,
                                zero, cosx, -sinx,
                                zero, sinx, cosx], axis=1), [batch_size, 3, 3])
-      Rcam=tf.matmul(tf.matmul(Rz,Ry), Rx, name="Rcam")
+      Rcam=tf.matmul(tf.matmul(Rz,tf.matmul(Ry,_Ry)), Rx, name="Rcam")
       return Rcam 
 
 

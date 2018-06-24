@@ -10,6 +10,7 @@ import colorsys
 from data import Data_Helper_h36_syn
 
 from visibility import tf_get_visibility, tf_get_visibility_raycast
+from utils import draw_2d_joints
 from ops import *
 import scipy.io as sio
 import math
@@ -983,15 +984,9 @@ class _3DINN(object):
                     # load test data
                     batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image, batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_J_c, _idx, batch_pmesh, batch_v_gt = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
-                    import cv2
-                    img_path = '/home/local/tmp/'
-                    image = batch_image[0][0]*255
-                    cv2.imwrite(img_path+'src.jpg', image)
-                    for i in range(24):
-                        joint = batch_J_2d[0][0][i]
-                        cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
-                    cv2.imwrite(img_path+'vis.jpg', image)
-                    exit()
+                    ####
+                    draw_2d_joints(batch_image[0][0]*255, batch_J_2d[0][0])
+
                     # Train interation
                     _, step, sup_loss, d3_loss, d2_loss = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss], feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.pmesh_gt:batch_pmesh, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
 
@@ -1012,7 +1007,6 @@ class _3DINN(object):
         # Wait for threads to finish.
         coord.join(threads)
         self.sess.close()
-                    
 
     def predict(self):
         print("----------------")

@@ -1,5 +1,6 @@
 import tensorflow as tf
 import math
+import cv2
 import numpy as np 
 from tensorflow.python.framework import ops
 from flow_transformer import transformer
@@ -293,3 +294,29 @@ def warper(frame, flow, name="warper", is_train=True, reuse=False):
             tf.get_variable_scope().reuse_variables()
         warp, occ = transformer(frame, flow, (int(h), int(w)))
         return warp, occ
+
+def draw_2d_joints(image, joints):
+    left_leg = [1, 4, 7, 10]
+    left_hand = [13, 16, 18, 20, 22]
+    right_leg = [2, 5, 8, 11]
+    right_hand = [14, 17, 19, 21, 23]
+    spine = [0, 3, 6, 9, 12, 15]
+
+    colors = {}
+    for i in left_leg:
+        colors[i] = (0, 255, 255)
+    for i in right_leg:
+        colors[i] = (0, 255, 0)
+    for i in left_hand:
+        colors[i] = (255, 0, 0)
+    for i in right_hand:
+        colors[i] = (0, 0, 255)
+    for i in spine:
+        colors[i] = (128, 128, 0)
+
+    img_path = '/home/local/tmp/'
+    cv2.imwrite(img_path+'src.jpg', image)
+    for joint in joints:
+        cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
+    cv2.imwrite(img_path+'vis.jpg', image)
+    exit()

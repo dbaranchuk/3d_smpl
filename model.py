@@ -170,11 +170,9 @@ class _3DINN(object):
           depth_mesh = tf.slice(self.v[frame_id], [0, 0, 2], [-1, -1, 1])
           depth_J = tf.slice(self.J[frame_id], [0, 0, 2], [-1, -1, 1])
           direct_project[frame_id] = tf.divide(tf.slice(self.v[frame_id], [0, 0, 0], [-1, -1, 2]), depth_mesh)
-          project_J[frame_id] = tf.divide(tf.slice(self.J[frame_id], [0, 0, 0], [-1, -1, 2]),depth_J)
-          project[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) \
-                              * direct_project[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
-          project_J[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1])\
-                                * project_J[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
+          project_J[frame_id] = tf.divide(tf.slice(self.J[frame_id], [0, 0, 0], [-1, -1, 2]), depth_J)
+          project[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) * direct_project[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
+          project_J[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) * project_J[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
           
           self.depth_J[frame_id] = project_J[frame_id]
           self.d2_loss = eud_loss(project_J[frame_id], J_2d_gt_split[frame_id])
@@ -1022,7 +1020,7 @@ class _3DINN(object):
                         beta[idx_t[0]], pose[idx_t[0]] = ([],[])
 
                     for frame_id in range(self.config.num_frames):
-                        _beta, _pose = self.sess.run([self.beta[frame_id], self.pose[frame_id]],
+                        _beta, _pose, _J_2d = self.sess.run([self.beta[frame_id], self.pose[frame_id], self.depth_J[frame_id]],
                         feed_dict={self.beta_gt:batch_beta_t, self.pose_gt:batch_pose_t,
                         self.T_gt: batch_T_t, self.R_gt:batch_R_t,
                         self.gender_gt:batch_gender_t,
@@ -1035,11 +1033,15 @@ class _3DINN(object):
                         self.images:batch_image_t,
                         self.resize_scale_gt: batch_resize_scale_t})
 
+                        print(_J_2d[0].shape)
+                        draw_2d_joints(batch_image_t[0][frame_id].copy(), batch_J_2d_t[0][frame_id], name='src_vis_'+str(frame_id)+'.jpg')
+                        draw_2d_joints(batch_image_t[0][frame_id].copy(), _J_2d[0], name='mocap_vis'+str(frame_id)+'.jpg')
                         beta[idx_t[0]].append(_beta[0])
                         pose[idx_t[0]].append(_pose[0])
                         # GT
                         #beta[idx_t[0]].append(batch_beta_t[0][frame_id])
                         #pose[idx_t[0]].append(batch_pose_t[0][frame_id])
+                    exit()
 
                 for i in beta.keys():
                     print(i)

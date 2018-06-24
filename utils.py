@@ -295,7 +295,7 @@ def warper(frame, flow, name="warper", is_train=True, reuse=False):
         warp, occ = transformer(frame, flow, (int(h), int(w)))
         return warp, occ
 
-def draw_2d_joints(image, joints):
+def draw_2d_joints(image, joints, name='vis.jpg'):
     left_leg = [1, 4, 7, 10]
     left_hand = [13, 16, 18, 20, 22]
     right_leg = [2, 5, 8, 11]
@@ -314,9 +314,7 @@ def draw_2d_joints(image, joints):
     for i in spine:
         colors[i] = (128, 128, 0)
 
-    img_path = '/home/local/tmp/'
-    cv2.imwrite(img_path+'src.jpg', image)
+    img_path = '/home/local/tmp'
     for i, joint in enumerate(joints):
         cv2.circle(image, tuple(joint), 2, colors[i], -1)
-    cv2.imwrite(img_path+'vis.jpg', image)
-    exit()
+    cv2.imwrite(os.path.join(img_path, name), image)

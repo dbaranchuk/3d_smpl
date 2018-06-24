@@ -110,19 +110,11 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
 
   #Mirror y coords of 2d annotation
-  output[0]['J_2d'][:, 1] = 240 - output[0]['J_2d'][:, 1]
-  output[1]['J_2d'][:, 1] = 240 - output[1]['J_2d'][:, 1]
+  output[0]['J_2d'][:, 1] = (240-1) - output[0]['J_2d'][:, 1]
+  output[1]['J_2d'][:, 1] = (240-1) - output[1]['J_2d'][:, 1]
 
   # Use keypoint 0 in frame1 as center
-  J_2d = output[0]['J_2d']#.astype('int32')
-
-#  img_path = '/home/local/tmp/'
-#  image = output[0]['image']
-#  for i in range(24):
-#      joint = J_2d[i]
-#      cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
-#      cv2.imwrite(img_path+'vis.jpg', image)
-#  exit()
+  J_2d = output[0]['J_2d']
 
   new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
   s = 1.2 #1.3 + 0.1 * np.random.rand()
@@ -174,7 +166,6 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       seg[seg < 0.5] = 0
       seg[seg >= 0.5] = 1
 
-      #print np.max(output['seg'][sample_id, :, :])
       data_seg[frame_id, :, :] = seg[:, :, 0]
       data_chamfer[frame_id, :, :], _, _ = get_chamfer(seg[:,:,0], chamfer_scale)
   return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_image/255.0,\

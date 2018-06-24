@@ -106,9 +106,13 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   data_gender = np.zeros(())
   # Cropping
   old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
+
+  #Mirror y coords of 2d annotation
+  output[0]['J_2d'][:, 1] = 240 - output[0]['J_2d'][:, 1]
+  output[1]['J_2d'][:, 1] = 240 - output[1]['J_2d'][:, 1]
+
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']#.astype('int32')
-  J_2d[:, 1] = 240 - J_2d[:, 1] -1
 #  import cv2
 #  img_path = '/home/local/tmp/'
 #  image = output[0]['image']

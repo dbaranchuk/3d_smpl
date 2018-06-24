@@ -1061,11 +1061,11 @@ class _3DINN(object):
                         self.images:batch_image_t,
                         self.resize_scale_gt: batch_resize_scale_t})
 
-                        #beta[idx_t[0]].append(_beta[0])# GT: batch_beta_t[0][frame_id])
-                        #pose[idx_t[0]].append(_pose[0])# GT: batch_pose_t[0][frame_id])
+                        beta[idx_t[0]].append(_beta[0])
+                        pose[idx_t[0]].append(_pose[0])
                         # GT
-                        beta[idx_t[0]].append(batch_beta_t[0][frame_id])
-                        pose[idx_t[0]].append(batch_pose_t[0][frame_id])
+                        #beta[idx_t[0]].append(batch_beta_t[0][frame_id])
+                        #pose[idx_t[0]].append(batch_pose_t[0][frame_id])
 
                 for i in beta.keys():
                     print(i)

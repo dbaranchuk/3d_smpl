@@ -363,9 +363,9 @@ class _3DINN(object):
       Rz = tf.reshape(tf.stack([cosz, -sinz, zero, 
                                sinz, cosz, zero, 
                                zero, zero, one], axis=1), [batch_size, 3, 3])
-      Ry = tf.reshape(tf.stack([-cosy, zero, -siny,
+      Ry = tf.reshape(tf.stack([cosy, zero, siny,
                                zero, one, zero,
-                               siny, zero, -cosy], axis=1), [batch_size, 3, 3])
+                               -siny, zero, cosy], axis=1), [batch_size, 3, 3])
       Rx = tf.reshape(tf.stack([one, zero, zero,
                                zero, cosx, -sinx,
                                zero, sinx, cosx], axis=1), [batch_size, 3, 3])

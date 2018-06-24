@@ -9,7 +9,7 @@ from tfrecord_utils import convert_to_tfrecords_from_folder
 with_idx=True
 dataset = "surreal"
 data_path = "/home/local/data/cmc/synthetic/bin"
-is_test = True
+is_test = False
 
 if is_test:
     modality = 'test'

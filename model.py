@@ -174,7 +174,8 @@ class _3DINN(object):
           project[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) * direct_project[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
           project_J[frame_id] = tf.reshape(resize_scale_gt_split[frame_id], [-1, 1, 1]) * project_J[frame_id] * focal_length + tf.expand_dims(c_gt_split[frame_id], 1)
           ####
-          project_J[frame_id][:,1] = 127 - project_J[frame_id][:,1]
+          for i in range(24):
+              project_J[frame_id] = project_J[frame_id][i,1].assign(127-project_J[frame_id][i,1])
 
           self.depth_J[frame_id] = project_J[frame_id]
           self.d2_loss = eud_loss(project_J[frame_id], J_2d_gt_split[frame_id])

@@ -171,10 +171,8 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
                = np.expand_dims(seg_float[img_y_min:img_y_max + 1, \
                                 img_x_min:img_x_max +1], 2)   
       seg = scipy.misc.imresize(crop_seg, [image_size, image_size])
-      #cv2.imwrite(img_path+str(frame_id)+'seg.jpg', seg)
       seg[seg < 0.5] = 0
-      seg[seg >= 0.5] = 1 
-      #cv2.imwrite(img_path+str(frame_id)+'seg_binary.jpg', seg*255)
+      seg[seg >= 0.5] = 1
 
       #print np.max(output['seg'][sample_id, :, :])
       data_seg[frame_id, :, :] = seg[:, :, 0]

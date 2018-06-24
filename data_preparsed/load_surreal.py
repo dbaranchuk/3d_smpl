@@ -57,9 +57,7 @@ def get_training_params(filename, data_dir, direction=None):
   all_image = np.zeros((num_frames, h, w, 3), dtype=np.uint8)
 
   for frame_id in range(num_frames):
- 
     img = cap.get_data(frame_id)
-    #print img.dtype
     seg = segs['segm_' + str(frame_id + 1)]
     idx = seg[:,:] > 0.5
     seg[idx] = 1
@@ -70,8 +68,6 @@ def get_training_params(filename, data_dir, direction=None):
     #import scipy
     #scipy.misc.imsave("seg.png", seg_tmp)
     
-    #if frame_id != 20:
-    #  continue
     pose = data['pose'][:, frame_id]
     pose[:3] = [math.pi, 0, 0]
     m.pose[:] = pose

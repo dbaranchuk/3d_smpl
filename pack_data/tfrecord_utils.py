@@ -9,6 +9,8 @@ import tensorflow as tf
 import math 
 import scipy.misc
 import sys
+import cv2
+
 sys.path.insert(0, '../')
 from chamfer_utils import get_chamfer
 
@@ -113,7 +115,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
 
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']#.astype('int32')
-#  import cv2
+
 #  img_path = '/home/local/tmp/'
 #  image = output[0]['image']
 #  for i in range(24):
@@ -169,12 +171,16 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
                = np.expand_dims(seg_float[img_y_min:img_y_max + 1, \
                                 img_x_min:img_x_max +1], 2)   
       seg = scipy.misc.imresize(crop_seg, [image_size, image_size])
+
+      cv2.imwrite(img_path+str(frame_id)+'seg.jpg', seg)
       seg[seg < 0.5] = 0
       seg[seg >= 0.5] = 1 
-      
+      cv2.imwrite(img_path+str(frame_id)+'seg_binary.jpg', seg*255)
+
       #print np.max(output['seg'][sample_id, :, :])
       data_seg[frame_id, :, :] = seg[:, :, 0]
       data_chamfer[frame_id, :, :], _, _ = get_chamfer(seg[:,:,0], chamfer_scale)
+      exit()
   return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_image/255.0,\
          data_seg, data_f, data_chamfer, data_c, data_gender, data_resize_scale  
 

@@ -1033,9 +1033,8 @@ class _3DINN(object):
                         self.images:batch_image_t,
                         self.resize_scale_gt: batch_resize_scale_t})
 
-                        print(_J_2d[0].shape)
-                        draw_2d_joints(batch_image_t[0][frame_id].copy(), batch_J_2d_t[0][frame_id], name='src_vis_'+str(frame_id)+'.jpg')
-                        draw_2d_joints(batch_image_t[0][frame_id].copy(), _J_2d[0], name='mocap_vis'+str(frame_id)+'.jpg')
+                        draw_2d_joints(batch_image_t[0][frame_id].copy()*255, batch_J_2d_t[0][frame_id], name='src_vis_'+str(frame_id)+'.jpg')
+                        draw_2d_joints(batch_image_t[0][frame_id].copy()*255, _J_2d[0], name='mocap_vis'+str(frame_id)+'.jpg')
                         beta[idx_t[0]].append(_beta[0])
                         pose[idx_t[0]].append(_pose[0])
                         # GT

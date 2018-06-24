@@ -860,12 +860,9 @@ class _3DINN(object):
 
 
     def train(self):
-        print("-----------------")
-        print("Started the train")
-        print("-----------------")
-        """Training"""
-        """ recon_optim = tf.train.AdamOptimizer(config.learning_rate, beta1 = config.beta1) \
-                                .minimize(self.recon_loss, global_step=self.global_step) """
+        print("-----------------------------")
+        print("Started the supervision train")
+        print("-----------------------------")
         t_vars = tf.trainable_variables()
         i_vars = [var for var in t_vars if "f_" not in var.name]
 
@@ -879,15 +876,12 @@ class _3DINN(object):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=self.sess, coord=coord)
 
-        """load data"""
-        # facet
         f_ = self.f
         try:
             self.LoadModel()
         except FileNotFoundError:
             return
 
-        start_time = time.time()
         try:
           while not coord.should_stop():
             for idx in xrange(0, self.config.max_iter):
@@ -896,22 +890,14 @@ class _3DINN(object):
               # load validation data
               batch_pose_v, batch_beta_v, batch_T_v, batch_R_v, batch_J_v, batch_J_2d_v, batch_image_v, batch_seg_v, batch_chamfer_v, batch_c_v, batch_f_v, batch_resize_scale_v, batch_gender_v, batch_J_c_v, idx_v, batch_pmesh_v, batch_v_gt_v = self.sess.run([ self.pose_sr_v, self.beta_sr_v, self.T_sr_v, self.R_sr_v, self.J_sr_v, self.J_2d_sr_v, self.image_sr_v, self.seg_sr_v, self.chamfer_sr_v, self.c_sr_v, self.f_sr_v, self.resize_scale_sr_v, self.gender_sr_v, self.J_c_sr_v, self.idx_sr_v, self.pmesh_sr_v, self.v_gt_v])
 
-              _, step, sup_loss, d3_loss, d2_loss = self.sess.run([sup_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss], feed_dict={\
-                         self.beta_gt:batch_beta, self.pose_gt:batch_pose,
-                         self.T_gt: batch_T, self.R_gt:batch_R,
-                         self.gender_gt:batch_gender,
-                         self.J_gt: batch_J, self.J_2d_gt: batch_J_2d,
-                         self.seg_gt:batch_seg, self.f_gt: batch_f,
-                         self.c_gt: batch_c,
-                         self.images:batch_image,
-                         self.resize_scale_gt: batch_resize_scale\
-              })
+              _, step, sup_loss, d3_loss, d2_loss = self.sess.run([sup_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss], feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
+
               if idx % 100 == 0:
                 # if there is only supervised training, do not predict chamfer and visibility to save time
                 print("=============================")
-                params = [self.global_step, self.syn_summary, self.sup_loss, self.v[0], self.J[0], self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.beta_loss, self.pose_loss, self.R_loss, self.T_loss]
+                params = [self.global_step, self.syn_summary, self.sup_loss, self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.beta_loss, self.pose_loss, self.R_loss, self.T_loss]
 
-                step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, d2_joint_loss, beta_loss, pose_loss, R_loss, T_loss = self.sess.run(params, feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose,
+                step, summ_str, sup_loss, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, d2_joint_loss, beta_loss, pose_loss, R_loss, T_loss = self.sess.run(params, feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose,
                             self.T_gt: batch_T, self.R_gt:batch_R,
                             self.gender_gt:batch_gender,
                             self.J_gt: batch_J, self.J_c_gt: batch_J_c,
@@ -926,7 +912,7 @@ class _3DINN(object):
                 print("[%s, step: %d] Losses: sup: %.4f, d3: %.4f (%.6f) (%.4f), d2: %.4f (%.6f), beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" % (self.config.name, step, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, beta_loss, pose_loss, R_loss, T_loss))
 
                 # Validation
-                step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, project1, flow, d2_joint_loss, beta_loss, pose_loss, R_loss, T_loss, project_mesh0, project_mesh1, pixel0, pixel1 = self.sess.run([self.global_step, self.syn_v_summary, self.sup_loss, self.v[0], self.J[0], self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.project1, self.flow, self.d2_joint_loss, self.beta_loss, self.pose_loss, self.R_loss, self.T_loss, self.project_mesh0, self.project_mesh1, self.pixel0, self.pixel1],
+                step, summ_str, sup_loss, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, project1, flow, d2_joint_loss, beta_loss, pose_loss, R_loss, T_loss, project_mesh0, project_mesh1, pixel0, pixel1 = self.sess.run([self.global_step, self.syn_v_summary, self.sup_loss,  self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.project1, self.flow, self.d2_joint_loss, self.beta_loss, self.pose_loss, self.R_loss, self.T_loss, self.project_mesh0, self.project_mesh1, self.pixel0, self.pixel1],
                     feed_dict={self.beta_gt:batch_beta_v, self.pose_gt:batch_pose_v,
                             self.T_gt: batch_T_v, self.R_gt:batch_R_v,
                             self.gender_gt:batch_gender_v,
@@ -972,8 +958,6 @@ class _3DINN(object):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=self.sess, coord=coord)
 
-        """load data"""
-        start_time = time.time()
         try:
             self.LoadModel()
         except FileNotFoundError:
@@ -985,15 +969,15 @@ class _3DINN(object):
                     batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image, batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_J_c, _idx, batch_pmesh, batch_v_gt = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
                     ####
-                    draw_2d_joints(batch_image[0][0]*255, batch_J_2d[0][0])
+                    draw_2d_joints(batch_image[0][1]*255, batch_J_2d[0][1])
 
                     # Train interation
                     _, step, sup_loss, d3_loss, d2_loss = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss], feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.pmesh_gt:batch_pmesh, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
 
                     if idx % 100 == 0:
-                        params = [self.global_step, self.syn_summary, self.sup_loss, self.v[0], self.J[0], self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.project1, self.flow, self.silh_loss, self.S_M[0], self.C_M[0], self.beta_loss, self.pose_loss, self.R_loss, self.T_loss]
+                        params = [self.global_step, self.syn_summary, self.sup_loss, self.d3_loss, self.d3_joint_loss, self.centered_d3_joint_loss, self.d2_loss, self.d2_joint_loss, self.project1, self.flow, self.silh_loss, self.S_M[0], self.C_M[0], self.beta_loss, self.pose_loss, self.R_loss, self.T_loss]
 
-                        step, summ_str, sup_loss, v, J, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, d2_joint_loss, project1, flow, silh_loss, S_M1, C_M1, beta_loss, pose_loss, R_loss, T_loss = self.sess.run(params, feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_c_gt: batch_J_c, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.v_gt:batch_v_gt, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
+                        step, summ_str, sup_loss, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, d2_joint_loss, project1, flow, silh_loss, S_M1, C_M1, beta_loss, pose_loss, R_loss, T_loss = self.sess.run(params, feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_c_gt: batch_J_c, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.v_gt:batch_v_gt, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
                         self.writer.add_summary(summ_str, step)
                         print("[%s, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f) (%.4f), d2: %.4f (%.6f), silh: %.4f, beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" %(self.config.name, idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, silh_loss, beta_loss, pose_loss, R_loss, T_loss))
                     if idx == self.config.max_iter-1:
@@ -1023,8 +1007,6 @@ class _3DINN(object):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess=self.sess, coord=coord)
 
-        """load data"""
-        start_time = time.time()
         try:
             self.LoadModel()
         except FileNotFoundError:

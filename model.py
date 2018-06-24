@@ -889,7 +889,6 @@ class _3DINN(object):
         start_time = time.time()
         try:
           while not coord.should_stop():
-            tf_vis = 0
             for idx in xrange(0, self.config.max_iter):
               # load training data
               batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image, batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_J_c, batch_v_gt = self.sess.run([ self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr, self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.v_gt_sr])
@@ -1062,8 +1061,11 @@ class _3DINN(object):
                         self.images:batch_image_t,
                         self.resize_scale_gt: batch_resize_scale_t})
 
-                        beta[idx_t[0]].append(_beta[0])# GT: batch_beta_t[0][frame_id])#_beta[0])
-                        pose[idx_t[0]].append(_pose[0])# GT: batch_pose_t[0][frame_id])
+                        #beta[idx_t[0]].append(_beta[0])# GT: batch_beta_t[0][frame_id])
+                        #pose[idx_t[0]].append(_pose[0])# GT: batch_pose_t[0][frame_id])
+                        # GT
+                        beta[idx_t[0]].append(batch_beta_t[0][frame_id])
+                        pose[idx_t[0]].append(batch_pose_t[0][frame_id])
 
                 for i in beta.keys():
                     print(i)

@@ -316,7 +316,7 @@ def draw_2d_joints(image, joints):
 
     img_path = '/home/local/tmp/'
     cv2.imwrite(img_path+'src.jpg', image)
-    for joint in joints:
-        cv2.circle(image, tuple(joint), 2, (0, 0, 255), -1)
+    for i, joint in enumerate(joints):
+        cv2.circle(image, tuple(joint), 2, colors[i], -1)
     cv2.imwrite(img_path+'vis.jpg', image)
     exit()

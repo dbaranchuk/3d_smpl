@@ -228,7 +228,7 @@ class _3DINN(object):
         # need to add smooth loss here
         self.recon_loss = tf.Variable(0, dtype=tf.float32)
         if self.config.key_loss:
-          self.recon_loss += 0.0000000000000001*self.d2_loss #self.pixel_loss + 10 * self.silh_loss #+ self.d3_loss
+          self.recon_loss += 0.01*self.d2_loss #self.pixel_loss + 10 * self.silh_loss #+ self.d3_loss
         if self.config.silh_loss:
           self.recon_loss += 0.01*self.silh_loss
         if self.config.pixel_loss:

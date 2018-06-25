@@ -110,8 +110,8 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
 
   #Mirror y coords of 2d annotation
-  output[0]['J_2d'][:, 1] = (240-1) - output[0]['J_2d'][:, 1]
-  output[1]['J_2d'][:, 1] = (240-1) - output[1]['J_2d'][:, 1]
+  #output[0]['J_2d'][:, 1] = (240-1) - output[0]['J_2d'][:, 1]
+  #output[1]['J_2d'][:, 1] = (240-1) - output[1]['J_2d'][:, 1]
 
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
@@ -154,8 +154,10 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
                  max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1, :] \
                  = image[img_y_min:img_y_max + 1, img_x_min:img_x_max +1, :] 
       data_image[frame_id, :, :, :] = scipy.misc.imresize(crop_image, [image_size, image_size])
-      #cv2.imwrite(img_path+str(frame_id)+'src.jpg', scipy.misc.imresize(crop_image, [image_size, image_size]))
 
+      print(data_J_2d[frame_id, :, :].shape)
+      draw_2d_joints(data_image[frame_id, :, :, :], data_J_2d[frame_id, :, :], name='/home/local/tmp/src'+str(frame_id)+'.jpg'):
+      
       seg_float = output[frame_id]['seg'].astype(np.float32)
       crop_seg = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32)
       crop_seg[max(0, -y_min):max(0, -y_min) + img_y_max - img_y_min + 1, \
@@ -350,4 +352,28 @@ def inputs_surreal_with_idx(tf_filenames, batch_size, shuffle=True):
              resize_scale, gender, idx], 
              batch_size=batch_size, 
              num_threads=2,capacity=80,min_after_dequeue=50)
+
+def draw_2d_joints(image, joints, name='vis.jpg'):
+    left_leg = [1, 4, 7, 10]
+    left_hand = [13, 16, 18, 20, 22]
+    right_leg = [2, 5, 8, 11]
+    right_hand = [14, 17, 19, 21, 23]
+    spine = [0, 3, 6, 9, 12, 15]
+
+    colors = {}
+    for i in left_leg:
+        colors[i] = (0, 255, 255)
+    for i in right_leg:
+        colors[i] = (0, 255, 0)
+    for i in left_hand:
+        colors[i] = (255, 0, 0)
+    for i in right_hand:
+        colors[i] = (0, 0, 255)
+    for i in spine:
+        colors[i] = (128, 128, 0)
+
+    img_path = '/home/local/tmp'
+    for i, joint in enumerate(joints):
+        cv2.circle(image, tuple(joint), 2, colors[i], -1)
+    cv2.imwrite(os.path.join(img_path, name), image)
 

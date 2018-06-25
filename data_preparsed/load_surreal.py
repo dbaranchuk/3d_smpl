@@ -112,8 +112,7 @@ def get_training_params(filename, data_dir, direction=None):
     d2[0, :] =  (320 - d2[0,:])
     d2[1, :] =  (240 - d2[1,:])
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
-    #draw_img = np.array(img)
-    #draw_2d_joints(draw_img, d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
 
     from mpl_toolkits.mplot3d import Axes3D
     d3 = data['joints3D'][:,:,frame_id]

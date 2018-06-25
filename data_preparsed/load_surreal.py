@@ -113,7 +113,7 @@ def get_training_params(filename, data_dir, direction=None):
     d2[0, :] =  (320 - d2[0,:])
     print(img.shape, seg.shape)
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
-    draw_2d_joints(img, d2, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    draw_2d_joints(img.transpose((2, 0, 1)), d2, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
     draw_2d_joints(seg, d2, name='/home/local/tmp/dir/seg'+str(frame_id)+'.jpg')
 
     from mpl_toolkits.mplot3d import Axes3D

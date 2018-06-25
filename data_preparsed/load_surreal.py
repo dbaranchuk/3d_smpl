@@ -112,7 +112,7 @@ def get_training_params(filename, data_dir, direction=None):
     d2[0, :] =  (320 - d2[0,:])
     d2[1, :] =  (240 - d2[1,:])
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
-    draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    #draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
 
     from mpl_toolkits.mplot3d import Axes3D
     d3 = data['joints3D'][:,:,frame_id]
@@ -164,9 +164,9 @@ def get_training_params(filename, data_dir, direction=None):
   
     reconstruct_3d = np.matmul(R_rec, J) + np.reshape(T, [3,1]) 
     #print "recovered R error", np.mean(np.sqrt(np.sum(np.square(d3 - reconstruct_3d), 0)))
-  
     #visualize_smpl_3d(reconstruct_3d, xlim = (T[0] -1, T[0] + 1), ylim = (T[1] -1, T[1] +1), 
     #                  zlim=(T[2] - 1, T[2] + 1),  title="recovered_3d")
+
     # use reconstruct_3d to do projection and get2d
     reconstruct_2d = reconstruct_3d[:2, :]/reconstruct_3d[2,:]
     
@@ -174,8 +174,8 @@ def get_training_params(filename, data_dir, direction=None):
     center = np.array([[160], [120]])
     reconstruct_2d += center
 
-    draw_2d_joints(np.array(img), reconstruct_2d.astype('int32').T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
-    print "2d error", np.mean(np.sqrt(np.sum(np.square(reconstruct_2d-d2), 0)))
+    #draw_2d_joints(np.array(img), reconstruct_2d.astype('int32').T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    #print "2d error", np.mean(np.sqrt(np.sum(np.square(reconstruct_2d-d2), 0)))
     #visualize_smpl_2d(reconstruct_2d, bg=img, figure_id=12, title="2d reconstructed") 
     #plt.pause(0.1)
     # things to store

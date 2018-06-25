@@ -110,7 +110,7 @@ def get_training_params(filename, data_dir, direction=None):
     seg = np.fliplr(seg)
     d2 = data['joints2D'][:,:,frame_id]
     d2[0, :] =  (320 - d2[0,:])
-    d2[1, :] =  (240 - d2[0,:])
+    d2[1, :] =  (240 - d2[1,:])
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     #draw_img = np.array(img)
     #draw_2d_joints(draw_img, d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')

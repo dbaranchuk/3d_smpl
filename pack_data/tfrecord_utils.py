@@ -156,8 +156,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       crop_seg = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32)
       crop_seg[max(0, -y_min):max(0, -y_min) + img_y_max - img_y_min + 1, \
                max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1] \
-               = np.expand_dims(seg_float[img_y_min:img_y_max + 1, \
-                                img_x_min:img_x_max +1], 2)   
+               = np.expand_dims(seg_float[img_y_min:img_y_max + 1, img_x_min:img_x_max +1], 2)
       seg = scipy.misc.imresize(crop_seg, [image_size, image_size])
       seg[seg < 0.5] = 0
       seg[seg >= 0.5] = 1
@@ -268,7 +267,6 @@ def read_and_decode_surreal(tfrecord_file):
   feature['c'] = tf.reshape(feature['c'], [num_frames, 2])
   feature['f'] = tf.reshape(feature['f'], [num_frames, 2])
   feature['resize_scale'] = tf.reshape(feature['resize_scale'], [num_frames])
-    
   return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'],\
            feature['image'], feature['seg'], feature['chamfer'], feature['c'], \
            feature['f'], feature['resize_scale'], feature['gender']

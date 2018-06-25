@@ -114,7 +114,7 @@ def get_training_params(filename, data_dir, direction=None):
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     draw_img = np.array(img)
     draw_seg = np.array(seg).astype('int32')*255
-    draw_seg = np.array([draw_seg,draw_seg,draw_seg])
+    draw_seg = np.array([draw_seg, draw_seg, draw_seg]).transpose((1,2,0))
     draw_2d_joints(draw_img, d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
     draw_2d_joints(draw_seg, d2.T, name='/home/local/tmp/dir/seg'+str(frame_id)+'.jpg')
 

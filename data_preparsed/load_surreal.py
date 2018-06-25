@@ -115,7 +115,7 @@ def get_training_params(filename, data_dir, direction=None):
     draw_img = np.array(img)
     draw_seg = np.array([np.array(seg),np.array(seg), np.array(seg)])
     draw_2d_joints(draw_img, d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
-    draw_2d_joints(draw_seg, d2.T, name='/home/local/tmp/dir/seg'+str(frame_id)+'.jpg')
+    draw_2d_joints(draw_seg.astype(np.uint8), d2.T, name='/home/local/tmp/dir/seg'+str(frame_id)+'.jpg')
 
     from mpl_toolkits.mplot3d import Axes3D
     d3 = data['joints3D'][:,:,frame_id]

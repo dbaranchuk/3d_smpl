@@ -156,7 +156,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       data_image[frame_id, :, :, :] = scipy.misc.imresize(crop_image, [image_size, image_size])
 
       print(data_J_2d[frame_id, :, :].shape)
-      draw_2d_joints(data_image[frame_id, :, :, :], data_J_2d[frame_id, :, :], name='/home/local/tmp/src'+str(frame_id)+'.jpg'):
+      draw_2d_joints(data_image[frame_id, :, :, :], data_J_2d[frame_id, :, :], name='/home/local/tmp/src'+str(frame_id)+'.jpg')
       
       seg_float = output[frame_id]['seg'].astype(np.float32)
       crop_seg = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32)

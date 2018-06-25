@@ -4,8 +4,34 @@ import imageio
 #import matplotlib.pyplot as plt
 import numpy as np
 import os
+import cv2
 #from visualize import visualize_smpl_2d, visualize_smpl_3d, visualize_smpl_mesh, visualize_smpl_3d_mesh
 from smpl_webuser.serialization import load_model
+
+
+def draw_2d_joints(image, joints, name='vis.jpg'):
+    left_leg = [1, 4, 7, 10]
+    left_hand = [13, 16, 18, 20, 22]
+    right_leg = [2, 5, 8, 11]
+    right_hand = [14, 17, 19, 21, 23]
+    spine = [0, 3, 6, 9, 12, 15]
+
+    colors = {}
+    for i in left_leg:
+        colors[i] = (0, 255, 255)
+    for i in right_leg:
+        colors[i] = (0, 255, 0)
+    for i in left_hand:
+        colors[i] = (255, 0, 0)
+    for i in right_hand:
+        colors[i] = (0, 0, 255)
+    for i in spine:
+        colors[i] = (128, 128, 0)
+
+    img_path = '/home/local/tmp'
+    for i, joint in enumerate(joints):
+        cv2.circle(image, tuple(joint), 2, colors[i], -1)
+    cv2.imwrite(os.path.join(img_path, name), image)
 
 
 #data_dir = './SURREAL/data/h36m/train/run0/'
@@ -62,7 +88,6 @@ def get_training_params(filename, data_dir, direction=None):
     idx = seg[:,:] > 0.5
     seg[idx] = 1
     seg = seg.astype(np.bool_)
-    #print np.max(seg), np.min(seg)
     #seg_tmp = np.zeros((240, 320, 3))
     #seg_tmp[:,:,:] = np.reshape(seg.astype(np.float32), [240, 320, 1])
     #import scipy
@@ -79,13 +104,17 @@ def get_training_params(filename, data_dir, direction=None):
     #print "beta", np.array(m.shapedirs)
     #fig = plt.figure(5)
     #visualize_smpl_3d_mesh(J, mesh, title="init_mesh", fig=fig)
+    #draw_2d_joints(img, data['joints2D'][:,:,frame_id], name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    #draw_2d_joints(seg, data['joints2D'][:,:,frame_id], name='/home/local/tmp/dir/seg'+str(frame_id)+'.jpg')
     # flip image and 2d gt
     img = np.fliplr(img)
     seg = np.fliplr(seg)
     d2 = data['joints2D'][:,:,frame_id]
     d2[0, :] =  (320 - d2[0,:])
-    #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt") 
-  
+    #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
+    draw_2d_joints(img, d2, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    draw_2d_joints(seg, d2, name='/home/local/tmp/dir/seg'+str(frame_id)+'.jpg')
+
     from mpl_toolkits.mplot3d import Axes3D
     d3 = data['joints3D'][:,:,frame_id]
     matrix_world = np.array([[0, 0, -1], [0, 1, 0], [1, 0, 0]])

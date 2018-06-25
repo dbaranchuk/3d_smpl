@@ -104,7 +104,7 @@ def get_training_params(filename, data_dir, direction=None):
     #print "beta", np.array(m.shapedirs)
     #fig = plt.figure(5)
     #visualize_smpl_3d_mesh(J, mesh, title="init_mesh", fig=fig)
-    draw_2d_joints(np.array(img), data['joints2D'][:,:,frame_id], name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    draw_2d_joints(np.array(img), data['joints2D'][:,:,frame_id].T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
     # flip image and 2d gt
     img = np.fliplr(img)
     seg = np.fliplr(seg)

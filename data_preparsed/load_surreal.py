@@ -104,12 +104,13 @@ def get_training_params(filename, data_dir, direction=None):
     #print "beta", np.array(m.shapedirs)
     #fig = plt.figure(5)
     #visualize_smpl_3d_mesh(J, mesh, title="init_mesh", fig=fig)
-    draw_2d_joints(np.array(img), data['joints2D'][:,:,frame_id].T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    #draw_2d_joints(np.array(img), data['joints2D'][:,:,frame_id].T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
     # flip image and 2d gt
     img = np.fliplr(img)
     seg = np.fliplr(seg)
     d2 = data['joints2D'][:,:,frame_id]
     d2[0, :] =  (320 - d2[0,:])
+    d2[1, :] =  (240 - d2[0,:])
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     #draw_img = np.array(img)
     #draw_2d_joints(draw_img, d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')

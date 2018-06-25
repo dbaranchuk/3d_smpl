@@ -345,7 +345,8 @@ def inputs_surreal_with_idx(tf_filenames, batch_size, shuffle=True):
              batch_size=batch_size, 
              num_threads=2,capacity=80,min_after_dequeue=50)
 
-def draw_2d_joints(image, joints, name='vis.jpg'):
+
+def draw_2d_joints(image, joints, name):
     left_leg = [1, 4, 7, 10]
     left_hand = [13, 16, 18, 20, 22]
     right_leg = [2, 5, 8, 11]

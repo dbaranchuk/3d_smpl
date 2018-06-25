@@ -513,8 +513,7 @@ class _3DINN(object):
         T = tf.matmul(tf.transpose(results, [1,2,3,0]), tf.tile(tf.expand_dims(tf.transpose(weights, [0, 2, 1]), 1), [1,4,1,1]))
         Ts = tf.split(T, 4, 2) 
         # 2 x 6890 x4
-        rest_shape_h = tf.concat((v_posed, np.ones((batch_size, 
-                                  self.config.mesh_num, 1))), 2) 
+        rest_shape_h = tf.concat((v_posed, np.ones((batch_size, self.config.mesh_num, 1))), 2)
         rest_shape_hs = tf.split(rest_shape_h, 4, 2)
         # 2 x 4 x6890
         v = tf.reshape(Ts[0], [batch_size, 4, self.config.mesh_num]) \
@@ -989,6 +988,7 @@ class _3DINN(object):
         # Wait for threads to finish.
         coord.join(threads)
         self.sess.close()
+
 
     def predict(self):
         print("----------------")

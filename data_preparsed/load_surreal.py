@@ -112,6 +112,7 @@ def get_training_params(filename, data_dir, direction=None):
     d2 = data['joints2D'][:,:,frame_id]
     d2[0, :] =  (320 - d2[0,:])
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
+    print(np.array(img))
     draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
     draw_2d_joints(np.array(seg), d2.T, name='/home/local/tmp/dir/seg'+str(frame_id)+'.jpg')
 

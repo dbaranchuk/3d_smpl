@@ -174,6 +174,7 @@ def get_training_params(filename, data_dir, direction=None):
     center = np.array([[160], [120]])
     reconstruct_2d += center
 
+    draw_2d_joints(np.array(img), reconstruct_2d.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
     print "2d error", np.mean(np.sqrt(np.sum(np.square(reconstruct_2d-d2), 0)))
     #visualize_smpl_2d(reconstruct_2d, bg=img, figure_id=12, title="2d reconstructed") 
     #plt.pause(0.1)

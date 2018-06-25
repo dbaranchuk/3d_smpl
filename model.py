@@ -1035,13 +1035,12 @@ class _3DINN(object):
 
                         draw_2d_joints(batch_image_t[0][frame_id].copy()*255, batch_J_2d_t[0][frame_id], name='src_vis_'+str(frame_id)+'.jpg')
                         draw_2d_joints(batch_image_t[0][frame_id].copy()*255, _J_2d[0], name='mocap_vis'+str(frame_id)+'.jpg')
-                        draw_2d_joints(batch_seg_t[0][frame_id].copy()*255, _J_2d[0], name='mocap_seg'+str(frame_id)+'.jpg')
+                        draw_2d_joints(batch_seg_t[0][frame_id].copy()*255, np.zeros(_J_2d[0].shape), name='mocap_seg'+str(frame_id)+'.jpg')
                         beta[idx_t[0]].append(_beta[0])
                         pose[idx_t[0]].append(_pose[0])
                         # GT
                         #beta[idx_t[0]].append(batch_beta_t[0][frame_id])
                         #pose[idx_t[0]].append(batch_pose_t[0][frame_id])
-                    #exit()
 
                 for i in beta.keys():
                     print(i)

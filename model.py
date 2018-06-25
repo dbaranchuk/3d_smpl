@@ -114,7 +114,7 @@ class _3DINN(object):
 
         # supervised loss
         #self.sup_loss = self.pose_loss + 0.05 * self.beta_loss + self.R_loss + 0.1 * self.T_loss
-        self.sup_loss = self.pose_loss + self.beta_loss + 0.1 * self.R_loss + 0.1 * self.T_loss
+        self.sup_loss = self.pose_loss + self.beta_loss + 0.1 * self.R_loss + 0.05 * self.T_loss
         seg = self.seg_gt
         chamfer = self.chamfer_gt
 

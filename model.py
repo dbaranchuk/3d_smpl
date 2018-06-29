@@ -593,12 +593,12 @@ class _3DINN(object):
         batch_gmap = tf.div(batch_gmap, batch_norm, name="batch_gmap")
 
         # Make maps with [0,0] zero
-        batch_mask = tf.where(tf.equal(batchX0 + batchY0, 0), tf.ones_like(batchX0), tf.zeros_like(batchX0))
-        batch_mask = tf.tile(batch_mask, [1, imgH, imgW, 1], name='mask')
-        print_shape(batch_mask)
-        masked_batch_gmap = tf.multiply(batch_gmap, batch_mask, name="masked_batch_gmap")
-        print_shape(masked_batch_gmap)
-        return masked_batch_gmap
+#        batch_mask = tf.where(tf.equal(batchX0 + batchY0, 0), tf.ones_like(batchX0), tf.zeros_like(batchX0))
+#        batch_mask = tf.tile(batch_mask, [1, imgH, imgW, 1], name='mask')
+#        print_shape(batch_mask)
+#        masked_batch_gmap = tf.multiply(batch_gmap, batch_mask, name="masked_batch_gmap")
+#        print_shape(masked_batch_gmap)
+        return batch_gmap
 
 
     def _3D_mesh_Interpretor(self, heatmaps, image, gender, f_gt, c_gt, resize_scale, is_train=False, reuse=False):

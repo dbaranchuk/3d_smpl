@@ -573,12 +573,11 @@ class _3DINN(object):
         # batchY0: [batch_size, 1, 1, keypoints_num]
         # xIdxMap: [batch_size, h, w, keypoints_num]
         # yIdxMap: [batch_size, h, w, keypoints_num]
-        #(1/(2*3.1315926*0.1*0.1))*math.exp(-(1*1+1*1)/(2*0.1*0.1)
-        var = sigma*sigma;
+        var = sigma*sigma
 
         x0Maps = tf.tile(batchX0, [1, imgH, imgW, 1])
         y0Maps = tf.tile(batchY0, [1, imgH, imgW, 1])
-        (x0Maps - tf.reshape(xIdxMap, [-1, imgH, imgW, 1]))
+        #(x0Maps - tf.reshape(xIdxMap, [-1, imgH, imgW, 1]))
         x2 = tf.square((x0Maps - tf.reshape(xIdxMap, [-1, imgH, imgW, 1]))/gWH, name="x2")
         print_shape(x2)
         y2 = tf.square((y0Maps - tf.reshape(yIdxMap, [-1, imgH, imgW, 1]))/gWH, name="y2")
@@ -591,10 +590,15 @@ class _3DINN(object):
         print_shape(batch_sum)
         batch_sum = tf.clip_by_value(batch_sum, 0.000000001, float('inf')) # prevent divide by zero
         batch_norm = tf.tile(batch_sum, [1, imgH, imgW, 1], name="batch_norm")
-        print_shape(batch_norm)
         batch_gmap = tf.div(batch_gmap, batch_norm, name="batch_gmap")
-        print_shape(batch_gmap)
-        return batch_gmap
+
+        # Make maps with [0,0] zero
+        batch_mask = tf.where(tf.equal(batch_X0 + batch_Y0, 0), tf.ones_like(batch_XY0), tf.zeros_like(batch_XY0))
+        batch_mask = tf.tile(batch_mask, [1, imgH, imgW, 1], name='mask')
+        print_shape(batch_mask)
+        masked_batch_gmap = tf.multiply(batch_gmap, batch_mask, name="masked_batch_gmap")
+        print_shape(masked_batch_gmap)
+        return masked_batch_gmap
 
 
     def _3D_mesh_Interpretor(self, heatmaps, image, gender, f_gt, c_gt, resize_scale, is_train=False, reuse=False):

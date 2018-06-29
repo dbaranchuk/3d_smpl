@@ -34,6 +34,8 @@ def draw_2d_joints(image, joints, name='vis.jpg'):
     cv2.imwrite(os.path.join(img_path, name), image)
 
 
+# Remove 3 6 9 13 14 15 22 23
+
 #data_dir = './SURREAL/data/h36m/train/run0/'
 smpl_dir = '../smpl'
 
@@ -55,8 +57,6 @@ def get_training_params(filename, data_dir, direction=None):
   else:
     smpl_model = "models/basicModel_f_lbs_10_207_0_v1.0.0.pkl"  
   m = load_model(os.path.join(smpl_dir, smpl_model)) 
-
-  #import cv2
   cap = imageio.get_reader(os.path.join(os.path.join(data_dir, folder_name), filename) + ".mp4")
 
   #['zrot', 'camDist', 'bg', 'joints3D', 'pose', 'clipNo', 'joints2D', 'gender', 'sequence', '__header__,

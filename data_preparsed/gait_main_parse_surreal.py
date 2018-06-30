@@ -6,15 +6,15 @@ import numpy as np
 import pickle as pkl
 from write_utils import write_syn_to_bin, read_syn_to_bin
 
-data_root_dir = '/home/local/data/cmc/synthetic/gait_dataset_1' #run0'
+data_root_dir = '/home/local/data/cmc/synthetic/gait_dataset_2' #run0'
 write_root_dir = '/home/local/data/cmc/synthetic/bin'
 is_test = True
 
 if is_test:
-    subjects = ['10_04', 'ung_07_03']
+    subjects = ['10_04']
     modality = 'test'
 else:
-    subjects = ['02_01', '05_01', '06_01', 'ung_07_01', 'ung_07_05', 'ung_07_08', 'ung_07_11', '08_01', '08_04', '08_05', '08_09', '08_11', 'ung_12_01', 'ung_12_02', 'ung_12_03', '15_01', '26_01', '27_01', '32_01', '37_01', '38_01', '38_02', '39_01', '39_02', '43_01', '45_01', 'ung_47_01', 'ung_49_01', '55_04', 'ung_74_01', 'ung_77_28', 'ung_82_11', 'ung_82_12', 'ung_91_57', 'ung_104_02', 'ung_113_25', 'ung_132_18', 'ung_132_48', 'ung_120_20', 'ung_136_21', 'ung_139_28', '143_32']
+    subjects = ['02_01', '05_01', '06_01', 'ung_07_01', 'ung_07_03', 'ung_07_05', 'ung_07_08', 'ung_07_11', '08_01', '08_04', '08_05', '08_09', '08_11', 'ung_12_01', 'ung_12_02', 'ung_12_03', '15_01', '26_01', '27_01', '32_01', '37_01', '38_01', '38_02', '39_01', '39_02', '43_01', '45_01', 'ung_47_01', 'ung_49_01', '55_04', 'ung_74_01', 'ung_77_28', 'ung_82_11', 'ung_82_12', 'ung_91_57', 'ung_104_02', 'ung_113_25', 'ung_132_18', 'ung_132_48', 'ung_120_20', 'ung_136_21', 'ung_139_28', '143_32']
     modality = 'train'
 
 directions = ['f', 'b']

@@ -1,5 +1,6 @@
 import scipy.io as sio
 from matrix_utils import avg_joint_error, rotationMatrixToEulerAngles, eulerAnglesToRotationMatrix
+from write_utils import read_openpose
 import imageio
 #import matplotlib.pyplot as plt
 import numpy as np
@@ -34,11 +35,7 @@ def draw_2d_joints(image, joints, name='vis.jpg'):
     cv2.imwrite(os.path.join(img_path, name), image)
 
 
-# Remove 3 6 9 13 14 15 22 23
-
-#data_dir = './SURREAL/data/h36m/train/run0/'
 smpl_dir = '../smpl'
-
 MALE = 1
 def get_training_params(filename, data_dir, direction=None):
   folder_name = filename[:-6]
@@ -79,6 +76,7 @@ def get_training_params(filename, data_dir, direction=None):
   all_T = np.zeros((num_frames, 3))
   all_J = np.zeros((num_frames, num_joints, 3))
   all_J_2d = np.zeros((num_frames, num_joints, 2))
+  all_J_2d_openpose = np.zeros((num_frames, num_joints, 2))
   all_seg = np.zeros((num_frames, h, w), dtype=np.bool_)
   all_image = np.zeros((num_frames, h, w, 3), dtype=np.uint8)
 
@@ -160,7 +158,6 @@ def get_training_params(filename, data_dir, direction=None):
     T += T2
  
     angles = rotationMatrixToEulerAngles(R)
-    #print angles 
     R_rec = eulerAnglesToRotationMatrix(angles)
   
     reconstruct_3d = np.matmul(R_rec, J) + np.reshape(T, [3,1]) 
@@ -183,13 +180,18 @@ def get_training_params(filename, data_dir, direction=None):
     all_pose[frame_id, :] = pose
     all_beta[frame_id, :] = data['shape'][:, frame_id]
     all_f[frame_id] = [fx, fy]
-    # center
     all_R[frame_id, :] = angles
     all_T[frame_id, :] = T[:,0]
     all_J[frame_id, :, :] = reconstruct_3d.T 
-    all_J_2d[frame_id, :, :] = d2.T #reconstruct_2d.T 
+    all_J_2d[frame_id, :, :] = d2.T #reconstruct_2d.T
     all_seg[frame_id, :, :] = seg
     all_image[frame_id, :, :, :] = img
+    # Read Openpose annotation if exists
+    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
+    print(openpose_annot_path)
+    if os.path.exists(openpose_annot_path):
+        all_J_2d_openpose[frame_id, :, :] = read_openpose(filename, frame_id, annot_path)
+
   output = dict()
   output['pose'] = all_pose
   output['beta'] = all_beta
@@ -198,7 +200,10 @@ def get_training_params(filename, data_dir, direction=None):
   output['T'] = all_T
   output['J'] = all_J
   output['J_2d'] = all_J_2d
+  output['J_2d_openpose'] = all_J_2d_openpose
   output['seg'] = all_seg
   output['image'] = all_image
   output['gender'] = gender
   return output
+
+

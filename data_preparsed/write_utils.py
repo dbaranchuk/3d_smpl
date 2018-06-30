@@ -26,8 +26,9 @@ def write_syn_to_bin(parsed_data, filename):
       T = list(parsed_data['T'][frame_id, :])
       J = list(np.reshape(parsed_data['J'][frame_id, :, :], [-1]))
       J_2d = list(np.reshape(parsed_data['J_2d'][frame_id, :, :], [-1]))
+      J_2d_openpose = list(np.reshape(parsed_data['J_2d_openpose'][frame_id, :, :], [-1]))
       image = list(np.reshape(parsed_data['image'][frame_id, :, :, :].astype(np.float32), [-1]))
-      params = beta + pose + f + R + T + J + J_2d + image
+      params = beta + pose + f + R + T + J + J_2d + J_2d_openpose + image
       num_elements = len(params)
       f_.write(struct.pack('f' * num_elements, *params))
       seg = list(np.reshape(parsed_data['seg'][frame_id, :, :], [-1])) 
@@ -56,6 +57,18 @@ def read_syn_to_bin(filename, frame_id):
     output['T'] = params[87:90]
     output['J'] = np.reshape(params[90:90 + 72], [24, 3])
     output['J_2d'] = np.reshape(params[162:162 + 48], [24, 2])
-    output['image'] = np.reshape(params[210:210 + h * w * 3], [h, w, 3])
+    output['J_2d_openpose'] = np.reshape(params[210:210 + 48], [24, 2])
+    output['image'] = np.reshape(params[258:258 + h * w * 3], [h, w, 3])
     output['seg'] = np.reshape(seg, [h, w])
-    return output 
+    return output
+
+def read_openpose(filename, frame_id, annot_path):
+    json_name = (os.path.join(annot_path, filename)+"_%012d_keypoints.json") % frame_id
+    with open(json_name, 'r') as f:
+        annot = json.load(f)
+    joints = annot['people'][0]['pose_keypoints_2d']
+    joints = np.array(joints).reshape((25, 3))[1:]
+    assert(len(joints) == 24)
+    visibility = joints[:,2]
+    joints = joints[:,:2].astype('int32')
+    return joints

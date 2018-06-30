@@ -115,7 +115,7 @@ def get_training_params(filename, data_dir, direction=None):
     openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
     if os.path.exists(openpose_annot_path):
         d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
-        d2_openpose[0, :] =  (320 - d2_openpose[0,:])
+        d2_openpose[:, 0] =  (320 - d2_openpose[:, 0])
         all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     #draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')

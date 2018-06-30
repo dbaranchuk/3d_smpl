@@ -1,5 +1,7 @@
 import numpy as np
 import struct
+import os
+
 w = 320
 h = 240
 def write_syn_to_bin(parsed_data, filename):

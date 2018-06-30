@@ -188,9 +188,8 @@ def get_training_params(filename, data_dir, direction=None):
     all_image[frame_id, :, :, :] = img
     # Read Openpose annotation if exists
     openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
-    print(openpose_annot_path)
     if os.path.exists(openpose_annot_path):
-        all_J_2d_openpose[frame_id, :, :] = read_openpose(filename, frame_id, annot_path)
+        all_J_2d_openpose[frame_id, :, :] = read_openpose(filename, frame_id, openpose_annot_path)
 
   output = dict()
   output['pose'] = all_pose

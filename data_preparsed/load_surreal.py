@@ -36,7 +36,7 @@ def draw_2d_joints(image, joints, name='vis.jpg'):
 
 
 smpl_dir = '../smpl'
-MALE = 1
+MALE = 0
 def get_training_params(filename, data_dir, direction=None):
   folder_name = filename[:-6]
   if direction != None:

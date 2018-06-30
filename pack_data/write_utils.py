@@ -131,19 +131,6 @@ def write_cmc_to_bin(parsed_data, filename):
             f_.write(struct.pack('f' * num_elements, *params))
             seg = list(np.reshape(parsed_data['seg'][frame_id, :, :], [-1]))
             f_.write(struct.pack('?' * h * w, *seg))
-    """
-    frame_id = 23
-    print "gender", parsed_data['gender']
-    print "beta", parsed_data['beta'][frame_id, :4]
-    print "pose", parsed_data['pose'][frame_id, :4]
-    print "f", parsed_data['f'][frame_id, :]
-    print "R", parsed_data['R'][frame_id, :]
-    print "T", parsed_data['T'][frame_id, :]
-    print "J", parsed_data['J'][frame_id, :2, :]
-    print "J_2d", parsed_data['J_2d'][frame_id, :2, :]
-    print "image", parsed_data['image'][frame_id, 120:125,180, :]
-    print "seg", parsed_data['seg'][frame_id, 120:125,170:175]
-    """
 
 
 def read_cmc_to_bin(filename, frame_id):
@@ -172,15 +159,3 @@ def read_cmc_to_bin(filename, frame_id):
         output['image'] = np.reshape(params[258:258 + h * w * 3], [h, w, 3])
         output['seg'] = np.reshape(seg, [h, w])
         return output
-       """
-        print gender, num_frames
-        print "beta", beta[:4]
-        print "pose", pose[:4]
-        print "f", f
-        print "R", R
-        print "T", T
-        print "J", J[:2, :]
-        print "J_2d", J_2d[:2, :]
-        print "image", image[120:125, 180, :]
-        print "seg", seg[120:125, 180]
-        """

@@ -69,6 +69,8 @@ def read_openpose(filename, frame_id, annot_path):
     json_name = (os.path.join(annot_path, filename)+"_%012d_keypoints.json") % frame_id
     with open(json_name, 'r') as f:
         annot = json.load(f)
+    if len(annot['people']) == 0:
+        return np.zeros((24,2))
     joints = annot['people'][0]['pose_keypoints_2d']
     joints = np.array(joints).reshape((25, 3))[1:]
     assert(len(joints) == 24)

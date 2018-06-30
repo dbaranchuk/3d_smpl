@@ -110,6 +110,13 @@ def get_training_params(filename, data_dir, direction=None):
     d2 = data['joints2D'][:,:,frame_id]
     d2[0, :] =  (320 - d2[0,:])
     d2[1, :] =  (240 - d2[1,:])
+
+    # Read Openpose annotation if exists
+    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
+    if os.path.exists(openpose_annot_path):
+        d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
+        d2_openpose[0, :] =  (320 - d2_openpose[0,:])
+        all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     #draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
 
@@ -186,10 +193,6 @@ def get_training_params(filename, data_dir, direction=None):
     all_J_2d[frame_id, :, :] = d2.T #reconstruct_2d.T
     all_seg[frame_id, :, :] = seg
     all_image[frame_id, :, :, :] = img
-    # Read Openpose annotation if exists
-    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
-    if os.path.exists(openpose_annot_path):
-        all_J_2d_openpose[frame_id, :, :] = read_openpose(filename, frame_id, openpose_annot_path)
 
   output = dict()
   output['pose'] = all_pose

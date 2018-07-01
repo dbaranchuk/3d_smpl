@@ -100,7 +100,7 @@ def read_openpose(filename, frame_id, annot_path):
 
     image = np.zeros((320,240,3))
     img_path = '/home/local/tmp'
-    for i, joint in enumerate(joints[perms]):
+    for i, joint in enumerate(joints[perm]):
         cv2.circle(image, tuple(joint), 2, colors[i], -1)
     cv2.imwrite(os.path.join(img_path, filename), image)
 

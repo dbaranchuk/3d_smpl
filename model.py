@@ -317,7 +317,7 @@ class _3DINN(object):
         # test data to predict from surreal
         #surreal_test_filenames = ["../tf_code/gait/surreal/test_full_annot.tfrecords"]
         surreal_test_filenames = ["../tf_code/gait/surreal/test_ignored_joints.tfrecords"]
-        self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_test_filenames, self.config.batch_size, shuffle=False))#, openpose=True))
+        self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_test_filenames, self.config.batch_size, shuffle=False, openpose=True))
 
 
     def centered_3d(self, pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender):

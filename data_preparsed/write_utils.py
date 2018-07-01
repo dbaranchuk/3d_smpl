@@ -77,8 +77,9 @@ def read_openpose(filename, frame_id, annot_path):
     visibility = joints[:,2]
     joints = joints[:,:2].astype('int32')
     # Permutate to SMPL
-    #perm = np.array([7,11,8,16,12,9,17,13,10,18,22,20,0,19,14,15,4,1,5,2,6,3,21,23])
-    perm = np.array([12,17,19,21,16,18,20,0,2,5,8,1,4,7,14,15,3,6,9,13,11,22,10,23])
+    perm = np.array([7,11,8,16,12,9,17,13,10,18,22,20,0,19,14,15,4,1,5,2,6,3,21,23])
+    #perm = np.array([12,17,19,21,16,18,20,0,2,5,8,1,4,7,14,15,3,6,9,13,11,22,10,23])
+
     import cv2
     left_leg = [1, 4, 7, 10]
     left_hand = [13, 16, 18, 20, 22]

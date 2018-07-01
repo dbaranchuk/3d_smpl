@@ -6,9 +6,9 @@ import numpy as np
 import pickle as pkl
 from write_utils import write_syn_to_bin, read_syn_to_bin
 
-data_root_dir = '/home/local/data/cmc/synthetic/gait_dataset_2' #run0'
+data_root_dir = '/home/local/data/cmc/synthetic/run0' #gait_dataset_2' #run0'
 write_root_dir = '/home/local/data/cmc/synthetic/bin'
-is_test = False
+is_test = True
 
 if is_test:
     subjects = ['10_04']

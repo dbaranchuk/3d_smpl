@@ -140,11 +140,11 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
 
       # Preprocess J_2d_openpose
       J_2d_openpose = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
+      indices = np.where(J_2d_openpose.sum(1) < 0)[0]
+      J_2d_openpose[indices] = np.zeros((len(indices), 2))
       for i, joint in enumerate(J_2d_openpose):
-          if joint[0] < 0 or joint[1] < 0:
-              #print(joint, np.zeros((2)))
-              print(J_2d_openpose[i])
-              J_2d_openpose[i] = np.zeros((2))
+          if joint[0] == 0 and joint[1] == 0:
+              print("hui")
       data_J_2d_openpose[frame_id, : , :] = J_2d_openpose
 
       # crop image

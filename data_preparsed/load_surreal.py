@@ -114,9 +114,6 @@ def get_training_params(filename, data_dir, direction=None):
     # Read Openpose annotation if exists
     openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
     if os.path.exists(openpose_annot_path):
-        ##############
-        # TODO: permutate and zero distinct joints
-        ##############
         d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
         indices = np.where(d2_openpose.sum(1) > 0)[0]
         d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])

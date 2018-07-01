@@ -111,6 +111,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
 
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
+  ignore_joints = [3,6,9,13,14,15,22,23]
 
   new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
   s = 1.25 #+ 0.1 * np.random.rand()
@@ -136,7 +137,15 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       data_T[frame_id, :] = output[frame_id]['T']
       data_J[frame_id, :, :] = output[frame_id]['J']
       data_J_2d[frame_id, :, :] = resize_scale * (output[frame_id]['J_2d'] - np.reshape(new_origin, [1, -1]))
-      data_J_2d_openpose[frame_id, : , :] = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
+
+      # Preprocess J_2d_openpose
+      J_2d_openpose = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
+      for i, joint in enumerate(J_2d_openpose):
+          if joint[0] < 0 or joint[1] < 0:
+              print(joint, np.zeros((2)))
+              J_2d_openpose[i] = np.zeros((2))
+      data_J_2d_openpose[frame_id, : , :] = J_2d_openpose
+
       # crop image
       image = output[frame_id]['image']
       h, w, _ = image.shape

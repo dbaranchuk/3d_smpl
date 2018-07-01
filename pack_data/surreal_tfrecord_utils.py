@@ -62,7 +62,6 @@ def convert_to_npz_from_folder(folder_name, npz_filename, get_samples=None, quo=
 
   for sample_id in tqdm(range(get_samples)):
     filename, t = files[sample_id].split("#")
-    #print filename, t, int(t)
     output = dict()
     output[0] = read_syn_to_bin(filename, int(t))
     output[1] = read_syn_to_bin(filename, int(t) + 1)

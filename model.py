@@ -966,7 +966,7 @@ class _3DINN(object):
                     batch_pose, batch_beta, batch_T, batch_R, batch_J, batch_J_2d, batch_image, batch_seg, batch_chamfer, batch_c, batch_f, batch_resize_scale, batch_gender, batch_J_c, _idx, batch_pmesh, batch_v_gt = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
                     ####
-                    draw_2d_joints(batch_image[0][1]*255, batch_J_2d[0][1])
+                    #draw_2d_joints(batch_image[0][1]*255, batch_J_2d[0][1])
 
                     # Train interation
                     _, step, sup_loss, d3_loss, d2_loss = self.sess.run([recon_optim, self.global_step, self.sup_loss, self.d3_loss, self.d2_loss], feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.pmesh_gt:batch_pmesh, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
@@ -1012,7 +1012,7 @@ class _3DINN(object):
         try:
             while not coord.should_stop():
                 beta, pose = {},{}
-                for i in range(226):
+                for i in range(122):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, batch_resize_scale_t, batch_gender_t, batch_J_c_t, idx_t, batch_pmesh_t, batch_v_gt_t = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 
@@ -1033,9 +1033,9 @@ class _3DINN(object):
                         self.images:batch_image_t,
                         self.resize_scale_gt: batch_resize_scale_t})
 
-                        draw_2d_joints(batch_image_t[0][frame_id].copy()*255, batch_J_2d_t[0][frame_id], name='src_vis_'+str(frame_id)+'.jpg')
-                        draw_2d_joints(batch_image_t[0][frame_id].copy()*255, _J_2d[0], name='mocap_vis'+str(frame_id)+'.jpg')
-                        draw_2d_joints(batch_seg_t[0][frame_id].copy()*255, _J_2d[0], name='mocap_seg'+str(frame_id)+'.jpg')
+                        #draw_2d_joints(batch_image_t[0][frame_id].copy()*255, batch_J_2d_t[0][frame_id], name='src_vis_'+str(frame_id)+'.jpg')
+                        #draw_2d_joints(batch_image_t[0][frame_id].copy()*255, _J_2d[0], name='mocap_vis'+str(frame_id)+'.jpg')
+                        #draw_2d_joints(batch_seg_t[0][frame_id].copy()*255, _J_2d[0], name='mocap_seg'+str(frame_id)+'.jpg')
                         beta[idx_t[0]].append(_beta[0])
                         pose[idx_t[0]].append(_pose[0])
                         # GT

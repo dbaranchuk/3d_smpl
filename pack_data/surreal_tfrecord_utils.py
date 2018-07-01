@@ -145,6 +145,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
               print(data_J_2d[frame_id, i])
           if joint[0] < 0 or joint[1] < 0:
               #print(joint, np.zeros((2)))
+              print(output[frame_id]['J_2d_openpose'][i])
               J_2d_openpose[i] = np.zeros((2))
       data_J_2d_openpose[frame_id, : , :] = J_2d_openpose
 

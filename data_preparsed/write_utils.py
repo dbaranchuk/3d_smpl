@@ -98,7 +98,7 @@ def read_openpose(filename, frame_id, annot_path):
     for i in spine:
         colors[i] = (128, 128, 0)
 
-    image = np.zeros((320,240,3))
+    image = np.zeros((240,320,3))
     img_path = '/home/local/tmp'
     for i, joint in enumerate(joints[perm]):
         cv2.circle(image, tuple(joint), 2, colors[i], -1)

@@ -119,7 +119,6 @@ def get_training_params(filename, data_dir, direction=None):
         ##############
         d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
         indices = np.where(d2_openpose.sum(1) > 0)[0]
-        print(indices)
         d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])
         all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")

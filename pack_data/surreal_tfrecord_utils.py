@@ -140,7 +140,6 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
 
       # Preprocess J_2d_openpose
       J_2d_openpose = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
-      print(J_2d_openpose.shape)
       indices = np.where(J_2d_openpose.sum(1) < 0)[0]
       J_2d_openpose[indices] = np.zeros((len(indices), 2))
       data_J_2d_openpose[frame_id, : , :] = J_2d_openpose

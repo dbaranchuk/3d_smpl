@@ -111,7 +111,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
 
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
-  ignore_joints = np.array([3,6,9,11,13,14,15,23])
+  ignore_joints = np.array([3,6,9,13,14,15,22,23])
 
   new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
   s = 1.25 #+ 0.1 * np.random.rand()

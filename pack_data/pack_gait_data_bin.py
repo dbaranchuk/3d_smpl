@@ -15,6 +15,6 @@ modality = 'test' if is_test else 'train'
 data_path = os.path.join(data_path, modality)
 print data_path
 
-filename = "/home/local/mocap/tf_code/gait/" + dataset + "/" + modality + "_ignored_joints.tfrecords"
+filename = "/home/local/mocap/tf_code/gait/" + dataset + "/" + modality + "_full_annot.tfrecords" #_ignored_joints.tfrecords"
 convert_to_tfrecords_from_folder(data_path, filename, is_test=is_test, with_idx=with_idx, is_gait=True)
 print filename

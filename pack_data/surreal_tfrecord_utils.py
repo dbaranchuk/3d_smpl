@@ -144,8 +144,8 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       J_2d_openpose[indices] = np.zeros((len(indices), 2))
       data_J_2d_openpose[frame_id, : , :] = J_2d_openpose
 
-      data_J_2d[frame_id, ignore_joints] = np.zeros((len(ignore_joints), 2))
-      data_J_2d_openpose[frame_id, ignore_joints] = np.zeros((len(ignore_joints), 2))
+      #data_J_2d[frame_id, ignore_joints] = np.zeros((len(ignore_joints), 2))
+      #data_J_2d_openpose[frame_id, ignore_joints] = np.zeros((len(ignore_joints), 2))
 
       # crop image
       image = output[frame_id]['image']

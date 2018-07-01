@@ -79,4 +79,29 @@ def read_openpose(filename, frame_id, annot_path):
     # Permutate to SMPL
     #perm = np.array([7,11,8,16,12,9,17,13,10,18,22,20,0,19,14,15,4,1,5,2,6,3,21,23])
     perm = np.array([12,17,19,21,16,18,20,0,2,5,8,1,4,7,14,15,3,6,9,13,11,22,10,23])
+
+    left_leg = [1, 4, 7, 10]
+    left_hand = [13, 16, 18, 20, 22]
+    right_leg = [2, 5, 8, 11]
+    right_hand = [14, 17, 19, 21, 23]
+    spine = [0, 3, 6, 9, 12, 15]
+
+    colors = {}
+    for i in left_leg:
+        colors[i] = (0, 255, 255)
+    for i in right_leg:
+        colors[i] = (0, 255, 0)
+    for i in left_hand:
+        colors[i] = (255, 0, 0)
+    for i in right_hand:
+        colors[i] = (0, 0, 255)
+    for i in spine:
+        colors[i] = (128, 128, 0)
+
+    image = np.zeros(320,240,3)
+    img_path = '/home/local/tmp'
+    for i, joint in enumerate(joints):
+        cv2.circle(image, tuple(joint), 2, colors[i], -1)
+    cv2.imwrite(os.path.join(img_path, filename), image)
+
     return joints[perm]

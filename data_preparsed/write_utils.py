@@ -65,6 +65,7 @@ def read_syn_to_bin(filename, frame_id):
     output['seg'] = np.reshape(seg, [h, w])
     return output
 
+
 def read_openpose(filename, frame_id, annot_path):
     json_name = (os.path.join(annot_path, filename)+"_%012d_keypoints.json") % frame_id
     with open(json_name, 'r') as f:

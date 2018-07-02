@@ -931,7 +931,7 @@ class _3DINN(object):
                 self.writer.add_summary(summ_str, step)
                 print("[test, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f)(%.4f), d2: %.4f (%.6f), beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" %(idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, beta_loss, pose_loss, R_loss, T_loss))
 
-              if step % 1000 == 0:
+              if step % 1000 == 0 or step == self.config.max_iter-1:
                 self.save(self.checkpoint_dir, step)
             break
         except tf.errors.OutOfRangeError:
@@ -983,7 +983,7 @@ class _3DINN(object):
                         step, summ_str, sup_loss, d3_loss, d3_joint_loss, d3_c_loss, d2_loss, d2_joint_loss, project1, flow, silh_loss, S_M1, C_M1, beta_loss, pose_loss, R_loss, T_loss = self.sess.run(params, feed_dict={self.beta_gt:batch_beta, self.pose_gt:batch_pose, self.T_gt: batch_T, self.R_gt:batch_R, self.gender_gt:batch_gender, self.J_gt: batch_J, self.J_c_gt: batch_J_c, self.J_2d_gt: batch_J_2d, self.seg_gt:batch_seg, self.f_gt: batch_f, self.c_gt: batch_c, self.v_gt:batch_v_gt, self.chamfer_gt: batch_chamfer, self.images:batch_image, self.resize_scale_gt: batch_resize_scale})
                         self.writer.add_summary(summ_str, step)
                         print("[%s, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f) (%.4f), d2: %.4f (%.6f), silh: %.4f, beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" %(self.config.name, idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, silh_loss, beta_loss, pose_loss, R_loss, T_loss))
-                    if idx == self.config.max_iter-1:
+                    if step % 1000 == 0 or step == self.config.max_iter-1:
                         self.save(self.checkpoint_dir, step)
                 break
         except tf.errors.OutOfRangeError:

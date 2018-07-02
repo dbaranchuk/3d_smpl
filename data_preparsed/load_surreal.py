@@ -37,6 +37,7 @@ def draw_2d_joints(image, joints, name='vis.jpg'):
 
 smpl_dir = '../smpl'
 MALE = 0
+
 def get_training_params(filename, data_dir, direction=None):
   folder_name = filename[:-6]
   if direction != None:
@@ -44,6 +45,8 @@ def get_training_params(filename, data_dir, direction=None):
   
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
   segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 
+  reconstructed_2d = np.load(os.path.join(os.path.join(data_dir, folder_name), filename) + "_reconstructed_2d.npy")
+  reconstructed_2d[:, :, 0] = 320 - reconstructed_2d[:, :, 0]
 
   #'h36m_S1_Directions/h36m_S1_Directions_c0028_info.mat' 
   # see whether it is male or female
@@ -190,8 +193,8 @@ def get_training_params(filename, data_dir, direction=None):
     all_f[frame_id] = [fx, fy]
     all_R[frame_id, :] = angles
     all_T[frame_id, :] = T[:,0]
-    all_J[frame_id, :, :] = reconstruct_3d.T 
-    all_J_2d[frame_id, :, :] = d2.T #reconstruct_2d.T
+    all_J[frame_id, :, :] = reconstruct_3d.T
+    all_J_2d[frame_id, :, :] = reconstructed_2d[frame_id] #d2.T #reconstruct_2d.T
     all_seg[frame_id, :, :] = seg
     all_image[frame_id, :, :, :] = img
 

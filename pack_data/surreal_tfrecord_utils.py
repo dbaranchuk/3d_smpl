@@ -86,7 +86,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       data_T[frame_id, :] = output[frame_id]['T']
       data_J[frame_id, :, :] = output[frame_id]['J']
       data_J_2d[frame_id, :, :] = resize_scale * (output[frame_id]['J_2d'] - np.reshape(new_origin, [1, -1]))
-      data_J_reconstruct_2d[frame_id, :, :] = resize_scale * (output[frame_id]['J_recontsruct_2d'] - np.reshape(new_origin, [1, -1]))
+      data_J_reconstruct_2d[frame_id, :, :] = resize_scale * (output[frame_id]['J_reconstruct_2d'] - np.reshape(new_origin, [1, -1]))
       # Preprocess J_2d_openpose
 #      J_2d_openpose = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
 #      indices = np.where(J_2d_openpose.sum(1) < 0)[0]

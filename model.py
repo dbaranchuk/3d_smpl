@@ -308,7 +308,7 @@ class _3DINN(object):
     '''Load surreal train validation and test data'''
     def loadData(self):
         #load data from tfrecords
-        #surreal_train_filenames = ["../tf_code/gait/surreal/train.tfrecords"]
+        surreal_train_filenames = ["../tf_code/gait/surreal/train.tfrecords"]
         self.pose_sr, self.beta_sr, self.T_sr, self.R_sr, self.J_sr, self.J_2d_sr, self.image_sr, self.seg_sr, self.chamfer_sr, self.c_sr, self.f_sr, self.resize_scale_sr, self.gender_sr, self.J_c_sr, self.idx_sr, self.pmesh_sr, self.v_gt_sr = self.centered_3d_with_idx(*inputs_surreal_with_idx(surreal_train_filenames, self.config.batch_size))
 
         # validation data from surreal

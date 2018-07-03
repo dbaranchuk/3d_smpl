@@ -45,8 +45,8 @@ def get_training_params(filename, data_dir, direction=None):
   
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
   segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 
-  reconstructed_2d = np.load(os.path.join(os.path.join(data_dir, folder_name), filename) + "_reconstructed_2d.npy")
-  reconstructed_2d[:, :, 0] = 320 - reconstructed_2d[:, :, 0]
+  all_J_reconstruct_2d = np.load(os.path.join(os.path.join(data_dir, folder_name), filename) + "_reconstructed_2d.npy")
+  all_J_reconstruct_2d[:, :, 0] = 320 - all_J_reconstruct_2d[:, :, 0]
 
   #'h36m_S1_Directions/h36m_S1_Directions_c0028_info.mat' 
   # see whether it is male or female
@@ -79,7 +79,6 @@ def get_training_params(filename, data_dir, direction=None):
   all_T = np.zeros((num_frames, 3))
   all_J = np.zeros((num_frames, num_joints, 3))
   all_J_2d = np.zeros((num_frames, num_joints, 2))
-  all_J_2d_openpose = np.zeros((num_frames, num_joints, 2))
   all_seg = np.zeros((num_frames, h, w), dtype=np.bool_)
   all_image = np.zeros((num_frames, h, w, 3), dtype=np.uint8)
 
@@ -115,12 +114,12 @@ def get_training_params(filename, data_dir, direction=None):
     d2[1, :] =  (240 - d2[1,:])
 
     # Read Openpose annotation if exists
-    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
-    if os.path.exists(openpose_annot_path):
-        d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
-        indices = np.where(d2_openpose.sum(1) > 0)[0]
-        d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])
-        all_J_2d_openpose[frame_id, :, :] = d2_openpose
+#    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
+#    if os.path.exists(openpose_annot_path):
+#        d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
+#        indices = np.where(d2_openpose.sum(1) > 0)[0]
+#        d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])
+#        all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     #draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
 
@@ -194,7 +193,7 @@ def get_training_params(filename, data_dir, direction=None):
     all_R[frame_id, :] = angles
     all_T[frame_id, :] = T[:,0]
     all_J[frame_id, :, :] = reconstruct_3d.T
-    all_J_2d[frame_id, :, :] = reconstructed_2d[frame_id] #d2.T #reconstruct_2d.T
+    all_J_2d[frame_id, :, :] = d2.T
     all_seg[frame_id, :, :] = seg
     all_image[frame_id, :, :, :] = img
 
@@ -206,7 +205,7 @@ def get_training_params(filename, data_dir, direction=None):
   output['T'] = all_T
   output['J'] = all_J
   output['J_2d'] = all_J_2d
-  output['J_2d_openpose'] = all_J_2d_openpose
+  output['J_reconstruct_2d'] = all_J_reconstruct_2d
   output['seg'] = all_seg
   output['image'] = all_image
   output['gender'] = gender

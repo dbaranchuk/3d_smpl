@@ -35,56 +35,6 @@ def get_file_list(data_path, quo=0, test=False):
     return files
 
 
-def convert_to_npz_from_folder(folder_name, npz_filename, get_samples=None, quo=0):
-  files = get_file_list(folder_name, quo)
-  random.shuffle(files)
-
-  num_files = len(files)
-  num_frames = 2
-  image_size_h = 240
-  image_size_w = 320
-
-  keypoints_num = 24
-  bases_num = 10
-  print("num_files", num_files)
-  if not get_samples:
-    get_samples = num_files
-  data_pose = np.zeros((get_samples, num_frames, keypoints_num, 3))
-  data_T = np.zeros((get_samples, num_frames, 3))
-  data_R = np.zeros((get_samples, num_frames, 3))
-  data_beta = np.zeros((get_samples, num_frames, bases_num))
-  data_J = np.zeros((get_samples, num_frames, keypoints_num, 3))
-  data_J_2d = np.zeros((get_samples, num_frames, keypoints_num, 2))
-  data_image = np.zeros((get_samples, num_frames, image_size_h, image_size_w, 3), dtype = np.uint8)
-  data_seg = np.zeros((get_samples, num_frames, image_size_h, image_size_w), dtype=np.bool_)
-  data_f = np.zeros((get_samples, num_frames, 2))
-  data_gender = np.zeros((get_samples), dtype=np.int32)
-
-  for sample_id in tqdm(range(get_samples)):
-    filename, t = files[sample_id].split("#")
-    output = dict()
-    output[0] = read_syn_to_bin(filename, int(t))
-    output[1] = read_syn_to_bin(filename, int(t) + 1)
-
-    for frame_id in range(num_frames): 
-      pose = np.reshape(output[frame_id]['pose'], [keypoints_num, 3]) 
-      data_pose[sample_id, frame_id, :, :] = pose
-      data_gender[sample_id] = int(output[frame_id]['gender'])
-      data_T[sample_id, frame_id, :] = output[frame_id]['T']
-      data_R[sample_id, frame_id, :] = output[frame_id]['R']
-      data_beta[sample_id, frame_id, :] = output[frame_id]['beta']
-      data_J[sample_id, frame_id, :, :] = output[frame_id]['J']
-      data_J_2d[sample_id, frame_id, :, :] = output[frame_id]['J_2d']
-      data_image[sample_id, frame_id, :, :, :] = output[frame_id]['image']
-      #print np.max(output['seg'][sample_id, :, :])
-      data_seg[sample_id, frame_id, :, :] = output[frame_id]['seg']
-      data_f[sample_id, frame_id, :] = output[frame_id]['f']
-
-
-  np.savez(npz_filename, pose=data_pose, T=data_T, R=data_R, beta=data_beta, J=data_J,
-           J_2d=data_J_2d, image=data_image, seg=data_seg, f=data_f, gender=data_gender)
-
-
 def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypoints_num=24, bases_num=10, chamfer_scale=0.5, is_gait=False):
   filename, t = file_string.split("#")
   output = dict()
@@ -97,7 +47,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
   data_beta = np.zeros((num_frames, bases_num))
   data_J = np.zeros((num_frames, keypoints_num, 3))
   data_J_2d = np.zeros((num_frames, keypoints_num, 2))
-  data_J_2d_openpose = np.zeros((num_frames, keypoints_num, 2))
+  data_J_reconstruct_2d = np.zeros((num_frames, keypoints_num, 2))
   data_image = np.zeros((num_frames, image_size, image_size, 3))
   data_seg = np.zeros((num_frames, image_size, image_size))
   small_image_size = int(chamfer_scale * image_size)
@@ -111,7 +61,7 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
 
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
-  ignore_joints = np.array([3,6,9,13,14,15,22,23])
+  #ignore_joints = np.array([3,6,9,13,14,15,22,23])
 
   new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
   s = 1.25 #+ 0.1 * np.random.rand()
@@ -139,11 +89,10 @@ def loadBatchSurreal_fromString(file_string, image_size=128, num_frames=2, keypo
       data_J_2d[frame_id, :, :] = resize_scale * (output[frame_id]['J_2d'] - np.reshape(new_origin, [1, -1]))
 
       # Preprocess J_2d_openpose
-      J_2d_openpose = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
-      indices = np.where(J_2d_openpose.sum(1) < 0)[0]
-      J_2d_openpose[indices] = np.zeros((len(indices), 2))
-      data_J_2d_openpose[frame_id, : , :] = J_2d_openpose
-
+#      J_2d_openpose = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
+#      indices = np.where(J_2d_openpose.sum(1) < 0)[0]
+#      J_2d_openpose[indices] = np.zeros((len(indices), 2))
+#      data_J_2d_openpose[frame_id, : , :] = J_2d_openpose
       #data_J_2d[frame_id, ignore_joints] = np.zeros((len(ignore_joints), 2))
       #data_J_2d_openpose[frame_id, ignore_joints] = np.zeros((len(ignore_joints), 2))
 
@@ -199,7 +148,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
     filename_to_idx = dict()
     counters = dict()
     for sample_id in tqdm(range(get_samples)):
-        pose, T, R, beta, J, J_2d, J_2d_openpose, image, seg, f, chamfer, c, gender, resize_scale = loadBatchSurreal_fromString(files[sample_id], crop_image_size, is_gait=is_gait)
+        pose, T, R, beta, J, J_2d, J_reconstruct_2d, image, seg, f, chamfer, c, gender, resize_scale = loadBatchSurreal_fromString(files[sample_id], crop_image_size, is_gait=is_gait)
         scipy.misc.imsave('../tmp/image_' + str(sample_id) + '.png', image[0, :, :, :])
         feature={
             'pose': _floatList_feature(pose.flatten()),
@@ -208,7 +157,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
             'R': _floatList_feature(R.flatten()),
             'J': _floatList_feature(J.flatten()),
             'J_2d': _floatList_feature(J_2d.flatten()),
-            'J_2d_openpose': _floatList_feature(J_2d_openpose.flatten()),
+            'J_reconstruct_2d': _floatList_feature(J_reconstruct_2d.flatten()),
             'image': _floatList_feature(image.flatten()),
             'seg': _floatList_feature(seg.flatten()),
             'f': _floatList_feature(f.flatten()),
@@ -257,7 +206,7 @@ def read_and_decode_surreal(tfrecord_file):
       'R': tf.FixedLenFeature([num_frames*6], tf.float32),
       'J': tf.FixedLenFeature([num_frames*keypoints_num*3], tf.float32),
       'J_2d': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
-      'J_2d_openpose': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
+      'J_reconstruct_2d': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
       'image': tf.FixedLenFeature([num_frames*image_size*image_size*3], tf.float32),
       'seg': tf.FixedLenFeature([num_frames*image_size*image_size], tf.float32),
       'f': tf.FixedLenFeature([num_frames*2], tf.float32),
@@ -272,14 +221,14 @@ def read_and_decode_surreal(tfrecord_file):
   feature['R'] = tf.reshape(feature['R'], [num_frames, 6])
   feature['J'] = tf.reshape(feature['J'], [num_frames, keypoints_num, 3])
   feature['J_2d'] = tf.reshape(feature['J_2d'], [num_frames, keypoints_num, 2])
-  feature['J_2d_openpose'] = tf.reshape(feature['J_2d_openpose'], [num_frames, keypoints_num, 2])
+  feature['J_reconstruct_2d'] = tf.reshape(feature['J_reconstruct_2d'], [num_frames, keypoints_num, 2])
   feature['image'] = tf.reshape(feature['image'], [num_frames, image_size, image_size, 3])
   feature['seg'] = tf.reshape(feature['seg'], [num_frames, image_size, image_size])
   feature['chamfer'] = tf.reshape(feature['chamfer'], [num_frames, small_image_size, small_image_size])
   feature['c'] = tf.reshape(feature['c'], [num_frames, 2])
   feature['f'] = tf.reshape(feature['f'], [num_frames, 2])
   feature['resize_scale'] = tf.reshape(feature['resize_scale'], [num_frames])
-  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['J_2d_openpose'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender']
+  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['J_reconstruct_2d'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender']
  
 
 def read_and_decode_surreal_with_idx(tfrecord_file):
@@ -300,7 +249,7 @@ def read_and_decode_surreal_with_idx(tfrecord_file):
       'R': tf.FixedLenFeature([num_frames*6], tf.float32),
       'J': tf.FixedLenFeature([num_frames*keypoints_num*3], tf.float32),
       'J_2d': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
-      'J_2d_openpose': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
+      'J_reconstruct_2d': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
       'image': tf.FixedLenFeature([num_frames*image_size*image_size*3], tf.float32),
       'seg': tf.FixedLenFeature([num_frames*image_size*image_size], tf.float32),
       'f': tf.FixedLenFeature([num_frames*2], tf.float32),
@@ -316,23 +265,23 @@ def read_and_decode_surreal_with_idx(tfrecord_file):
   feature['R'] = tf.reshape(feature['R'], [num_frames, 6])
   feature['J'] = tf.reshape(feature['J'], [num_frames, keypoints_num, 3])
   feature['J_2d'] = tf.reshape(feature['J_2d'], [num_frames, keypoints_num, 2])
-  feature['J_2d_openpose'] = tf.reshape(feature['J_2d_openpose'], [num_frames, keypoints_num, 2])
+  feature['J_reconstruct_2d'] = tf.reshape(feature['J_reconstruct_2d'], [num_frames, keypoints_num, 2])
   feature['image'] = tf.reshape(feature['image'], [num_frames, image_size, image_size, 3])
   feature['seg'] = tf.reshape(feature['seg'], [num_frames, image_size, image_size])
   feature['chamfer'] = tf.reshape(feature['chamfer'], [num_frames, small_image_size, small_image_size])
   feature['c'] = tf.reshape(feature['c'], [num_frames, 2])
   feature['f'] = tf.reshape(feature['f'], [num_frames, 2])
   feature['resize_scale'] = tf.reshape(feature['resize_scale'], [num_frames])
-  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['J_2d_openpose'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender'], feature['idx']
+  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['J_reconstruct_2d'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender'], feature['idx']
 
 
 def inputs_surreal(tf_filenames, batch_size, shuffle=True, openpose=False):
   with tf.name_scope('surreal_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames)
-    pose, beta, T, R, J, J_2d, J_2d_openpose, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_surreal(filename_queue)
+    pose, beta, T, R, J, J_2d, J_reconstruct_2d, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_surreal(filename_queue)
 
     if openpose:
-        J_2d = J_2d_openpose
+        J_2d = J_reconstruct_2d
 
     if not shuffle:
         return tf.train.batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender], batch_size=batch_size, num_threads=2)
@@ -343,10 +292,10 @@ def inputs_surreal(tf_filenames, batch_size, shuffle=True, openpose=False):
 def inputs_surreal_with_idx(tf_filenames, batch_size, shuffle=True, openpose=False):
   with tf.name_scope('surreal_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames, shuffle=shuffle)
-    pose, beta, T, R, J, J_2d, J_2d_openpose, image, seg, chamfer, c, f, resize_scale, gender, idx = read_and_decode_surreal_with_idx(filename_queue)
+    pose, beta, T, R, J, J_2d, J_reconstruct_2d, image, seg, chamfer, c, f, resize_scale, gender, idx = read_and_decode_surreal_with_idx(filename_queue)
 
     if openpose:
-        J_2d = J_2d_openpose
+        J_2d = J_reconstruct_2d
 
     if not shuffle:
       return tf.train.batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, idx], batch_size=batch_size, num_threads=2) #,capacity=80,min_after_dequeue=50)

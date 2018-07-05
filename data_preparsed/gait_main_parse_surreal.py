@@ -9,6 +9,7 @@ from write_utils import write_syn_to_bin, read_syn_to_bin
 data_root_dir = '/home/local/data/cmc/synthetic'
 write_root_dir = '/home/local/data/cmc/synthetic/bin'
 
+# Perezapisat train
 is_test = True
 
 if is_test:

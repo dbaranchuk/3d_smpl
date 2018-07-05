@@ -1,6 +1,6 @@
 # This file preparsed surreal data into binary files
 # For fast tfrecord read-write
-from load_surreal import get_training_params
+from load_cmc import get_training_params
 import os
 import numpy as np
 import pickle as pkl
@@ -34,5 +34,5 @@ for subject in subjects:
             sfile = filename + '.mp4'
             print sfile
             parsed_data = get_training_params(sfile, data_root_dir, direction)
-            write_syn_to_bin(parsed_data, os.path.join(full_write_path, sfile) + "_" + direction + ".bin")
+            write_cmc_to_bin(parsed_data, os.path.join(full_write_path, sfile) + "_" + direction + ".bin")
           

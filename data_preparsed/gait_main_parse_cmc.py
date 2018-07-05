@@ -31,7 +31,7 @@ for subject in subjects:
         if os.path.exists(os.path.join(data_root_dir , filename)):
             data_folder = os.path.join(data_root_dir , filename)
             check_dir(full_write_path)
-            sfile = filename + '.mp4'
+            sfile = filename
             print sfile
             parsed_data = get_training_params(sfile, data_root_dir)
             write_cmc_to_bin(parsed_data, os.path.join(full_write_path, sfile) + "_" + direction + ".bin")

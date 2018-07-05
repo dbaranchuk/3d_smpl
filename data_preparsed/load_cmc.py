@@ -35,7 +35,7 @@ def draw_2d_joints(image, joints, name='vis.jpg'):
 
 
 def get_training_params(filename, data_dir, direction=None):
-    folder_name = filename
+  folder_name = filename
   if direction != None:
     filename += direction
 

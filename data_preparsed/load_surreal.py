@@ -121,7 +121,7 @@ def get_training_params(filename, data_dir, direction=None):
 #        d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])
 #        all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
-    #draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    draw_2d_joints(np.array(img), all_J_reconstruct_2d[frame_id], name='/home/local/tmp/synthetic/vis'+str(frame_id)+'.jpg')
 
     from mpl_toolkits.mplot3d import Axes3D
     d3 = data['joints3D'][:,:,frame_id]

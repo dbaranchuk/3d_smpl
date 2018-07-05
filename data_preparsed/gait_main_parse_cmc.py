@@ -33,6 +33,6 @@ for subject in subjects:
             check_dir(full_write_path)
             sfile = filename + '.mp4'
             print sfile
-            parsed_data = get_training_params(sfile, data_root_dir, direction)
+            parsed_data = get_training_params(sfile, data_root_dir)
             write_cmc_to_bin(parsed_data, os.path.join(full_write_path, sfile) + "_" + direction + ".bin")
           

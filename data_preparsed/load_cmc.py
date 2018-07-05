@@ -35,14 +35,14 @@ def draw_2d_joints(image, joints, name='vis.jpg'):
 
 
 def get_training_params(filename, data_dir, direction=None):
-  folder_name = 'S1'
+    folder_name = filename
   if direction != None:
     filename += direction
 
   w = 320
   h = 240
-  cap = imageio.get_reader(os.path.join(os.path.join(data_dir, folder_name), filename) + ".mp4")
-  all_J_2d = np.load(os.path.join(os.path.join(data_dir, folder_name), filename) + "_reconstructed_2d.npy")
+  cap = imageio.get_reader(os.path.join(data_dir, folder_name, filename) + ".mp4")
+  all_J_2d = np.load(os.path.join(data_dir, folder_name, filename) + "_reconstructed_2d.npy")
   all_J_2d[:, :, 0] = w - all_J_reconstruct_2d[:, :, 0]
 
   num_frames = all_J_2d.shape[0]

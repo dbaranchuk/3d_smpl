@@ -43,7 +43,7 @@ def get_training_params(filename, data_dir, direction=None):
   h = 240
   cap = imageio.get_reader(os.path.join(data_dir, folder_name, filename) + ".mp4")
   all_J_2d = np.load(os.path.join(data_dir, folder_name, filename) + "_reconstructed_2d.npy")
-  all_J_2d[:, :, 0] = w - all_J_reconstruct_2d[:, :, 0]
+  all_J_2d[:, :, 0] = w - all_J_2d[:, :, 0]
 
   num_frames = all_J_2d.shape[0]
   all_image = np.zeros((num_frames, h, w, 3), dtype=np.uint8)

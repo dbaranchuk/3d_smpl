@@ -12,7 +12,7 @@ write_root_dir = '/home/local/data/cmc/real/bin'
 is_test = True
 if is_test:
     subjects = ['s1']
-    modality = 'real/subdir'
+    modality = 'test/subdir'
 else:
     pass
 

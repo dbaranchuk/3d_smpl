@@ -4,7 +4,7 @@ from load_surreal import get_training_params
 import os
 import numpy as np
 import pickle as pkl
-from write_utils import write_syn_to_bin, read_syn_to_bin
+from write_utils import write_cmc_to_bin, read_cmc_to_bin
 
 data_root_dir = '/home/local/data/cmc/real'
 write_root_dir = '/home/local/data/cmc/real/bin'

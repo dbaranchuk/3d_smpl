@@ -35,33 +35,23 @@ def draw_2d_joints(image, joints, name='vis.jpg'):
 
 
 def get_training_params(filename, data_dir, direction=None):
-  folder_name = filename[:-6]
+  folder_name = 'S1'
   if direction != None:
-    folder_name += '_' + direction
-  
-  data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat")
-  cap = imageio.get_reader(os.path.join(os.path.join(data_dir, folder_name), filename) + ".mp4")
+    filename += direction
 
-  num_joints = data['joints2D'].shape[1]
-  num_frames = data['joints2D'].shape[2]
-  
-  import time
-  import math
   w = 320
   h = 240
-  all_J_2d = np.zeros((num_frames, num_joints, 2))
+  cap = imageio.get_reader(os.path.join(os.path.join(data_dir, folder_name), filename) + ".mp4")
+  all_J_2d = np.load(os.path.join(os.path.join(data_dir, folder_name), filename) + "_reconstructed_2d.npy")
+  all_J_2d[:, :, 0] = w - all_J_reconstruct_2d[:, :, 0]
+
+  num_frames = all_J_2d.shape[0]
   all_image = np.zeros((num_frames, h, w, 3), dtype=np.uint8)
 
   for frame_id in range(num_frames):
     img = cap.get_data(frame_id)
-
-    # flip image and 2d gt
-    img = np.fliplr(img)
-    d2 = data['joints2D'][:,:,frame_id]
-    d2[0, :] =  (320 - d2[0,:])
     #draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
-    all_J_2d[frame_id, :, :] = d2.T
-    all_image[frame_id, :, :, :] = img
+    all_image[frame_id, :, :, :] = np.fliplr(img)
 
   output = dict()
   output['J_2d'] = all_J_2d

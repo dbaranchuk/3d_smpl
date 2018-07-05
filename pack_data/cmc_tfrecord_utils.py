@@ -47,7 +47,6 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
   data_beta = np.zeros((num_frames, bases_num))
   data_J = np.zeros((num_frames, keypoints_num, 3))
   data_J_2d = np.zeros((num_frames, keypoints_num, 2))
-  data_J_2d_openpose = np.zeros((num_frames, keypoints_num, 2))
   data_image = np.zeros((num_frames, image_size, image_size, 3))
   data_seg = np.zeros((num_frames, image_size, image_size))
   small_image_size = int(chamfer_scale * image_size)
@@ -63,7 +62,7 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
   J_2d = output[0]['J_2d']
 
   new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
-  s = 1.2 #+ 0.1 * np.random.rand()
+  s = 1.25 #+ 0.1 * np.random.rand()
 
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
   new_image_size = int(2*crop_size)
@@ -76,17 +75,8 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
   new_origin = np.array([x_min, y_min]) 
   data_c[:, :] = np.reshape(old_2d_center - new_origin, [-1, 2])
   
-  for frame_id in range(num_frames): 
-      data_pose[frame_id, :] = output[frame_id]['pose']      
-      data_gender = int(output[frame_id]['gender'])
-      data_R[frame_id, :3] = np.sin(output[frame_id]['R'])
-      data_R[frame_id, 3:6] = np.cos(output[frame_id]['R'])
-      data_beta[frame_id, :] = output[frame_id]['beta']
-      data_f[frame_id, :] = output[frame_id]['f']
-      data_T[frame_id, :] = output[frame_id]['T']
-      data_J[frame_id, :, :] = output[frame_id]['J']
+  for frame_id in range(num_frames):
       data_J_2d[frame_id, :, :] = resize_scale * (output[frame_id]['J_2d'] - np.reshape(new_origin, [1, -1]))
-      data_J_2d_openpose[frame_id, : , :] = resize_scale * (output[frame_id]['J_2d_openpose'] - np.reshape(new_origin, [1, -1]))
       # crop image
       image = output[frame_id]['image']
       h, w, _ = image.shape
@@ -100,20 +90,9 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
                  max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1, :] \
                  = image[img_y_min:img_y_max + 1, img_x_min:img_x_max +1, :] 
       data_image[frame_id, :, :, :] = scipy.misc.imresize(crop_image, [image_size, image_size])
-      draw_2d_joints(data_image[frame_id, :, :, :], data_J_2d_openpose[frame_id, :, :].astype('int32'), name='/home/local/tmp/'+file_string+str(frame_id)+'.jpg')
-      
-      seg_float = output[frame_id]['seg'].astype(np.float32)
-      crop_seg = np.zeros((new_image_size, new_image_size, 3), dtype=np.float32)
-      crop_seg[max(0, -y_min):max(0, -y_min) + img_y_max - img_y_min + 1, \
-               max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1] \
-               = np.expand_dims(seg_float[img_y_min:img_y_max + 1, img_x_min:img_x_max +1], 2)
-      seg = scipy.misc.imresize(crop_seg, [image_size, image_size])
-      seg[seg < 0.5] = 0
-      seg[seg >= 0.5] = 1
+      draw_2d_joints(data_image[frame_id, :, :, :], data_J_2d[frame_id, :, :].astype('int32'), name='/home/local/tmp/'+file_string+str(frame_id)+'_real.jpg')
 
-      data_seg[frame_id, :, :] = seg[:, :, 0]
-      data_chamfer[frame_id, :, :], _, _ = get_chamfer(seg[:,:,0], chamfer_scale)
-  return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_J_2d_openpose, data_image/255.0, data_seg, data_f, data_chamfer, data_c, data_gender, data_resize_scale
+  return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_image/255.0, data_seg, data_f, data_chamfer, data_c, data_gender, data_resize_scale
 
 
 def _floatList_feature(value):
@@ -139,7 +118,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
     filename_to_idx = dict()
     counters = dict()
     for sample_id in tqdm(range(get_samples)):
-        pose, T, R, beta, J, J_2d, J_2d_openpose, image, seg, f, chamfer, c, gender, resize_scale = loadBatchCmc_fromString(files[sample_id], crop_image_size, is_gait=is_gait)
+        pose, T, R, beta, J, J_2d, image, seg, f, chamfer, c, gender, resize_scale = loadBatchCmc_fromString(files[sample_id], crop_image_size, is_gait=is_gait)
         scipy.misc.imsave('../tmp/image_' + str(sample_id) + '.png', image[0, :, :, :])
         feature={
             'pose': _floatList_feature(pose.flatten()),
@@ -148,7 +127,6 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
             'R': _floatList_feature(R.flatten()),
             'J': _floatList_feature(J.flatten()),
             'J_2d': _floatList_feature(J_2d.flatten()),
-            'J_2d_openpose': _floatList_feature(J_2d_openpose.flatten()),
             'image': _floatList_feature(image.flatten()),
             'seg': _floatList_feature(seg.flatten()),
             'f': _floatList_feature(f.flatten()),
@@ -179,6 +157,7 @@ def convert_to_tfrecords_from_folder(folder_name, tf_filename, get_samples=None,
     writer.close()
 
 
+
 def read_and_decode_cmc(tfrecord_file):
   num_frames = 2
   image_size = 128
@@ -197,7 +176,6 @@ def read_and_decode_cmc(tfrecord_file):
       'R': tf.FixedLenFeature([num_frames*6], tf.float32),
       'J': tf.FixedLenFeature([num_frames*keypoints_num*3], tf.float32),
       'J_2d': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
-      'J_2d_openpose': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
       'image': tf.FixedLenFeature([num_frames*image_size*image_size*3], tf.float32),
       'seg': tf.FixedLenFeature([num_frames*image_size*image_size], tf.float32),
       'f': tf.FixedLenFeature([num_frames*2], tf.float32),
@@ -212,14 +190,13 @@ def read_and_decode_cmc(tfrecord_file):
   feature['R'] = tf.reshape(feature['R'], [num_frames, 6])
   feature['J'] = tf.reshape(feature['J'], [num_frames, keypoints_num, 3])
   feature['J_2d'] = tf.reshape(feature['J_2d'], [num_frames, keypoints_num, 2])
-  feature['J_2d_openpose'] = tf.reshape(feature['J_2d_openpose'], [num_frames, keypoints_num, 2])
   feature['image'] = tf.reshape(feature['image'], [num_frames, image_size, image_size, 3])
   feature['seg'] = tf.reshape(feature['seg'], [num_frames, image_size, image_size])
   feature['chamfer'] = tf.reshape(feature['chamfer'], [num_frames, small_image_size, small_image_size])
   feature['c'] = tf.reshape(feature['c'], [num_frames, 2])
   feature['f'] = tf.reshape(feature['f'], [num_frames, 2])
   feature['resize_scale'] = tf.reshape(feature['resize_scale'], [num_frames])
-  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['J_2d_openpose'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender']
+  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender']
  
 
 def read_and_decode_cmc_with_idx(tfrecord_file):
@@ -240,7 +217,6 @@ def read_and_decode_cmc_with_idx(tfrecord_file):
       'R': tf.FixedLenFeature([num_frames*6], tf.float32),
       'J': tf.FixedLenFeature([num_frames*keypoints_num*3], tf.float32),
       'J_2d': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
-      'J_2d_openpose': tf.FixedLenFeature([num_frames*keypoints_num*2], tf.float32),
       'image': tf.FixedLenFeature([num_frames*image_size*image_size*3], tf.float32),
       'seg': tf.FixedLenFeature([num_frames*image_size*image_size], tf.float32),
       'f': tf.FixedLenFeature([num_frames*2], tf.float32),
@@ -256,23 +232,19 @@ def read_and_decode_cmc_with_idx(tfrecord_file):
   feature['R'] = tf.reshape(feature['R'], [num_frames, 6])
   feature['J'] = tf.reshape(feature['J'], [num_frames, keypoints_num, 3])
   feature['J_2d'] = tf.reshape(feature['J_2d'], [num_frames, keypoints_num, 2])
-  feature['J_2d_openpose'] = tf.reshape(feature['J_2d_openpose'], [num_frames, keypoints_num, 2])
   feature['image'] = tf.reshape(feature['image'], [num_frames, image_size, image_size, 3])
   feature['seg'] = tf.reshape(feature['seg'], [num_frames, image_size, image_size])
   feature['chamfer'] = tf.reshape(feature['chamfer'], [num_frames, small_image_size, small_image_size])
   feature['c'] = tf.reshape(feature['c'], [num_frames, 2])
   feature['f'] = tf.reshape(feature['f'], [num_frames, 2])
   feature['resize_scale'] = tf.reshape(feature['resize_scale'], [num_frames])
-  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['J_2d_openpose'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender'], feature['idx']
+  return feature['pose'], feature['beta'], feature['T'], feature['R'], feature['J'], feature['J_2d'], feature['image'], feature['seg'], feature['chamfer'], feature['c'], feature['f'], feature['resize_scale'], feature['gender'], feature['idx']
 
 
-def inputs_cmc(tf_filenames, batch_size, shuffle=True, openpose=False):
+def inputs_cmc(tf_filenames, batch_size, shuffle=False):
   with tf.name_scope('cmc_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames)
-    pose, beta, T, R, J, J_2d, J_2d_openpose, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_cmc(filename_queue)
-
-    if openpose:
-        J_2d = J_2d_openpose
+    pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender = read_and_decode_cmc(filename_queue)
 
     if not shuffle:
         return tf.train.batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender], batch_size=batch_size, num_threads=2)
@@ -280,13 +252,10 @@ def inputs_cmc(tf_filenames, batch_size, shuffle=True, openpose=False):
         return tf.train.shuffle_batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender], batch_size=batch_size, num_threads=2, capacity=5000,min_after_dequeue=2000)
 
 
-def inputs_cmc_with_idx(tf_filenames, batch_size, shuffle=True, openpose=False):
+def inputs_cmc_with_idx(tf_filenames, batch_size, shuffle=False):
   with tf.name_scope('cmc_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames, shuffle=shuffle)
     pose, beta, T, R, J, J_2d, J_2d_openpose, image, seg, chamfer, c, f, resize_scale, gender, idx = read_and_decode_cmc_with_idx(filename_queue)
-
-    if openpose:
-        J_2d = J_2d_openpose
 
     if not shuffle:
       return tf.train.batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, idx], batch_size=batch_size, num_threads=2) #,capacity=80,min_after_dequeue=50)

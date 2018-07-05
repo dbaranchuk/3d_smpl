@@ -80,3 +80,31 @@ def read_openpose(filename, frame_id, annot_path):
     # Permutate to SMPL
     perm = np.array([7,11,8,16,12,9,17,13,10,18,19,22,0,20,14,15,4,1,5,2,6,3,21,23])
     return joints[perm]
+
+
+def write_cmc_to_bin(parsed_data, filename):
+    num_frames = parsed_data['J_2d'].shape[0]
+    # gender[int32], num_frames[int32]
+    with open(filename, "wb") as f_:
+        f_.write(struct.pack('i', num_frames))
+        for frame_id in range(num_frames):
+            J_2d = list(np.reshape(parsed_data['J_2d'][frame_id, :, :], [-1]))
+            image = list(np.reshape(parsed_data['image'][frame_id, :, :, :].astype(np.float32), [-1]))
+            params = J_2d + image
+            num_elements = len(params)
+            f_.write(struct.pack('f' * num_elements, *params))
+
+
+def read_cmc_to_bin(filename, frame_id):
+    with open(filename, 'rb') as f_:
+        line = f_.read(4)
+        num_frames = struct.unpack('i', line)[0]
+        num_elements_in_line = 24 * 2 + h * w * 3
+        # get to the head of requested frame
+        _ = f_.read((4 * (num_elements_in_line) + h * w) * frame_id)
+        line = f_.read(4 * num_elements_in_line)
+        params = struct.unpack('f' * num_elements_in_line, line)
+        output = dict()
+        output['J_2d'] = np.reshape(params[:48], [24, 2])
+        output['image'] = np.reshape(params[48:48 + h * w * 3], [h, w, 3])
+        return output

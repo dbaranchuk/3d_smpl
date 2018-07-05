@@ -50,7 +50,7 @@ def get_training_params(filename, data_dir, direction=None):
 
   for frame_id in range(num_frames):
     img = cap.get_data(frame_id)
-    #draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')
+    draw_2d_joints(np.array(img), d2.T, name='/home/local/tmp/real/vis'+str(frame_id)+'.jpg')
     all_image[frame_id, :, :, :] = np.fliplr(img)
 
   output = dict()

@@ -14,6 +14,7 @@ if is_test:
     subjects = ['s1']
     modality = 'real/subdir'
 else:
+    pass
 
 directions = ['f', 'b']
 

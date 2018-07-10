@@ -257,7 +257,7 @@ def inputs_cmc(tf_filenames, batch_size, shuffle=False):
 def inputs_cmc_with_idx(tf_filenames, batch_size, shuffle=False):
   with tf.name_scope('cmc_input'):
     filename_queue = tf.train.string_input_producer(tf_filenames, shuffle=shuffle)
-    pose, beta, T, R, J, J_2d, J_2d_openpose, image, seg, chamfer, c, f, resize_scale, gender, idx = read_and_decode_cmc_with_idx(filename_queue)
+    pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, idx = read_and_decode_cmc_with_idx(filename_queue)
 
     if not shuffle:
       return tf.train.batch([pose, beta, T, R, J, J_2d, image, seg, chamfer, c, f, resize_scale, gender, idx], batch_size=batch_size, num_threads=2) #,capacity=80,min_after_dequeue=50)

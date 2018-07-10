@@ -15,7 +15,7 @@
 CUDA_VISIBLE_DEVICES=0 python main.py --name=model0 --batch_size=1 --gf_dim=32 --is_sup_train=False --is_train=False
 
 #finetune
-#rm -rf checkpoint/finetune1/
-#CUDA_VISIBLE_DEVICES=0 python main.py --name=finetune1 --batch_size=1 --model_dir=checkpoint/model8 --gf_dim=32 --is_sup_train=False --is_train=True --learning_rate=0.000001 --key_loss=True --max_iter=10000  #--silh_loss=True
+rm -rf checkpoint/finetune_real/
+CUDA_VISIBLE_DEVICES=0 python main.py --name=finetune_real --batch_size=1 --model_dir=checkpoint/model0 --gf_dim=32 --is_sup_train=False --is_train=True --learning_rate=0.000001 --key_loss=True --max_iter=10000  #--silh_loss=True
 
-#CUDA_VISIBLE_DEVICES=0 python main.py --name=finetune1 --batch_size=1 --model_dir=checkpoint/finetune1 --gf_dim=32 --is_sup_train=False --is_train=False
+CUDA_VISIBLE_DEVICES=0 python main.py --name=finetune_real --batch_size=1 --model_dir=checkpoint/finetune_real --gf_dim=32 --is_sup_train=False --is_train=False

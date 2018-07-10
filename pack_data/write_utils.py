@@ -118,6 +118,7 @@ def read_cmc_to_bin(filename, frame_id):
     with open(filename, 'rb') as f_:
         line = f_.read(4)
         num_frames = struct.unpack('i', line)[0]
+        print(num_frames)
         num_elements_in_line = 24 * 2 + h * w * 3
         # get to the head of requested frame
         _ = f_.read((4 * (num_elements_in_line) + h * w) * frame_id)

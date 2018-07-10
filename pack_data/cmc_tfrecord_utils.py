@@ -287,5 +287,6 @@ def draw_2d_joints_cmc(image, joints, name):
     img_path = '/home/local/tmp'
     for i, joint in enumerate(joints):
         cv2.circle(image, tuple(joint), 2, colors[i], -1)
+    print(os.path.join(img_path, name))
     cv2.imwrite(os.path.join(img_path, name), image)
 

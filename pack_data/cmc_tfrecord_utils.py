@@ -63,7 +63,7 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
 
-  new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
+  new_2d_center = np.round(J_2d[0, :] + 8 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
   s = 1.25 #+ 0.1 * np.random.rand()
 
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
@@ -287,6 +287,5 @@ def draw_2d_joints_cmc(image, joints, name):
     img_path = '/home/local/tmp'
     for i, joint in enumerate(joints):
         cv2.circle(image, tuple(joint), 2, colors[i], -1)
-    print(os.path.join(img_path, name))
     cv2.imwrite(os.path.join(img_path, name), image)
 

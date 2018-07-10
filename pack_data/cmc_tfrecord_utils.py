@@ -22,7 +22,6 @@ def get_file_list(data_path, quo=0, test=False):
         p = os.path.join(data_path, folder)
         for filename in os.listdir(p):
             with open(os.path.join(p, filename), 'rb') as f_:
-                line = f_.read(4) # gender
                 line = f_.read(4) # num_frames
                 num_frames = struct.unpack('i', line)[0]
                 print filename, "nframes", num_frames

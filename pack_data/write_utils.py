@@ -115,6 +115,7 @@ def write_cmc_to_bin(parsed_data, filename):
 
 
 def read_cmc_to_bin(filename, frame_id):
+    w, h = (320, 180)
     with open(filename, 'rb') as f_:
         line = f_.read(4)
         num_frames = struct.unpack('i', line)[0]

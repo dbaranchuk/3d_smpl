@@ -39,8 +39,7 @@ def get_training_params(filename, data_dir, direction=None):
   if direction != None:
     filename += direction
 
-  w = 320
-  h = 180
+  w, h = (320, 180)
   cap = imageio.get_reader(os.path.join(data_dir, folder_name, filename) + ".mp4")
   all_J_2d = np.load(os.path.join(data_dir, folder_name, filename) + "_reconstructed_2d.npy")
   all_J_2d[:, :, 0] = w - all_J_2d[:, :, 0]

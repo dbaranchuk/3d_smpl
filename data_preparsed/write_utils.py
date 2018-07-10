@@ -66,25 +66,25 @@ def read_syn_to_bin(filename, frame_id):
     return output
 
 
-def read_openpose(filename, frame_id, annot_path):
-    json_name = (os.path.join(annot_path, filename)+"_%012d_keypoints.json") % frame_id
-    with open(json_name, 'r') as f:
-        annot = json.load(f)
-    if len(annot['people']) == 0:
-        return np.zeros((24,2))
-    joints = annot['people'][0]['pose_keypoints_2d']
-    joints = np.array(joints).reshape((25, 3))[1:]
-    assert(len(joints) == 24)
-    visibility = joints[:,2]
-    joints = joints[:,:2].astype('int32')
-    # Permutate to SMPL
-    perm = np.array([7,11,8,16,12,9,17,13,10,18,19,22,0,20,14,15,4,1,5,2,6,3,21,23])
-    return joints[perm]
+#def read_openpose(filename, frame_id, annot_path):
+#    json_name = (os.path.join(annot_path, filename)+"_%012d_keypoints.json") % frame_id
+#    with open(json_name, 'r') as f:
+#        annot = json.load(f)
+#    if len(annot['people']) == 0:
+#        return np.zeros((24,2))
+#    joints = annot['people'][0]['pose_keypoints_2d']
+#    joints = np.array(joints).reshape((25, 3))[1:]
+#    assert(len(joints) == 24)
+#    visibility = joints[:,2]
+#    joints = joints[:,:2].astype('int32')
+#    # Permutate to SMPL
+#    perm = np.array([7,11,8,16,12,9,17,13,10,18,19,22,0,20,14,15,4,1,5,2,6,3,21,23])
+#    return joints[perm]
 
 
 def write_cmc_to_bin(parsed_data, filename):
+    w, h = (320, 180)
     num_frames = parsed_data['J_2d'].shape[0]
-    print(num_frames)
     # gender[int32], num_frames[int32]
     with open(filename, "wb") as f_:
         f_.write(struct.pack('i', num_frames))
@@ -103,7 +103,7 @@ def read_cmc_to_bin(filename, frame_id):
         num_frames = struct.unpack('i', line)[0]
         num_elements_in_line = 24 * 2 + h * w * 3
         # get to the head of requested frame
-        _ = f_.read((4 * (num_elements_in_line) + h * w) * frame_id)
+        _ = f_.read(4 * num_elements_in_line * frame_id)
         line = f_.read(4 * num_elements_in_line)
         params = struct.unpack('f' * num_elements_in_line, line)
         output = dict()

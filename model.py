@@ -18,7 +18,8 @@ import math
 import pickle
 import struct
 
-from pack_data.surreal_tfrecord_utils import inputs_surreal, inputs_surreal_with_idx  
+from pack_data.surreal_tfrecord_utils import inputs_surreal, inputs_surreal_with_idx
+from pack_data.cmc_tfrecord_utils import inputs_cmc, inputs_cmc_with_idx  
 from tqdm import tqdm
 from utils import warper 
 

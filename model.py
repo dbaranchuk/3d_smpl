@@ -1016,7 +1016,7 @@ class _3DINN(object):
         try:
             while not coord.should_stop():
                 beta, pose = {},{}
-                for i in range(122):
+                for i in range(60):#122):
                     # load testing data
                     batch_pose_t, batch_beta_t, batch_T_t, batch_R_t, batch_J_t, batch_J_2d_t, batch_image_t, batch_seg_t, batch_chamfer_t, batch_c_t, batch_f_t, batch_resize_scale_t, batch_gender_t, batch_J_c_t, idx_t, batch_pmesh_t, batch_v_gt_t = self.sess.run([self.pose_sr_t, self.beta_sr_t, self.T_sr_t, self.R_sr_t, self.J_sr_t, self.J_2d_sr_t, self.image_sr_t, self.seg_sr_t, self.chamfer_sr_t, self.c_sr_t, self.f_sr_t, self.resize_scale_sr_t, self.gender_sr_t, self.J_c_sr_t, self.idx_sr_t, self.pmesh_sr_t, self.v_gt_t])
 

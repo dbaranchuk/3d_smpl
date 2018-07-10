@@ -34,5 +34,5 @@ for subject in subjects:
             sfile = filename
             print sfile
             parsed_data = get_training_params(sfile, data_root_dir)
-            write_cmc_to_bin(parsed_data, os.path.join(full_write_path, sfile) + "_" + direction + ".bin")
+            write_cmc_to_bin(parsed_data, os.path.join(full_write_path, sfile) + ".bin")
           

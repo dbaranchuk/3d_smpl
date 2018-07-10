@@ -2,13 +2,14 @@ import numpy as np
 import pickle
 import os 
 import random
-from write_utils import read_syn_to_bin
+from write_utils import read_cmc_to_bin
 import struct 
 import sys
-from surreal_tfrecord_utils import convert_to_tfrecords_from_folder
+from cmc_tfrecord_utils import convert_to_tfrecords_from_folder
+
 with_idx=True
-dataset = "surreal"
-data_path = "/home/local/data/cmc/synthetic/bin"
+dataset = "real"
+data_path = "/home/local/data/cmc/real/bin"
 is_test = True
 modality = 'test' if is_test else 'train'
 

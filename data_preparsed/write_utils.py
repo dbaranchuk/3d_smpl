@@ -84,6 +84,7 @@ def read_openpose(filename, frame_id, annot_path):
 
 def write_cmc_to_bin(parsed_data, filename):
     num_frames = parsed_data['J_2d'].shape[0]
+    print(num_frames)
     # gender[int32], num_frames[int32]
     with open(filename, "wb") as f_:
         f_.write(struct.pack('i', num_frames))
@@ -99,6 +100,7 @@ def read_cmc_to_bin(filename, frame_id):
     with open(filename, 'rb') as f_:
         line = f_.read(4)
         num_frames = struct.unpack('i', line)[0]
+        print(num_frames)
         num_elements_in_line = 24 * 2 + h * w * 3
         # get to the head of requested frame
         _ = f_.read((4 * (num_elements_in_line) + h * w) * frame_id)

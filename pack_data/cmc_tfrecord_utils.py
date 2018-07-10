@@ -40,8 +40,8 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
 
   filename, t = file_string.split("#")
   output = dict()
-  output[0] = read_syn_to_bin(filename, int(t))
-  output[1] = read_syn_to_bin(filename, int(t) + 1)
+  output[0] = read_cmc_to_bin(filename, int(t))
+  output[1] = read_cmc_to_bin(filename, int(t) + 1)
 
   data_pose = np.zeros((num_frames, keypoints_num * 3))
   data_T = np.zeros((num_frames, 3))

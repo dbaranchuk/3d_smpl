@@ -2,7 +2,7 @@ import numpy as np
 import pickle
 import os 
 import random
-from write_utils import read_syn_to_bin
+from write_utils import read_cmc_to_bin
 import struct 
 from tqdm import tqdm
 import tensorflow as tf
@@ -36,6 +36,9 @@ def get_file_list(data_path, quo=0, test=False):
 
 
 def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints_num=24, bases_num=10, chamfer_scale=0.5, is_gait=False):
+  w = 320
+  h = 180
+
   filename, t = file_string.split("#")
   output = dict()
   output[0] = read_syn_to_bin(filename, int(t))
@@ -56,7 +59,7 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
   data_resize_scale = np.zeros((num_frames))
   data_gender = np.zeros(())
   # Cropping
-  old_2d_center = np.array([(320 - 1)/2.0, (240-1)/2.0])
+  old_2d_center = np.array([(w - 1)/2.0, (h-1)/2.0])
 
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']

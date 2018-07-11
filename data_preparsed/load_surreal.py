@@ -67,7 +67,7 @@ def get_training_params(filename, data_dir, direction=None):
 
   # Read Openpose annotation if exists to cut off out of edge frames
   openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
-  for i in range(num_frames):
+  for frame_id in range(num_frames):
     if os.path.exists(openpose_annot_path):
       d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
       if d2_openpose.sum() == 0:

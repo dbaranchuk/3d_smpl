@@ -1,6 +1,6 @@
 import scipy.io as sio
 from matrix_utils import avg_joint_error, rotationMatrixToEulerAngles, eulerAnglesToRotationMatrix
-from write_utils import read_openpose
+#from write_utils import read_openpose
 import imageio
 #import matplotlib.pyplot as plt
 import numpy as np
@@ -44,9 +44,7 @@ def get_training_params(filename, data_dir, direction=None):
     folder_name += '_' + direction
   
   data = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_info.mat") 
-  segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat") 
-  all_J_reconstruct_2d = np.load(os.path.join(os.path.join(data_dir, folder_name), filename) + "_reconstructed_2d.npy")
-  all_J_reconstruct_2d[:, :, 0] = 320 - all_J_reconstruct_2d[:, :, 0]
+  segs = sio.loadmat(os.path.join(os.path.join(data_dir, folder_name), filename) + "_segm.mat")
 
   #'h36m_S1_Directions/h36m_S1_Directions_c0028_info.mat' 
   # see whether it is male or female
@@ -66,7 +64,7 @@ def get_training_params(filename, data_dir, direction=None):
 
   num_joints = data['joints2D'].shape[1]
   num_frames = data['joints2D'].shape[2]
-  
+
   import time
   import math
   w = 320
@@ -79,8 +77,15 @@ def get_training_params(filename, data_dir, direction=None):
   all_T = np.zeros((num_frames, 3))
   all_J = np.zeros((num_frames, num_joints, 3))
   all_J_2d = np.zeros((num_frames, num_joints, 2))
+  all_J_reconstruct_2d = np.zeros((num_frames, num_joints, 2))
   all_seg = np.zeros((num_frames, h, w), dtype=np.bool_)
   all_image = np.zeros((num_frames, h, w, 3), dtype=np.uint8)
+
+  # Read transformed 2d keypoints from openpose annotation
+  reconstruct_2d_filename = os.path.join(data_dir, folder_name, filename) + "_reconstructed_2d.npy"
+  if os.path.exists(reconstruct_2d_filename):
+    all_J_reconstruct_2d = np.load(reconstruct_2d_filename)
+    all_J_reconstruct_2d[:, :, 0] = 320 - all_J_reconstruct_2d[:, :, 0]
 
   for frame_id in range(num_frames):
     img = cap.get_data(frame_id)
@@ -112,16 +117,8 @@ def get_training_params(filename, data_dir, direction=None):
     d2 = data['joints2D'][:,:,frame_id]
     d2[0, :] =  (320 - d2[0,:])
     d2[1, :] =  (240 - d2[1,:])
-
-    # Read Openpose annotation if exists
-#    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
-#    if os.path.exists(openpose_annot_path):
-#        d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
-#        indices = np.where(d2_openpose.sum(1) > 0)[0]
-#        d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])
-#        all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
-    draw_2d_joints(np.array(img), all_J_reconstruct_2d[frame_id], name='/home/local/tmp/synthetic/vis'+str(frame_id)+'.jpg')
+    #draw_2d_joints(np.array(img), all_J_reconstruct_2d[frame_id], name='/home/local/tmp/synthetic/vis'+str(frame_id)+'.jpg')
 
     from mpl_toolkits.mplot3d import Axes3D
     d3 = data['joints3D'][:,:,frame_id]

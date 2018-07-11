@@ -1,7 +1,7 @@
 import numpy as np
 import struct
 w = 320
-h = 240
+h = 180
 def write_syn_to_bin(parsed_data, filename):
   # gender: 1 
   # beta: 100 x 10

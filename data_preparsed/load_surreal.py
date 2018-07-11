@@ -68,7 +68,7 @@ def get_training_params(filename, data_dir, direction=None):
   import time
   import math
   w = 320
-  h = 240
+  h = 180
   all_pose = np.zeros((num_frames, num_joints * 3))
   all_beta = np.zeros((num_frames, 10))
   all_f = np.zeros((num_frames, 2))
@@ -85,7 +85,7 @@ def get_training_params(filename, data_dir, direction=None):
   reconstruct_2d_filename = os.path.join(data_dir, folder_name, filename) + "_reconstructed_2d.npy"
   if os.path.exists(reconstruct_2d_filename):
     all_J_reconstruct_2d = np.load(reconstruct_2d_filename)
-    all_J_reconstruct_2d[:, :, 0] = 320 - all_J_reconstruct_2d[:, :, 0]
+    all_J_reconstruct_2d[:, :, 0] = w - all_J_reconstruct_2d[:, :, 0]
 
   for frame_id in range(num_frames):
     img = cap.get_data(frame_id)
@@ -115,8 +115,8 @@ def get_training_params(filename, data_dir, direction=None):
     img = np.fliplr(img)
     seg = np.fliplr(seg)
     d2 = data['joints2D'][:,:,frame_id]
-    d2[0, :] =  (320 - d2[0,:])
-    d2[1, :] =  (240 - d2[1,:])
+    d2[0, :] =  (w - d2[0,:])
+    d2[1, :] =  (h - d2[1,:])
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     #draw_2d_joints(np.array(img), all_J_reconstruct_2d[frame_id], name='/home/local/tmp/synthetic/vis'+str(frame_id)+'.jpg')
 
@@ -152,8 +152,8 @@ def get_training_params(filename, data_dir, direction=None):
     #visualize_smpl_2d(d3_project, xlim=(-160, 160), ylim=(-120, 120), title="projected 3d", figure_id=3)
     #print "piexl error", avg_joint_error(d3_project - centered_2d)
     T2 = np.zeros((3,1))
-    T2[0] = (d2[0, 0] - 160) /fx * d3[2, 0]
-    T2[1] = (d2[1, 0] - 120) /fy * d3[2, 1]
+    T2[0] = (d2[0, 0] - w//2) /fx * d3[2, 0]
+    T2[1] = (d2[1, 0] - h//2) /fy * d3[2, 1]
 
     # smpl to 3d center
     J_ones = np.concatenate((J, np.ones((1, num_joints))), 0)
@@ -176,7 +176,7 @@ def get_training_params(filename, data_dir, direction=None):
     reconstruct_2d = reconstruct_3d[:2, :]/reconstruct_3d[2,:]
     
     reconstruct_2d *= np.array([[fx],[fy]])
-    center = np.array([[160], [120]])
+    center = np.array([[w//2], [h//2]])
     reconstruct_2d += center
 
     #draw_2d_joints(np.array(img), reconstruct_2d.astype('int32').T, name='/home/local/tmp/dir/vis'+str(frame_id)+'.jpg')

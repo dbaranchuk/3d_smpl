@@ -1,6 +1,6 @@
 import scipy.io as sio
 from matrix_utils import avg_joint_error, rotationMatrixToEulerAngles, eulerAnglesToRotationMatrix
-#from write_utils import read_openpose
+from write_utils import read_openpose
 import imageio
 #import matplotlib.pyplot as plt
 import numpy as np
@@ -115,12 +115,19 @@ def get_training_params(filename, data_dir, direction=None):
     img = np.fliplr(img)
     seg = np.fliplr(seg)
     d2 = data['joints2D'][:,:,frame_id]
-    if d2.sum() <= 0:
-        print(filename)
-    d2[0, :] =  (w - d2[0,:])
-    d2[1, :] =  (h - d2[1,:])
+    d2[0, :] = (w - d2[0,:])
+    d2[1, :] = (h - d2[1,:])
+
+    # Read Openpose annotation if exists
+    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
+    if os.path.exists(openpose_annot_path):
+        d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
+
+#        indices = np.where(d2_openpose.sum(1) > 0)[0]
+#        d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])
+#        all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
-    #draw_2d_joints(np.array(img), all_J_reconstruct_2d[frame_id], name='/home/local/tmp/synthetic/vis'+str(frame_id)+'.jpg')
+    #draw_2d_joints(np.array(img), all_J_2d[frame_id], name='/home/local/tmp/synthetic/vis'+str(frame_id)+'.jpg')
 
     from mpl_toolkits.mplot3d import Axes3D
     d3 = data['joints3D'][:,:,frame_id]

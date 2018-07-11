@@ -65,6 +65,16 @@ def get_training_params(filename, data_dir, direction=None):
   num_joints = data['joints2D'].shape[1]
   num_frames = data['joints2D'].shape[2]
 
+  # Read Openpose annotation if exists to cut off out of edge frames
+  openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
+  for i in range(num_frames):
+    if os.path.exists(openpose_annot_path):
+      d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
+      if d2_openpose.sum() == 0:
+        print("Prev number of frames: %d New number of frames: %d" % (num_frames, frame_id))
+        num_frames = frame_id
+        break
+
   import time
   import math
   w = 320
@@ -117,15 +127,6 @@ def get_training_params(filename, data_dir, direction=None):
     d2 = data['joints2D'][:,:,frame_id]
     d2[0, :] = (w - d2[0,:])
     d2[1, :] = (h - d2[1,:])
-
-    # Read Openpose annotation if exists
-    openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
-    if os.path.exists(openpose_annot_path):
-        d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
-
-#        indices = np.where(d2_openpose.sum(1) > 0)[0]
-#        d2_openpose[indices, 0] =  (320 - d2_openpose[indices, 0])
-#        all_J_2d_openpose[frame_id, :, :] = d2_openpose
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")
     #draw_2d_joints(np.array(img), all_J_2d[frame_id], name='/home/local/tmp/synthetic/vis'+str(frame_id)+'.jpg')
 

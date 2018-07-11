@@ -70,15 +70,15 @@ def read_openpose(filename, frame_id, annot_path):
     json_name = (os.path.join(annot_path, filename)+"_%012d_keypoints.json") % frame_id
     with open(json_name, 'r') as f:
         annot = json.load(f)
+
     if len(annot['people']) == 0:
-        print(filename, frame_id)
         return np.zeros((25,2))
+
     joints = annot['people'][0]['pose_keypoints_2d']
     joints = np.array(joints).reshape((25, 3))
-    assert(len(joints) == 25)
     visibility = joints[:,2]
     joints = joints[:,:2].astype('int32')
-    # Permutate to SMPL
+    # Permutate to SMPL joints
     perm = np.array([8,12,9,17,13,10,18,14,11,19,20,23,1,21,15,16,5,2,6,3,7,4,22,24,0])
     return joints[perm]
 

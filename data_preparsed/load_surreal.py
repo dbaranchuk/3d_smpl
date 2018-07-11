@@ -115,6 +115,8 @@ def get_training_params(filename, data_dir, direction=None):
     img = np.fliplr(img)
     seg = np.fliplr(seg)
     d2 = data['joints2D'][:,:,frame_id]
+    if d2.sum() <= 0:
+        print(filename)
     d2[0, :] =  (w - d2[0,:])
     d2[1, :] =  (h - d2[1,:])
     #visualize_smpl_2d(d2, bg=img, figure_id=10, title="2d gt")

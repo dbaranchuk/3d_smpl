@@ -65,14 +65,14 @@ def get_training_params(filename, data_dir, direction=None):
   num_frames = data['joints2D'].shape[2]
 
   # Read Openpose annotation if exists to cut off out of edge frames
-#  openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
-#  for frame_id in range(num_frames):
-#    if os.path.exists(openpose_annot_path):
-#      d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
-#      if d2_openpose.sum() == 0:
-#        print("Prev number of frames: %d New number of frames: %d" % (num_frames, frame_id))
-#        num_frames = frame_id
-#        break
+  openpose_annot_path = os.path.join(data_dir, folder_name, 'openpose_annotation')
+  for frame_id in range(num_frames):
+    if os.path.exists(openpose_annot_path):
+      d2_openpose = read_openpose(filename, frame_id, openpose_annot_path)
+      if d2_openpose.sum() == 0:
+        print("Prev number of frames: %d New number of frames: %d" % (num_frames, frame_id))
+        num_frames = frame_id
+        break
 
   import time
   import math

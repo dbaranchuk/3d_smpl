@@ -10,7 +10,7 @@ with_idx=True
 dataset = "surreal"
 data_path = "/home/local/data/cmc/synthetic/bin"
 is_test = True
-modality = 'valid' if is_test else 'train'
+modality = 'test' if is_test else 'train'
 
 data_path = os.path.join(data_path, modality)
 print data_path

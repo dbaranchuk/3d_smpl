@@ -93,9 +93,10 @@ def get_training_params(filename, data_dir, direction=None):
   # Read transformed 2d keypoints from openpose annotation
   reconstruct_2d_filename = os.path.join(data_dir, folder_name, filename) + "_reconstructed_2d.npy"
   if os.path.exists(reconstruct_2d_filename):
-    print(filename)
     all_J_reconstruct_2d = np.load(reconstruct_2d_filename)
     all_J_reconstruct_2d[:, :, 0] = w - all_J_reconstruct_2d[:, :, 0]
+    assert(all_J_reconstruct_2d.shape[0] == num_frames)
+    assert(all_J_reconstruct_2d.shape[1] == num_joints)
 
   for frame_id in range(num_frames):
     img = cap.get_data(frame_id)

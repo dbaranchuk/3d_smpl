@@ -929,7 +929,7 @@ class _3DINN(object):
                 self.writer.add_summary(summ_str, step)
                 print("[test, iter: %d] Losses: sup: %.4f, d3: %.4f (%.6f)(%.4f), d2: %.4f (%.6f), beta: %.4f, pose: %.4f, R: %.4f, T: %.4f" %(idx, sup_loss, d3_joint_loss, d3_loss, d3_c_loss, d2_joint_loss, d2_loss, beta_loss, pose_loss, R_loss, T_loss))
 
-              if step % 1000 == 0: #or step == self.config.max_iter-1:
+              if step % 1000 == 0:
                 self.save(self.checkpoint_dir, step)
             break
         except tf.errors.OutOfRangeError:

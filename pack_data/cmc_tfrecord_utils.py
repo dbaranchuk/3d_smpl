@@ -63,8 +63,8 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
   # Use keypoint 0 in frame1 as center
   J_2d = output[0]['J_2d']
 
-  new_2d_center = np.round(J_2d[0, :] + 8 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
-  s = 1.25 #+ 0.1 * np.random.rand()
+  new_2d_center = np.round(J_2d[0, :] + 10 * (np.random.uniform((2)) - 1)) + 0.5*np.ones((2))
+  s = 1.2 #+ 0.1 * np.random.rand()
 
   crop_size = np.round(s * np.max(np.abs(J_2d - np.reshape(new_2d_center, [1, 1, -1]))))
   new_image_size = int(2*crop_size)
@@ -92,7 +92,7 @@ def loadBatchCmc_fromString(file_string, image_size=128, num_frames=2, keypoints
                  max(0, -x_min):max(0, -x_min) + img_x_max - img_x_min + 1, :] \
                  = image[img_y_min:img_y_max + 1, img_x_min:img_x_max +1, :] 
       data_image[frame_id, :, :, :] = scipy.misc.imresize(crop_image, [image_size, image_size])
-      #draw_2d_joints_cmc(data_image[frame_id, :, :, :], data_J_2d[frame_id, :, :].astype('int32'), name='real/preprocess/'+str(t)+str(frame_id)+'.jpg')
+      draw_2d_joints_cmc(data_image[frame_id, :, :, :], data_J_2d[frame_id, :, :].astype('int32'), name='real/preprocess/'+str(t)+str(frame_id)+'.jpg')
 
   return data_pose, data_T, data_R, data_beta, data_J, data_J_2d, data_image/255.0, data_seg, data_f, data_chamfer, data_c, data_gender, data_resize_scale
 
